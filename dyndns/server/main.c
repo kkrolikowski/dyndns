@@ -11,9 +11,12 @@ int main(int argc, char *argv[]) {
 	int sockfd;
 	int status;
 	char * source_addr;
+	char * client_domain;
 	pid_t child, pid;
 	source_addr = (char *) malloc(16 * sizeof(char));
+	client_domain = (char *) malloc(64 * sizeof(char));
 	bzero(source_addr, 16 * sizeof(char));
+	bzero(client_domain, 64 * sizeof(char));
 
 	if(argc < 2) {
 		fprintf(stderr, "ERROR: no port provided.\n");
@@ -30,8 +33,11 @@ int main(int argc, char *argv[]) {
 			fprintf(stderr, "connection failed\n");
 			exit(1);
 		}
-		else
+		else {
 			printf("Connection from: %s\n", source_addr);
+			client_domain = readData(sockfd);
+			printf("Domena: %s\n", client_domain);
+		}
 	}
 	pid = wait(&status);
 	printf("Proces: %d zakonczyl sie z kodem: %d\n", pid, WEXITSTATUS(status));

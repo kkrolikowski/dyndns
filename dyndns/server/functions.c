@@ -43,6 +43,18 @@ int clientConn(int fd, char * cliaddr) {
 		return clifd;
 	}
 }
+char * readData(int fd) {
+	char buf[256];
+	int n;
+
+	n = read(fd, buf, 255);
+	if(n < 0) {
+		fprintf(stderr, "Error reading data");
+		return NULL;
+	}
+	else
+		return buf;
+}
 void error(char *msg) {
 	perror(msg);
 	exit(1);

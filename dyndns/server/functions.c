@@ -4,6 +4,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <strings.h>
+#include <string.h>
 #include "dynsrv.h"
 
 int bindToInterface(int portno) {
@@ -30,7 +31,6 @@ int bindToInterface(int portno) {
 int clientConn(int fd, char * cliaddr) {
 	int clilen, clifd;
 	struct sockaddr_in cli_addr;
-	char buff[16];
 
 	clilen = sizeof(cli_addr);
 	clifd = accept(fd, (struct sockaddr *) &cli_addr, &clilen);
@@ -38,7 +38,7 @@ int clientConn(int fd, char * cliaddr) {
 	if(clifd < 0)
 		return -1;
 	else {
-		cliaddr = (char *) inet_ntoa(cli_addr.sin_addr.s_addr);
+		strcpy(cliaddr, (char *) inet_ntoa(cli_addr.sin_addr.s_addr));
 		return clifd;
 	}
 }

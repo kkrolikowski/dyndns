@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 	}
 	bzero(buffer, 256);
 	strcpy(buffer, config.domain);
-	n = write(sockfd, buffer, strlen(buffer));
+	n = write(sockfd, buffer, strlen(buffer) +1);
 	if(n < 0) {
 		fprintf(stderr, "Error sending data.");
 		exit(1);

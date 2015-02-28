@@ -16,9 +16,10 @@ bool ReadCFG(PARAMS * cfg, char * filename) {
 	while(fscanf(cfgfile, "%s %s", opt, val) != EOF) {
 		if(strcmp(opt, "server") == 0)
 			strcpy(cfg->host, val);
-		if(strcmp(opt, "port") == 0) {
+		if(strcmp(opt, "port") == 0)
 			cfg->port = atoi(val);
-		}
+		if(strcmp(opt, "domain") == 0)
+			strcpy(cfg->domain, val);
 	}
 	fclose(cfgfile);
 	return true;

@@ -4,6 +4,7 @@
 
 typedef struct params {
 	char host[50];
+	char domain[64];
 	int port;
 } PARAMS;
 bool ReadCFG(PARAMS * cfg, char * filename);

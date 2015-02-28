@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <strings.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -37,5 +38,8 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "Error connecting to server\n");
 		exit(1);
 	}
+	bzero(buffer, 256);
+	strcpy(buffer, config.domain);
+	puts(buffer);
 	return 0;
 }

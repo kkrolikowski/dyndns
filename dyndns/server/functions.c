@@ -26,6 +26,20 @@ int bindToInterface(int portno) {
 
 	return sockfd;
 }
+int clientConn(int fd, char * cliaddr) {
+	int clilen, clifd;
+	struct sockaddr_in cli_addr;
+
+	clilen = sizeof(cli_addr);
+	clifd = accept(fd, (struct sockaddr *) &cli_addr, &clilen);
+
+	if(clifd < 0)
+		return -1;
+	else {
+		cliaddr = (char *) inet_ntoa(cli_addr.sin_addr.s_addr);
+		return clifd;
+	}
+}
 void error(char *msg) {
 	perror(msg);
 	exit(1);

@@ -12,7 +12,7 @@ int bindToInterface(int portno) {
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if(sockfd < 0) {
 		perror("ERROR opening socket");
-		return 1;
+		return -1;
 	}
 	bzero((char *) &serv_addr, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
@@ -20,7 +20,7 @@ int bindToInterface(int portno) {
 	serv_addr.sin_addr.s_addr = INADDR_ANY;
 	if(bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
 		perror("ERROR on binding");
-		return 1;
+		return -1;
 	}
 	listen(sockfd, 5);
 

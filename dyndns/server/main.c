@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
 	int sockfd, newsockfd, portno, clilen, n;
 	int status;
 	char buffer[256];
-	struct sockaddr_in serv_addr, cli_addr;
+	struct sockaddr_in cli_addr;
 	char * source_addr;
 	pid_t child, pid;
 
@@ -22,6 +22,10 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 	sockfd = bindToInterface(atoi(argv[1]));
+	if(sockfd < 0) {
+		fprintf(stderr, "Cannot bind to interface\n");
+		exit(1);
+	}
 	clilen = sizeof(cli_addr);
 	printf("PID: %d\n", (int) getpid());
 	child = fork();

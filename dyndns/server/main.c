@@ -8,7 +8,7 @@
 #include "dynsrv.h"
 
 int main(int argc, char *argv[]) {
-	int sockfd cli_fd;
+	int sockfd, cli_fd;
 	int status;
 	int n;
 	char * source_addr;

@@ -8,7 +8,7 @@
 #include "dynsrv.h"
 
 int main(int argc, char *argv[]) {
-	int sockfd;
+	int sockfd cli_fd;
 	int status;
 	int n;
 	char * source_addr;
@@ -30,13 +30,13 @@ int main(int argc, char *argv[]) {
 	}
 	child = fork();
 	if(!child) {
-		if(clientConn(sockfd, source_addr) < 0) {
+		if((cli_fd = clientConn(sockfd, source_addr)) < 0) {
 			fprintf(stderr, "connection failed\n");
 			exit(1);
 		}
 		else {
 			printf("Connection from: %s\n", source_addr);
-			n = readData(sockfd, client_domain);
+			n = readData(cli_fd, client_domain);
 			printf("Domena: %s\n", client_domain);
 		}
 	}

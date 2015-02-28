@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <strings.h>
 #include <string.h>
+#include <arpa/inet.h>
 #include "dynsrv.h"
 
 int bindToInterface(int portno) {

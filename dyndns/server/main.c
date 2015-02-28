@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
 	char * source_addr;
 	pid_t child, pid;
 	source_addr = (char *) malloc(16 * sizeof(char));
+	bzero(source_addr, 16 * sizeof(char));
 
 	if(argc < 2) {
 		fprintf(stderr, "ERROR: no port provided.\n");

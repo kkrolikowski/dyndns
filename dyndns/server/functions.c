@@ -4,6 +4,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <strings.h>
+#include "dynsrv.h"
 
 int bindToInterface(int portno) {
 	int sockfd;

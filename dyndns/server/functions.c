@@ -30,6 +30,7 @@ int bindToInterface(int portno) {
 int clientConn(int fd, char * cliaddr) {
 	int clilen, clifd;
 	struct sockaddr_in cli_addr;
+	char buff[16];
 
 	clilen = sizeof(cli_addr);
 	clifd = accept(fd, (struct sockaddr *) &cli_addr, &clilen);

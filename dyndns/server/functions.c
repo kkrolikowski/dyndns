@@ -24,7 +24,7 @@ int bindToInterface(int portno) {
 	}
 	listen(sockfd, 5);
 
-	return 0;
+	return sockfd;
 }
 void error(char *msg) {
 	perror(msg);

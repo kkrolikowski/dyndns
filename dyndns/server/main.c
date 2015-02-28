@@ -21,10 +21,7 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "ERROR: no port provided.\n");
 		exit(1);
 	}
-	if(bindToInterface(atoi(argv[1]))) {
-		fprintf(stderr, "Cannot listen on port %s\n", argv[1]);
-		return 1;
-	}
+	sockfd = bindToInterface(atoi(argv[1]));
 	clilen = sizeof(cli_addr);
 	printf("PID: %d\n", (int) getpid());
 	child = fork();

@@ -10,6 +10,7 @@
 int main(int argc, char *argv[]) {
 	int sockfd;
 	int status;
+	int n;
 	char * source_addr;
 	char * client_domain;
 	pid_t child, pid;
@@ -35,7 +36,7 @@ int main(int argc, char *argv[]) {
 		}
 		else {
 			printf("Connection from: %s\n", source_addr);
-			client_domain = readData(sockfd);
+			n = readData(sockfd, client_domain);
 			printf("Domena: %s\n", client_domain);
 		}
 	}

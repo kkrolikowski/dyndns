@@ -2,6 +2,6 @@
 #define DYNSRV_H_
 int bindToInterface(int portno);
 int clientConn(int fd, char * cliaddr);
-char * readData(int fd);
+int readData(int fd, char * domain);
 void error(char *);
 #endif

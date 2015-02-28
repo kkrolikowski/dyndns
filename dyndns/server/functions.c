@@ -43,17 +43,17 @@ int clientConn(int fd, char * cliaddr) {
 		return clifd;
 	}
 }
-char * readData(int fd) {
+int readData(int fd, char * domain) {
 	char buf[256];
 	int n;
 
 	n = read(fd, buf, 255);
 	if(n < 0) {
-		fprintf(stderr, "Error reading data");
-		return NULL;
+		fprintf(stderr, "Error reading from socket");
+		return -1
 	}
-	else
-		return buf;
+	strcpy(domain, buf);
+	return n;
 }
 void error(char *msg) {
 	perror(msg);

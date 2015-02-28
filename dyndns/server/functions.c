@@ -39,7 +39,7 @@ int clientConn(int fd, char * cliaddr) {
 	if(clifd < 0)
 		return -1;
 	else {
-		strcpy(cliaddr, (char *) inet_ntoa(cli_addr.sin_addr.s_addr));
+		strcpy(cliaddr, (char *) inet_ntoa(cli_addr.sin_addr));
 		return clifd;
 	}
 }

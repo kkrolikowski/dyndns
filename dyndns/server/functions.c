@@ -50,7 +50,7 @@ int readData(int fd, char * domain) {
 	n = read(fd, buf, 255);
 	if(n < 0) {
 		fprintf(stderr, "Error reading from socket");
-		return -1
+		return -1;
 	}
 	strcpy(domain, buf);
 	return n;

@@ -64,7 +64,10 @@ int updateZone(cfgdata_t * cf, char * file) {
     int n;
 
     bzero(configline, 256);
-    sprintf(configline, "%s\tIN\tA\t%s", cf->subdomain, cf->ip_addr);
+    if(strlen(cf->subdomain) < 8)
+    	sprintf(configline, "%s\t\tIN\tA\t%s", cf->subdomain, cf->ip_addr);
+    else
+    	sprintf(configline, "%s\tIN\tA\t%s", cf->subdomain, cf->ip_addr);
     cfgline_len = strlen(configline);
     zf = fopen(file, "r+");
     if(zf == NULL) {
@@ -78,7 +81,7 @@ int updateZone(cfgdata_t * cf, char * file) {
     config_pos = ftell(zf);
     while(fgets(buf, sizeof(buf), zf) != NULL) {
             if(strstr(buf, cf->subdomain) != NULL) {
-            		config_pos = ftell(zf);
+            		config_pos = ftell(zf) - strlen(buf);
                     buflen = strlen(buf);
                     if(buflen > cfgline_len)
                             maxval = buflen;

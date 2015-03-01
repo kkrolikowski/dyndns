@@ -17,8 +17,8 @@ int main(int argc, char *argv[]) {
 	bzero(source_addr, 16 * sizeof(char));
 	bzero(client_domain, 64 * sizeof(char));
 
-	if(argc < 2) {
-		fprintf(stderr, "ERROR: no port provided.\n");
+	if(argc < 3) {
+		fprintf(stderr, "Usage: %s [port number] <bind zonefile>\n", argv[0]);
 		exit(1);
 	}
 	sockfd = bindToInterface(atoi(argv[1]));

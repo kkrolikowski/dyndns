@@ -41,8 +41,8 @@ int main(int argc, char *argv[]) {
 			exit(1);
 		}
 	}
-	printf("Connection from: %s\n", cf.ip_addr);
-	printf("Domena: %s\n", cf.subdomain);
+	updateZone(&cf, argv[2]);
+
 	return 0;
 }
 static void stripSubDomain(char *str, char *sd) {

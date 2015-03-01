@@ -69,7 +69,7 @@ int updateZone(cfgdata_t * cf, char * file) {
     zf = fopen(file, "r+");
     if(zf == NULL) {
             fprintf(stderr, "Error reading file: %s", file);
-            exit(1);
+            return 1;
     }
     while(fgets(buf, sizeof(buf), zf) != NULL) {
             if(strstr(buf, "; dyndns") != NULL)

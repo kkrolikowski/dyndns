@@ -55,7 +55,3 @@ int readData(int fd, char * domain) {
 	strcpy(domain, buf);
 	return n;
 }
-void error(char *msg) {
-	perror(msg);
-	exit(1);
-}

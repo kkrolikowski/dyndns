@@ -46,11 +46,13 @@ int main(int argc, char *argv[]) {
 				exit(1);
 			}
 		}
-		printf("Connection from: %s\n", cf.ip_addr);
-		printf("Domena: %s\n", cf.subdomain);
+		if(!fork()) {
+			printf("Connection from: %s\n", cf.ip_addr);
+			printf("Domena: %s\n", cf.subdomain);
+		}
+		pid = wait(&status);
+		printf("Proces: %d zakonczyl sie z kodem: %d\n", pid, WEXITSTATUS(status));
 	}
-	pid = wait(&status);
-	printf("Proces: %d zakonczyl sie z kodem: %d\n", pid, WEXITSTATUS(status));
 	return 0;
 }
 static void stripSubDomain(char *str, char *sd) {

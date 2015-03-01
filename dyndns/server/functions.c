@@ -55,3 +55,44 @@ int readData(int fd, char * domain) {
 	strcpy(domain, buf);
 	return n;
 }
+int updateZone(CFGDATA * cf, char * file) {
+    FILE *zf;
+    char buf[256];
+    char configline[256];
+    int buflen, cfgline_len, maxval;
+    long config_pos = 0;
+    int n;
+
+    bzero(configline, 256);
+    sprintf(configline, "%s\tIN\tA\t%s", cf->domain, cf->ip_addr);
+    cfgline_len = strlen(configline);
+    zf = fopen(argv[1], "r+");
+    if(zf == NULL) {
+            fprintf(stderr, "Error reading file: %s", argv[1]);
+            exit(1);
+    }
+    while(fgets(buf, sizeof(buf), zf) != NULL) {
+            if(strstr(buf, "; dyndns") != NULL)
+                    break;
+    }
+    config_pos = ftell(zf);
+    while(fgets(buf, sizeof(buf), zf) != NULL) {
+            if(strstr(buf, argv[2]) != NULL) {
+                    buflen = strlen(buf);
+                    if(buflen > cfgline_len)
+                            maxval = buflen;
+                    else
+                            maxval = cfgline_len;
+                    fseek(zf, config_pos, SEEK_SET);
+                    for(n=0; n < maxval; n++) {
+                            if(configline[n] != '\0')
+                                    fputc(configline[n], zf);
+                            else
+                                    fputc('\0', zf);
+                    }
+                    fputc('\n', zf);
+            }
+    }
+    fclose(zf);
+    return 0;
+}

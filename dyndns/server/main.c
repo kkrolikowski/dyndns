@@ -5,14 +5,15 @@
 #include <unistd.h>
 #include "dynsrv.h"
 
+static void stripSubDomain(char *str, cfgdata_t *cf);
+
 int main(int argc, char *argv[]) {
 	int sockfd, cli_fd;
 	int status;
-	int n;
 	char * source_addr;
 	char * client_domain;
 	pid_t child, pid;
-	CFGDATA cf;
+	cfgdata_t cf;
 
 	source_addr = (char *) malloc(16 * sizeof(char));
 	client_domain = (char *) malloc(64 * sizeof(char));
@@ -35,12 +36,30 @@ int main(int argc, char *argv[]) {
 			exit(1);
 		}
 		else {
-			printf("Connection from: %s\n", source_addr);
-			n = readData(cli_fd, client_domain);
-			printf("Domena: %s\n", client_domain);
+			strcpy(cf.ip_addr, source_addr);
+			if(readData(cli_fd, client_domain) > 0)
+				stripSubDomain(client_domain, &cf);
+			else {
+				fprintf(stderr, "Error reading data from client\n");
+				exit(1);
+			}
 		}
+		printf("Connection from: %s\n", cf.ip_addr);
+		printf("Domena: %s\n", cf.subdomain);
 	}
 	pid = wait(&status);
 	printf("Proces: %d zakonczyl sie z kodem: %d\n", pid, WEXITSTATUS(status));
 	return 0;
+}
+static void stripSubDomain(char *str, cfgdata_t *cf) {
+	while(*str != '\0') {
+		if(*str == '.') {
+			*cf->subdomain = '\0';
+			break;
+		}
+		else
+			*cf->subdomain = *str;
+		str++;
+		cf->subdomain++;
+	}
 }

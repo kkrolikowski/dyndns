@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <strings.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <netinet/in.h>
 #include <unistd.h>
 #include "dynsrv.h"
 

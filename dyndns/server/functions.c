@@ -77,7 +77,7 @@ int updateZone(cfgdata_t * cf, char * file) {
     }
     config_pos = ftell(zf);
     while(fgets(buf, sizeof(buf), zf) != NULL) {
-            if(strstr(buf, argv[2]) != NULL) {
+            if(strstr(buf, cf->subdomain) != NULL) {
                     buflen = strlen(buf);
                     if(buflen > cfgline_len)
                             maxval = buflen;

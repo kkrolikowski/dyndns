@@ -7,7 +7,7 @@
 #include <string.h>
 #include "dynsrv.h"
 
-static void stripSubDomain(char *str, cfgdata_t *cf);
+static void stripSubDomain(char *str, char *sd);
 
 int main(int argc, char *argv[]) {
 	int sockfd, cli_fd;
@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 		else {
 			strcpy(cf.ip_addr, source_addr);
 			if(readData(cli_fd, client_domain) > 0)
-				stripSubDomain(client_domain, &cf);
+				stripSubDomain(client_domain, cf.subdomain);
 			else {
 				fprintf(stderr, "Error reading data from client\n");
 				exit(1);
@@ -53,15 +53,15 @@ int main(int argc, char *argv[]) {
 	printf("Proces: %d zakonczyl sie z kodem: %d\n", pid, WEXITSTATUS(status));
 	return 0;
 }
-static void stripSubDomain(char *str, cfgdata_t *cf) {
+static void stripSubDomain(char *str, char *sd) {
 	while(*str != '\0') {
 		if(*str == '.') {
-			*cf->subdomain = '\0';
+			*sd = '\0';
 			break;
 		}
 		else
-			*cf->subdomain = *str;
+			*sd = *str;
 		str++;
-		*(cf)->subdomain++;
+		sd++;
 	}
 }

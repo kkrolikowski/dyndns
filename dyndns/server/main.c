@@ -12,6 +12,8 @@ int main(int argc, char *argv[]) {
 	char * source_addr;
 	char * client_domain;
 	pid_t child, pid;
+	CFGDATA cf;
+
 	source_addr = (char *) malloc(16 * sizeof(char));
 	client_domain = (char *) malloc(64 * sizeof(char));
 	bzero(source_addr, 16 * sizeof(char));

@@ -55,7 +55,7 @@ int readData(int fd, char * domain) {
 	strcpy(domain, buf);
 	return n;
 }
-int updateZone(CFGDATA * cf, char * file) {
+int updateZone(cfgdata_t * cf, char * file) {
     FILE *zf;
     char buf[256];
     char configline[256];

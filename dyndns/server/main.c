@@ -3,6 +3,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <strings.h>
+#include <string.h>
 #include "dynsrv.h"
 
 static void stripSubDomain(char *str, cfgdata_t *cf);
@@ -60,6 +62,6 @@ static void stripSubDomain(char *str, cfgdata_t *cf) {
 		else
 			*cf->subdomain = *str;
 		str++;
-		cf->subdomain++;
+		&cf->subdomain++;
 	}
 }

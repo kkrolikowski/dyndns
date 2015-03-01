@@ -64,11 +64,11 @@ int updateZone(cfgdata_t * cf, char * file) {
     int n;
 
     bzero(configline, 256);
-    sprintf(configline, "%s\tIN\tA\t%s", cf->domain, cf->ip_addr);
+    sprintf(configline, "%s\tIN\tA\t%s", cf->subdomain, cf->ip_addr);
     cfgline_len = strlen(configline);
-    zf = fopen(argv[1], "r+");
+    zf = fopen(file, "r+");
     if(zf == NULL) {
-            fprintf(stderr, "Error reading file: %s", argv[1]);
+            fprintf(stderr, "Error reading file: %s", file);
             exit(1);
     }
     while(fgets(buf, sizeof(buf), zf) != NULL) {

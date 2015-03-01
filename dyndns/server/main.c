@@ -62,6 +62,6 @@ static void stripSubDomain(char *str, cfgdata_t *cf) {
 		else
 			*cf->subdomain = *str;
 		str++;
-		&cf->subdomain++;
+		*(cf)->subdomain++;
 	}
 }

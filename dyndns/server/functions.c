@@ -6,6 +6,7 @@
 #include <strings.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <time.h>
 #include "dynsrv.h"
 
 int bindToInterface(int portno) {
@@ -99,4 +100,29 @@ int updateZone(cfgdata_t * cf, char * file) {
     }
     fclose(zf);
     return 0;
+}
+int updateSerialNo(char * fromfile, char * newserial) {
+    time_t today;
+    struct tm tf;
+    char serial[12];
+    char * ver = "00";
+    long bigger_serial = 0;
+
+    time(&today);
+    localtime_r(&today, &tf);
+    strftime(serial, sizeof(serial), "%Y%m%d", &tf);
+    strcat(serial, ver);
+
+    if(atol(fromfile) > atol(serial)) {
+            bigger_serial = atol(argv[1]) + 1;
+            sprintf(serial, "%ld", bigger_serial);
+            strcpy(newserial, serial);
+            return 0;
+    }
+    else if(atol(argv[1]) == atol(serial))
+           return 1;
+    else {
+    	strcpy(newserial, serial);
+    	return 0;
+    }
 }

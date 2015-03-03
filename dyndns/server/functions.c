@@ -58,12 +58,16 @@ int readData(int fd, char * domain) {
 }
 int updateZone(cfgdata_t * cf, char * file) {
     FILE *zf;
+    FILE *tmp;
+    char tmp_path[21];
     char buf[256];
     char configline[256];
     int buflen, cfgline_len, maxval;
     long config_pos = 0;
     int n;
 
+    RandomFilename(tmp_path);
+    strcat(tmp_path);
     bzero(configline, 256);
     if(strlen(cf->subdomain) < 8)
     	sprintf(configline, "%s\t\tIN\tA\t%s", cf->subdomain, cf->ip_addr);
@@ -74,6 +78,11 @@ int updateZone(cfgdata_t * cf, char * file) {
     if(zf == NULL) {
             fprintf(stderr, "Error reading file: %s", file);
             return 1;
+    }
+    tmp = fopen(tmp_path, "w");
+    if(tmp == NULL) {
+    	fprintf(stderr, "Error creating file: %s", tmp_path);
+    	return 1;
     }
     while(fgets(buf, sizeof(buf), zf) != NULL) {
             if(strstr(buf, "; dyndns") != NULL)
@@ -99,6 +108,8 @@ int updateZone(cfgdata_t * cf, char * file) {
             }
     }
     fclose(zf);
+    fclose(tmp);
+
     return 0;
 }
 int updateSerialNo(char * oldserial, char * newserial) {
@@ -131,7 +142,7 @@ void RandomFilename(char *filename) {
     int n, i;
     const int len = 8;                              // random part lenght
     struct timeval tv;
-    char tmp[15] = "dyndns_";                       // prefix of temp file
+    char tmp[20] = "/tmp/dyndns_";                  // prefix of temp file
     char * ptmp;                                    // pointer to the begining of temp filename
     ptmp = tmp + strlen(tmp);                       // moving to the end of a prefix
 

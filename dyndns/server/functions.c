@@ -126,3 +126,23 @@ int updateSerialNo(char * oldserial, char * newserial) {
     	return 0;
     }
 }
+char * RandomFilename(void) {
+	char * entropy = "1qaz2wsx3edc4rfv5tgb6yhn7ujm8i0poklaZAQ1XSW2CDE3VFR4BGT5NHY6MJU6MJU7";
+	int n, i;
+	const int len = 8;                              // random part lenght
+	struct timeval tv;
+	char tmp[15] = "dyndns_";                       // prefix of temp file
+	char * ptmp;                                    // pointer to the begining of temp filename
+	ptmp = tmp + strlen(tmp);                       // moving to the end of a prefix
+
+	for(i=0; i<len; i++, ptmp++) {                  // while counter is smaller then lenght of random part
+			gettimeofday(&tv, NULL);                // get current time
+			srand(tv.tv_usec);                      // generate new seed with time in micro seconds
+			n = rand() % strlen(entropy);           // generate new random character
+			*ptmp = entropy[n];                     // and put it in the next field of an array.
+	}
+	*ptmp = '\0';                                   // end of string containing random filename
+	puts(tmp);
+
+	return tmp;
+}

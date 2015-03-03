@@ -66,8 +66,6 @@ int updateZone(cfgdata_t * cf, char * file) {
     long config_pos = 0;
     int n;
 
-    RandomFilename(tmp_path);
-    strcat(tmp_path);
     bzero(configline, 256);
     if(strlen(cf->subdomain) < 8)
     	sprintf(configline, "%s\t\tIN\tA\t%s", cf->subdomain, cf->ip_addr);
@@ -79,6 +77,7 @@ int updateZone(cfgdata_t * cf, char * file) {
             fprintf(stderr, "Error reading file: %s", file);
             return 1;
     }
+    RandomFilename(tmp_path);
     tmp = fopen(tmp_path, "w");
     if(tmp == NULL) {
     	fprintf(stderr, "Error creating file: %s", tmp_path);

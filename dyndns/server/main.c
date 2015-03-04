@@ -45,6 +45,8 @@ int main(int argc, char *argv[]) {
 	if(checkIPaddress(cf.ip_addr, argv[2]) == false)
 		updateZone(&cf, argv[2]);
 
+	free(source_addr);
+	free(client_domain);
 	return 0;
 }
 static void stripSubDomain(char *str, char *sd) {

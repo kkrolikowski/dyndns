@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <strings.h>
 #include <string.h>
+#include <stdbool.h>
 #include "dynsrv.h"
 
 static void stripSubDomain(char *str, char *sd);
@@ -41,7 +42,8 @@ int main(int argc, char *argv[]) {
 			exit(1);
 		}
 	}
-	updateZone(&cf, argv[2]);
+	if(checkIPaddress(cf.ip_addr, argv[2]) == false)
+		updateZone(&cf, argv[2]);
 
 	return 0;
 }

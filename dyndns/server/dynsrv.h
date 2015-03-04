@@ -1,5 +1,6 @@
 #ifndef DYNSRV_H_
 #define DYNSRV_H_
+#include <stdbool.h>
 
 typedef struct cfgdata {
 	char domain[64];
@@ -14,4 +15,5 @@ int updateZone(cfgdata_t * cf, char * file);
 int updateSerialNo(char * fromfile, char * newserial);
 void RandomFilename(char *filename);
 void stripSerialNo(char *in, char *out);
+bool checkIPaddress(char *ip, char *zfname);
 #endif

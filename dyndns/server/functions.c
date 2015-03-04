@@ -67,11 +67,6 @@ int updateZone(cfgdata_t * cf, char * file) {
     char serial[12];
     char newserial[12];
 
-    bzero(configline, 256);
-    if(strlen(cf->subdomain) < 8)
-    	sprintf(configline, "%s\t\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
-    else
-    	sprintf(configline, "%s\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
     zf = fopen(file, "r");
     if(zf == NULL) {
             fprintf(stderr, "Error reading file: %s", file);
@@ -89,10 +84,13 @@ int updateZone(cfgdata_t * cf, char * file) {
 		if(!updateSerialNo(serial, newserial))
 			sprintf(buf, "\t%s\t; serial\n", newserial);
 	    }
-	    if(strstr(buf, cf->subdomain) != NULL)
-		fputs(configline, tmp);
-	    else
-	    	fputs(buf, tmp);
+	    if(strstr(buf, cf->subdomain) != NULL) {
+		    if(strlen(cf->subdomain) < 8)
+			sprintf(buf, "%s\t\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
+		    else
+			sprintf(buf, "%s\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
+	    }
+	    fputs(buf, tmp);
     }
     fclose(zf);
     fclose(tmp);

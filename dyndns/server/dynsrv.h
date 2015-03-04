@@ -13,4 +13,5 @@ int readData(int fd, char * domain);
 int updateZone(cfgdata_t * cf, char * file);
 int updateSerialNo(char * fromfile, char * newserial);
 void RandomFilename(char *filename);
+void stripSerialNo(char *in, char *out);
 #endif

@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <strings.h>
 #include <string.h>
+#include <ctype.h>
 #include <arpa/inet.h>
 #include <time.h>
 #include "dynsrv.h"
@@ -62,6 +63,8 @@ int updateZone(cfgdata_t * cf, char * file) {
     char tmp_path[21];
     char buf[256];
     char configline[256];
+    char serial[12];
+    char newserial[12];
 
     bzero(configline, 256);
     if(strlen(cf->subdomain) < 8)
@@ -80,6 +83,11 @@ int updateZone(cfgdata_t * cf, char * file) {
     	return 1;
     }
     while(fgets(buf, sizeof(buf), zf) != NULL) {
+	    if(strstr(buf, "; serial") != NULL) {
+		stripSerialNo(buf, serial);
+		if(!updateSerialNo(serial, newserial))
+			sprintf(buf, "\t%s\t; serial\n", newserial);
+	    }
 	    if(strstr(buf, cf->subdomain) != NULL)
 		fputs(configline, tmp);
 	    else
@@ -102,14 +110,12 @@ int updateSerialNo(char * oldserial, char * newserial) {
     strftime(serial, sizeof(serial), "%Y%m%d", &tf);
     strcat(serial, ver);
 
-    if(atol(oldserial) > atol(serial)) {
+    if(atol(oldserial) >= atol(serial)) {
             bigger_serial = atol(oldserial) + 1;
             sprintf(serial, "%ld", bigger_serial);
             strcpy(newserial, serial);
             return 0;
     }
-    else if(atol(oldserial) == atol(serial))
-           return 1;
     else {
     	strcpy(newserial, serial);
     	return 0;
@@ -132,4 +138,19 @@ void RandomFilename(char *filename) {
     }
     *ptmp = '\0';                                   // end of string containing random filename
     strcpy(filename, tmp);
+}
+void stripSerialNo(char *in, char *out) {
+	char serial[12];
+	char * pserial;
+
+	pserial = serial;
+	while(*in) {
+		if(isdigit(*in)) {
+			*pserial = *in;
+			pserial++;
+		}
+		in++;
+	}
+	*in = '\0';
+	strcpy(out, serial);
 }

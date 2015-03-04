@@ -63,7 +63,6 @@ int updateZone(cfgdata_t * cf, char * file) {
     FILE *tmp;
     char tmp_path[21];
     char buf[256];
-    char configline[256];
     char serial[12];
     char newserial[12];
 

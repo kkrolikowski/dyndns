@@ -62,17 +62,13 @@ int updateZone(cfgdata_t * cf, char * file) {
     char tmp_path[21];
     char buf[256];
     char configline[256];
-    int buflen, cfgline_len, maxval;
-    long config_pos = 0;
-    int n;
 
     bzero(configline, 256);
     if(strlen(cf->subdomain) < 8)
-    	sprintf(configline, "%s\t\tIN\tA\t%s", cf->subdomain, cf->ip_addr);
+    	sprintf(configline, "%s\t\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
     else
-    	sprintf(configline, "%s\tIN\tA\t%s", cf->subdomain, cf->ip_addr);
-    cfgline_len = strlen(configline);
-    zf = fopen(file, "r+");
+    	sprintf(configline, "%s\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
+    zf = fopen(file, "r");
     if(zf == NULL) {
             fprintf(stderr, "Error reading file: %s", file);
             return 1;
@@ -84,27 +80,10 @@ int updateZone(cfgdata_t * cf, char * file) {
     	return 1;
     }
     while(fgets(buf, sizeof(buf), zf) != NULL) {
-            if(strstr(buf, "; dyndns") != NULL)
-                    break;
-    }
-    config_pos = ftell(zf);
-    while(fgets(buf, sizeof(buf), zf) != NULL) {
-            if(strstr(buf, cf->subdomain) != NULL) {
-            		config_pos = ftell(zf) - strlen(buf);
-                    buflen = strlen(buf);
-                    if(buflen > cfgline_len)
-                            maxval = buflen;
-                    else
-                            maxval = cfgline_len;
-                    fseek(zf, config_pos, SEEK_SET);
-                    for(n=0; n < maxval; n++) {
-                            if(configline[n] != '\0')
-                                    fputc(configline[n], zf);
-                            else
-                                    fputc('\0', zf);
-                    }
-                    fputc('\n', zf);
-            }
+	    if(strstr(buf, cf->subdomain) != NULL)
+		fputs(configline, tmp);
+	    else
+	    	fputs(buf, tmp);
     }
     fclose(zf);
     fclose(tmp);

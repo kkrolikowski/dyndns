@@ -206,8 +206,9 @@ int NewEntry(cfgdata_t * cf, char * file) {
 		sprintf(buf, "%s\t\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
 	else
 		sprintf(buf, "%s\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
+	fputs(buf, tmp);
 
-    fclose(zf);
+	fclose(zf);
     fclose(tmp);
 
     return 0;

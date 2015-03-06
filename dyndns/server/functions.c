@@ -178,7 +178,7 @@ bool if_Exist(char *item, char *zfname) {
 bool NewEntry(cfgdata_t * cf, char *fname) {
 	FILE * zf;
 
-	zf = fopen(filename, "a");
+	zf = fopen(fname, "a");
 	if(zf == NULL) {
 		fprintf(stderr, "Error opening file %s", fname);
 		return false;

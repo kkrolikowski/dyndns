@@ -177,12 +177,24 @@ bool if_Exist(char *item, char *zfname) {
 }
 bool NewEntry(cfgdata_t * cf, char *fname) {
 	FILE * zf;
+	char buf[256];
+    char serial[12];
+    char newserial[12];
 
-	zf = fopen(fname, "a");
+	zf = fopen(fname, "w");
 	if(zf == NULL) {
 		fprintf(stderr, "Error opening file %s", fname);
 		return false;
 	}
+    while(fgets(buf, sizeof(buf), zf) != NULL) {
+	    if(strstr(buf, "; serial") != NULL) {
+			stripSerialNo(buf, serial);
+			if(!updateSerialNo(serial, newserial))
+				sprintf(buf, "\t%s\t; serial\n", newserial);
+			break;
+	    }
+    }
+	fseek(zf, 0, SEEK_END);
     if(strlen(cf->subdomain) < 8)
     	fprintf(zf, "%s\t\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
     else

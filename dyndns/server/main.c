@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 			updateZone(&cf, zonepath);
 	}
 	else
-		newEntry(&cf, zonepath);
+		NewEntry(&cf, zonepath);
 
 	free(source_addr);
 	free(client_domain);

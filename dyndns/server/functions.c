@@ -91,13 +91,6 @@ int updateZone(cfgdata_t * cf, char * file) {
 	    }
 	    fputs(buf, tmp);
     }
-    if(new == 1) {
-	    if(strlen(cf->subdomain) < 8)
-	    	sprintf(buf, "%s\t\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
-	    else
-	    	sprintf(buf, "%s\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
-	    fputs(buf, tmp);
-    }
     fclose(zf);
     fclose(tmp);
 

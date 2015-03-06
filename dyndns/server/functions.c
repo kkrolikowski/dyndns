@@ -58,7 +58,7 @@ int readData(int fd, char * domain) {
 	strcpy(domain, buf);
 	return n;
 }
-int updateZone(cfgdata_t * cf, char * file, int new) {
+int updateZone(cfgdata_t * cf, char * file) {
     FILE *zf;
     FILE *tmp;
     char tmp_path[21];
@@ -83,14 +83,19 @@ int updateZone(cfgdata_t * cf, char * file, int new) {
 			if(!updateSerialNo(serial, newserial))
 				sprintf(buf, "\t%s\t; serial\n", newserial);
 	    }
-	    if(new == 1)
-	    	fseek(zf, 0, SEEK_END);
 	    if(strstr(buf, cf->subdomain) != NULL) {
 		    if(strlen(cf->subdomain) < 8)
 		    	sprintf(buf, "%s\t\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
 		    else
 		    	sprintf(buf, "%s\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
 	    }
+	    fputs(buf, tmp);
+    }
+    if(new == 1) {
+	    if(strlen(cf->subdomain) < 8)
+	    	sprintf(buf, "%s\t\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
+	    else
+	    	sprintf(buf, "%s\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
 	    fputs(buf, tmp);
     }
     fclose(zf);
@@ -176,4 +181,48 @@ bool if_Exist(char *item, char *zfname) {
 		return true;
 	else
 		return false;
+}
+int NewEntry(cfgdata_t * cf, char * file) {
+    FILE *zf;
+    FILE *tmp;
+    char tmp_path[21];
+    char buf[256];
+    char serial[12];
+    char newserial[12];
+    long pos;
+
+    zf = fopen(file, "r");
+    if(zf == NULL) {
+            fprintf(stderr, "Error reading file: %s", file);
+            return 1;
+    }
+    fseek(zf, 0, SEEK_END);
+    pos = ftell(zf);
+    rewind(zf);
+    RandomFilename(tmp_path);
+    tmp = fopen(tmp_path, "w");
+    if(tmp == NULL) {
+    	fprintf(stderr, "Error creating file: %s", tmp_path);
+    	return 1;
+    }
+    while(fgets(buf, sizeof(buf), zf) != NULL) {
+	    if(strstr(buf, "; serial") != NULL) {
+			stripSerialNo(buf, serial);
+			if(!updateSerialNo(serial, newserial)) {
+				sprintf(buf, "\t%s\t; serial\n", newserial);
+
+			}
+	    }
+	    if(zf == pos) {
+		    if(strlen(cf->subdomain) < 8)
+		    	sprintf(buf, "%s\t\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
+		    else
+		    	sprintf(buf, "%s\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
+	    }
+	    fputs(buf, tmp);
+    }
+    fclose(zf);
+    fclose(tmp);
+
+    return 0;
 }

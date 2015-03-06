@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include "dynsrv.h"
 
-static void stripSubDomain(char *str, char *sd);
+static void splitDomain(char *userdomain, cfgdata_t * cfg);
 
 int main(int argc, char *argv[]) {
 	int sockfd, cli_fd;
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 	} else {
 		strcpy(cf.ip_addr, source_addr);
 		if (readData(cli_fd, client_domain) > 0)
-			stripSubDomain(client_domain, cf.subdomain);
+			stripSubDomain(client_domain, &cf);
 		else {
 			fprintf(stderr, "Error reading data from client\n");
 			exit(1);
@@ -49,14 +49,21 @@ int main(int argc, char *argv[]) {
 	free(client_domain);
 	return 0;
 }
-static void stripSubDomain(char *str, char *sd) {
-	while (*str != '\0') {
-		if (*str == '.') {
-			*sd = '\0';
-			break;
-		} else
-			*sd = *str;
-		str++;
-		sd++;
-	}
+static void splitDomain(char *userdomain, cfgdata_t * cfg) {
+    char * dom;
+    char * subdom;
+
+    dom = cfg->domain;
+    subdom = cfg->subdomain;
+
+    while(*userdomain) {
+            *subdom++ = *userdomain++;
+            if(*userdomain == '.') {
+                    *subdom = '\0';
+                    break;
+            }
+    }
+    while(*++userdomain)
+            *dom++ = *userdomain;
+    *dom = '\0';
 }

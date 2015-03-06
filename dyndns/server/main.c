@@ -12,6 +12,7 @@ static void splitDomain(char *userdomain, cfgdata_t * cfg);
 int main(int argc, char *argv[]) {
 	int sockfd, cli_fd;
 	int status;
+	int new = 0;
 	char * source_addr;
 	char * client_domain;
 	char zonepath[64];
@@ -47,12 +48,15 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	if(if_Exist(cf.subdomain, zonepath) == true) {
-		if(if_Exist(cf.ip_addr, zonepath) == false)
-			updateZone(&cf, zonepath);
+		new = 0;
+		if(if_Exist(cf.ip_addr, zonepath) == false) {
+			updateZone(&cf, zonepath, new);
+		}
 	}
-	else
-		NewEntry(&cf, zonepath);
-
+	else {
+		new = 1;
+		updateZone(&cf, zonepath, new);
+	}
 	free(source_addr);
 	free(client_domain);
 	return 0;

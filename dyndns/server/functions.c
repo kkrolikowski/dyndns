@@ -85,9 +85,9 @@ int updateZone(cfgdata_t * cf, char * file) {
 	    }
 	    if(strstr(buf, cf->subdomain) != NULL) {
 		    if(strlen(cf->subdomain) < 8)
-			sprintf(buf, "%s\t\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
+		    	sprintf(buf, "%s\t\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
 		    else
-			sprintf(buf, "%s\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
+		    	sprintf(buf, "%s\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
 	    }
 	    fputs(buf, tmp);
     }
@@ -152,7 +152,7 @@ void stripSerialNo(char *in, char *out) {
 	*in = '\0';
 	strcpy(out, serial);
 }
-bool checkIPaddress(char *ip, char *zfname) {
+bool if_Exist(char *item, char *zfname) {
 	FILE *zf;
 	char buf[256];
 	int found = 0;
@@ -163,7 +163,7 @@ bool checkIPaddress(char *ip, char *zfname) {
 		return false;
 	}
 	while(fgets(buf, sizeof(buf), zf) != NULL) {
-		if(strstr(buf,ip) != NULL) {
+		if(strstr(buf,item) != NULL) {
 			found = 1;
 			break;
 		}
@@ -174,4 +174,20 @@ bool checkIPaddress(char *ip, char *zfname) {
 		return true;
 	else
 		return false;
+}
+bool NewEntry(cfgdata_t * cf, char *fname) {
+	FILE * zf;
+
+	zf = fopen(filename, "a");
+	if(zf == NULL) {
+		fprintf(stderr, "Error opening file %s", fname);
+		return false;
+	}
+    if(strlen(cf->subdomain) < 8)
+    	fprintf(zf, "%s\t\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
+    else
+    	fprintf(zf, "%s\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
+
+    fclose(zf);
+    return true;
 }

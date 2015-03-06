@@ -46,8 +46,12 @@ int main(int argc, char *argv[]) {
 			exit(1);
 		}
 	}
-	if(checkIPaddress(cf.ip_addr, argv[2]) == false)
-		updateZone(&cf, zonepath);
+	if(if_Exist(cf.subdomain, zonepath) == true) {
+		if(if_Exist(cf.ip_addr, zonepath) == false)
+			updateZone(&cf, zonepath);
+	}
+	else
+		newEntry(&cf, zonepath);
 
 	free(source_addr);
 	free(client_domain);

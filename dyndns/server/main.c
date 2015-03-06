@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
 	int status;
 	char * source_addr;
 	char * client_domain;
+	char zonepath[64];
 	cfgdata_t cf;
 
 	source_addr = (char *) malloc(16 * sizeof(char));
@@ -22,9 +23,10 @@ int main(int argc, char *argv[]) {
 	bzero(client_domain, 64 * sizeof(char));
 
 	if (argc < 3) {
-		fprintf(stderr, "Usage: %s [port number] <bind zonefile>\n", argv[0]);
+		fprintf(stderr, "Usage: %s [port number] <zonedir>\n", argv[0]);
 		exit(1);
 	}
+	strcpy(zonepath, argv[2]);
 	sockfd = bindToInterface(atoi(argv[1]));
 	if (sockfd < 0) {
 		fprintf(stderr, "Cannot bind to interface\n");
@@ -35,15 +37,17 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	} else {
 		strcpy(cf.ip_addr, source_addr);
-		if (readData(cli_fd, client_domain) > 0)
-			stripSubDomain(client_domain, &cf);
+		if (readData(cli_fd, client_domain) > 0) {
+			splitDomain(client_domain, &cf);
+			strcat(zonepath, cf.domain);
+		}
 		else {
 			fprintf(stderr, "Error reading data from client\n");
 			exit(1);
 		}
 	}
 	if(checkIPaddress(cf.ip_addr, argv[2]) == false)
-		updateZone(&cf, argv[2]);
+		updateZone(&cf, zonepath);
 
 	free(source_addr);
 	free(client_domain);

@@ -296,7 +296,7 @@ char * timestamp(char * t_stamp) {
 
     time(&sec);
     localtime_r(&sec, &st_time);
-    strftime(timestamp, sizeof(timestamp), "[%d/%B/%Y %T]", &st_time);
+    strftime(t_stamp, TIMESTAMP_LEN * sizeof(t_stamp), "[%d/%B/%Y %T]", &st_time);
 
     return t_stamp;
 }

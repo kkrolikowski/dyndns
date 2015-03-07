@@ -16,8 +16,8 @@ int ddserv(char * portno, char * zonedir, int logfd) {
 	char * source_addr;
 	char * client_domain;
 	char zonepath[64];
-	extern char logmsg[256];
-	extern char t_stamp[32];
+	extern char logmsg[LOG_MSG_LEN];
+	extern char t_stamp[TIMESTAMP_LEN];
 	cfgdata_t cf;
 
 	source_addr = (char *) malloc(16 * sizeof(char));

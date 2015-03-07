@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
+#include <sys/wait.h>
 #include <netinet/in.h>
 #include <strings.h>
 #include <string.h>
@@ -12,6 +13,7 @@
 #include <stdbool.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include "dynsrv.h"
 
 int bindToInterface(int portno) {
@@ -218,7 +220,7 @@ int NewEntry(cfgdata_t * cf, char * file) {
     apply(tmp_path, file, cf->domain);
     return 0;
 }
-int apply(char * tmp_f, char * dst_f, char * domain) {
+int apply(char * tmp_f, char * dst_f, const char * domain) {
     int tmp, dst;
     struct stat st;
     char * buf;

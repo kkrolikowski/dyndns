@@ -27,11 +27,14 @@ int ddserv(char * portno, char * zonedir, int logfd) {
 	strcpy(zonepath, zonedir);
 	sockfd = bindToInterface(atoi(portno));
 	if (sockfd < 0) {
-		timestamp(logmsg);
-		strcat(logmsg, "Cannot bind to interface\n");
+		sprintf(logmsg, "%s ERROR: Cannot bind to interface\n", timestamp());
 		write(logfd, logmsg, strlen(logmsg));
 		fprintf(stderr, "Cannot bind to interface\n");
 		exit(1);
+	}
+	else {
+		sprintf(logmsg, "%s INFO: Listening on port: %s\n",timestamp(), portno);
+		write(logfd, logmsg, strlen(logmsg));
 	}
 	if ((cli_fd = clientConn(sockfd, source_addr)) < 0) {
 		fprintf(stderr, "connection failed\n");

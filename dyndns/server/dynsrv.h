@@ -8,6 +8,7 @@ typedef struct cfgdata {
 	char ip_addr[16];
 } cfgdata_t;
 char logmsg[256];
+char t_stamp[32];
 
 int bindToInterface(int portno);
 int clientConn(int fd, char * cliaddr);

@@ -299,5 +299,5 @@ void timestamp(char *msg) {
     localtime_r(&sec, &st_time);
     strftime(timestamp, sizeof(timestamp), "[%d/%B/%Y %T]", &st_time);
 
-    strcpy(msg, tmimestamp);
+    strcpy(msg, timestamp);
 }

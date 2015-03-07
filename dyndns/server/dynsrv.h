@@ -17,4 +17,5 @@ void RandomFilename(char *filename);
 void stripSerialNo(char *in, char *out);
 bool if_Exist(char *item, char *zfname);
 int NewEntry(cfgdata_t * cf, char * file);
+int apply(char * tmp_f, char * dst_f);
 #endif

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <strings.h>
@@ -9,6 +10,8 @@
 #include <arpa/inet.h>
 #include <time.h>
 #include <stdbool.h>
+#include <errno.h>
+#include <fcntl.h>
 #include "dynsrv.h"
 
 int bindToInterface(int portno) {
@@ -212,4 +215,57 @@ int NewEntry(cfgdata_t * cf, char * file) {
     fclose(tmp);
 
     return 0;
+}
+int apply(char * tmp_f, char * dst_f) {
+    int tmp, dst;
+    struct stat st;
+    char * buf;
+    int buf_size;
+    ssize_t n;
+
+    tmp = open(tmp_f, O_RDWR);
+    if(tmp < 0) {
+            perror("error opening tmp");
+            return -1;
+    }
+    dst = open(dst_f, O_WRONLY|O_TRUNC, 0644);
+    if(dst < 0) {
+            perror("error writing zonefile");
+            return -1;
+    }
+    fstat(tmp, &st);
+    buf_size = (int) st.st_size;
+    buf = (char *) malloc(buf_size);
+    if(buf == NULL) {
+            fprintf(stderr, "Memory allocation failed.\n");
+            return -1;
+    }
+    while(buf_size != 0 && (n = read(tmp, buf, buf_size)) < buf_size) {
+            if(n == -1) {
+                    if(errno == EINTR)
+                            continue;
+                    perror("read tmp");
+                    break;
+            }
+            buf_size -= n;
+            buf += n;
+    }
+    while(buf_size != 0 && (n = write(dst, buf, buf_size)) < buf_size) {
+            if(n == -1) {
+                    if(errno == EINTR)
+                            continue;
+                    perror("write zone");
+                    break;
+            }
+            buf_size -= n;
+            buf += n;
+    }
+
+    close(tmp);
+    close(dst);
+    free(buf);
+    if(unlink(tmp_f) < 0) {
+            perror("Warning: error deleting tmpfile");
+    }
+
 }

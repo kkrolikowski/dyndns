@@ -3,13 +3,15 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <string.h>
+#include <fcntl.h>
+#include "dynsrv.h"
 
 int main(int argc, char *argv[]) {
 	pid_t pid, sess;
+	int log_fd;
 
 	if (argc < 3) {
-		fprintf(stderr, "Usage: %s [port number] <zonedir>\n", argv[0]);
+		fprintf(stderr, "Usage: %s [port number] <zonedir> <logfile>\n", argv[0]);
 		exit(1);
 	}
 	
@@ -28,9 +30,10 @@ int main(int argc, char *argv[]) {
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
+	log_fd = open(argv[3], O_RWD|O_CREAT|O_APPEND);
 	while(1) {
-		ddserv(argv[1], argv[2]);
+		ddserv(argv[1], argv[2], int logfd);
 	}
-
+	close(log_fd);
 	return 0;
 }

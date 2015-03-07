@@ -7,6 +7,7 @@ typedef struct cfgdata {
 	char subdomain[16];
 	char ip_addr[16];
 } cfgdata_t;
+char errormsg[256];
 
 int bindToInterface(int portno);
 int clientConn(int fd, char * cliaddr);
@@ -18,5 +19,5 @@ void stripSerialNo(char *in, char *out);
 bool if_Exist(char *item, char *zfname);
 int NewEntry(cfgdata_t * cf, char * file);
 int apply(char * tmp_f, char * dst_f, const char * domain);
-int ddserv(char * portno, char * zonedir);
+int ddserv(char * portno, char * zonedir, int logfd);
 #endif

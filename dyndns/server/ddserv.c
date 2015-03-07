@@ -28,7 +28,7 @@ int ddserv(char * portno, char * zonedir, int logfd) {
 	sockfd = bindToInterface(atoi(portno));
 	if (sockfd < 0) {
 		timestamp(logmsg);
-		strcpy(logmsg, "Cannot bind to interface\n");
+		strcat(logmsg, "Cannot bind to interface\n");
 		write(logfd, logmsg, strlen(logmsg));
 		fprintf(stderr, "Cannot bind to interface\n");
 		exit(1);

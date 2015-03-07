@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <strings.h>
 #include <string.h>
@@ -16,6 +17,7 @@ int main(int argc, char *argv[]) {
 	char * client_domain;
 	char zonepath[64];
 	cfgdata_t cf;
+	pid_t chld;
 
 	source_addr = (char *) malloc(16 * sizeof(char));
 	client_domain = (char *) malloc(64 * sizeof(char));
@@ -26,36 +28,48 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "Usage: %s [port number] <zonedir>\n", argv[0]);
 		exit(1);
 	}
-	strcpy(zonepath, argv[2]);
-	sockfd = bindToInterface(atoi(argv[1]));
-	if (sockfd < 0) {
-		fprintf(stderr, "Cannot bind to interface\n");
-		exit(1);
+	chld = fork();
+	if(chld < 0) {
+		perror("fork");
+		exit(-1);
 	}
-	if ((cli_fd = clientConn(sockfd, source_addr)) < 0) {
-		fprintf(stderr, "connection failed\n");
-		exit(1);
-	} else {
-		strcpy(cf.ip_addr, source_addr);
-		if (readData(cli_fd, client_domain) > 0) {
-			splitDomain(client_domain, &cf);
-			strcat(zonepath, cf.domain);
-		}
-		else {
-			fprintf(stderr, "Error reading data from client\n");
-			exit(1);
-		}
-	}
-	if(if_Exist(cf.subdomain, zonepath) == true) {
-		if(if_Exist(cf.ip_addr, zonepath) == false) {
-			updateZone(&cf, zonepath);
-		}
+	if(chld > 0) {
+		printf("Starting server process\n");
+		waitpid(chld, &status, WNOHANG);
 	}
 	else {
-		NewEntry(&cf, zonepath);
+		strcpy(zonepath, argv[2]);
+		sockfd = bindToInterface(atoi(argv[1]));
+		if (sockfd < 0) {
+			fprintf(stderr, "Cannot bind to interface\n");
+			exit(1);
+		}
+		if ((cli_fd = clientConn(sockfd, source_addr)) < 0) {
+			fprintf(stderr, "connection failed\n");
+			exit(1);
+		} else {
+			strcpy(cf.ip_addr, source_addr);
+			if (readData(cli_fd, client_domain) > 0) {
+				splitDomain(client_domain, &cf);
+				strcat(zonepath, cf.domain);
+			}
+			else {
+				fprintf(stderr, "Error reading data from client\n");
+				exit(1);
+			}
+		}
+		if(if_Exist(cf.subdomain, zonepath) == true) {
+			if(if_Exist(cf.ip_addr, zonepath) == false) {
+				updateZone(&cf, zonepath);
+			}
+		}
+		else {
+			NewEntry(&cf, zonepath);
+		}
+		free(source_addr);
+		free(client_domain);
+		exit(0);
 	}
-	free(source_addr);
-	free(client_domain);
 	return 0;
 }
 static void splitDomain(char *userdomain, cfgdata_t * cfg) {

@@ -30,7 +30,6 @@ int ddserv(char * portno, char * zonedir, int logfd) {
 	if (sockfd < 0) {
 		sprintf(logmsg, "%s ERROR: Cannot bind to interface\n", timestamp(t_stamp));
 		write(logfd, logmsg, strlen(logmsg));
-		fprintf(stderr, "Cannot bind to interface\n");
 		exit(1);
 	}
 	else {
@@ -38,23 +37,34 @@ int ddserv(char * portno, char * zonedir, int logfd) {
 		write(logfd, logmsg, strlen(logmsg));
 	}
 	if ((cli_fd = clientConn(sockfd, source_addr)) < 0) {
-		fprintf(stderr, "connection failed\n");
+		sprintf(logmsg, "%s ERROR: Connection failed from: %s\n", timestamp(t_stamp), source_addr);
+		write(logfd, logmsg, strlen(logmsg));
 		exit(1);
 	}
 	else {
+		sprintf(logmsg, "%s INFO: Client: %s connected\n", timestamp(t_stamp), source_addr);
+		write(logfd, logmsg, strlen(logmsg));
 		strcpy(cf.ip_addr, source_addr);
 		if (readData(cli_fd, client_domain) > 0) {
 			splitDomain(client_domain, &cf);
 			strcat(zonepath, cf.domain);
 		}
 		else {
-			fprintf(stderr, "Error reading data from client\n");
+			sprintf(logmsg, "%s ERROR: Read data failed from: %s\n", timestamp(t_stamp), source_addr);
+			write(logfd, logmsg, strlen(logmsg));
 			exit(1);
 		}
 	}
 	if(if_Exist(cf.subdomain, zonepath) == true) {
 		if(if_Exist(cf.ip_addr, zonepath) == false) {
-			updateZone(&cf, zonepath);
+			if(updateZone(&cf, zonepath)) {
+				sprintf(logmsg, "%s INFO: %s IP Address updated\n", timestamp(t_stamp), cf.subdomain);
+				write(logfd, logmsg, strlen(logmsg));
+			}
+			else {
+				sprintf(logmsg, "%s ERROR: %s update failed\n", timestamp(t_stamp), cf.subdomain);
+				write(logfd, logmsg, strlen(logmsg));
+			}
 		}
 	}
 	else

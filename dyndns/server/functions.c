@@ -74,13 +74,13 @@ int updateZone(cfgdata_t * cf, char * file) {
     zf = fopen(file, "r");
     if(zf == NULL) {
             fprintf(stderr, "Error reading file: %s", file);
-            return 1;
+            return 0;
     }
     RandomFilename(tmp_path);
     tmp = fopen(tmp_path, "w");
     if(tmp == NULL) {
     	fprintf(stderr, "Error creating file: %s", tmp_path);
-    	return 1;
+    	return 0;
     }
     while(fgets(buf, sizeof(buf), zf) != NULL) {
 	    if(strstr(buf, "; serial") != NULL) {
@@ -100,7 +100,7 @@ int updateZone(cfgdata_t * cf, char * file) {
     fclose(tmp);
     apply(tmp_path, file, cf->domain);
 
-    return 0;
+    return 1;
 }
 int updateSerialNo(char * oldserial, char * newserial) {
     time_t today;

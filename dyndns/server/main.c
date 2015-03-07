@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 	close(STDERR_FILENO);
 	log_fd = open(argv[3], O_RDWR|O_CREAT|O_APPEND, 0644);
 	while(1) {
-		ddserv(argv[1], argv[2], int logfd);
+		ddserv(argv[1], argv[2], logfd);
 	}
 	close(log_fd);
 	return 0;

@@ -16,7 +16,7 @@ int ddserv(char * portno, char * zonedir, int logfd) {
 	char * source_addr;
 	char * client_domain;
 	char zonepath[64];
-	extern char errormsg[256];
+	extern char logmsg[256];
 	cfgdata_t cf;
 
 	source_addr = (char *) malloc(16 * sizeof(char));
@@ -27,8 +27,9 @@ int ddserv(char * portno, char * zonedir, int logfd) {
 	strcpy(zonepath, zonedir);
 	sockfd = bindToInterface(atoi(portno));
 	if (sockfd < 0) {
-		strcpy(errormsg, "Cannot bind to interface\n");
-		write(logfd, errormsg, strlen(errormsg));
+		timstamp(logmsg);
+		strcpy(logmsg, "Cannot bind to interface\n");
+		write(logfd, logmsg, strlen(logmsg));
 		fprintf(stderr, "Cannot bind to interface\n");
 		exit(1);
 	}

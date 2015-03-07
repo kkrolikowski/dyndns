@@ -290,3 +290,14 @@ int apply(char * tmp_f, char * dst_f, const char * domain) {
     }
     exit(0);
 }
+void timestamp(char *msg) {
+    time_t sec;
+    struct tm st_time;
+    char timestamp[64];
+
+    time(&sec);
+    localtime_r(&sec, &st_time);
+    strftime(timestamp, sizeof(timestamp), "[%d/%B/%Y %T]", &st_time);
+
+    strcpy(msg, tmimestamp);
+}

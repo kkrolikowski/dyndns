@@ -47,7 +47,8 @@ int main(int argc, char *argv[]) {
 		if ((cli_fd = clientConn(sockfd, source_addr)) < 0) {
 			fprintf(stderr, "connection failed\n");
 			exit(1);
-		} else {
+		}
+		else {
 			strcpy(cf.ip_addr, source_addr);
 			if (readData(cli_fd, client_domain) > 0) {
 				splitDomain(client_domain, &cf);
@@ -63,9 +64,9 @@ int main(int argc, char *argv[]) {
 				updateZone(&cf, zonepath);
 			}
 		}
-		else {
+		else
 			NewEntry(&cf, zonepath);
-		}
+
 		free(source_addr);
 		free(client_domain);
 		exit(0);

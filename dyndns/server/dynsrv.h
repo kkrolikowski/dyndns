@@ -18,4 +18,5 @@ void stripSerialNo(char *in, char *out);
 bool if_Exist(char *item, char *zfname);
 int NewEntry(cfgdata_t * cf, char * file);
 int apply(char * tmp_f, char * dst_f, const char * domain);
+int ddserv(char * portno, char * zonedir);
 #endif

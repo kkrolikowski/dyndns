@@ -18,7 +18,7 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.mingw.exe.debug.1952873928." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.base.1257008354" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.base.1744253144" name="Debug Platform" osList="linux,hpux,aix,qnx" superClass="cdt.managedbuild.target.gnu.platform.base"/>
-							<builder buildPath="/home/phobos/workspace/dyndns" id="cdt.managedbuild.target.gnu.builder.base.701458783" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.base"/>
+							<builder buildPath="/home/phobos/workspace/dyndns" command="make" id="cdt.managedbuild.target.gnu.builder.base.701458783" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.base.662451587" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.225829620" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
 								<option id="gnu.cpp.compiler.option.optimization.level.1803586330" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
@@ -89,7 +89,7 @@
 							<option id="cdt.managedbuild.option.gnu.cross.prefix.1839925849" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix"/>
 							<option id="cdt.managedbuild.option.gnu.cross.path.1823238678" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.1343623923" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
-							<builder buildPath="${workspace_loc:/dyndns}/Release" id="cdt.managedbuild.builder.gnu.cross.837407600" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
+							<builder buildPath="${workspace_loc:/dyndns}/Release" id="cdt.managedbuild.builder.gnu.cross.837407600" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1029461162" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.1638901830" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker">
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.848529535" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
@@ -116,6 +116,7 @@
 						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.785131224" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base" unusedChildren="cdt.managedbuild.tool.gnu.cross.c.compiler">
 							<option id="cdt.managedbuild.option.gnu.cross.prefix.1839925849.1193927117" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix.1839925849"/>
 							<option id="cdt.managedbuild.option.gnu.cross.path.1823238678.1287392398" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path.1823238678"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.457982613" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1691696838"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.363587082" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker.1638901830"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.2007342555" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker.1872637242"/>
@@ -168,7 +169,6 @@
 		<buildTargets>
 			<target name="ddserver" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>make</buildCommand>
-				<buildArguments/>
 				<buildTarget>ddserver</buildTarget>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>true</useDefaultCommand>
@@ -176,18 +176,19 @@
 			</target>
 			<target name="client" path="client" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>make</buildCommand>
+				<buildArguments/>
 				<buildTarget>client</buildTarget>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>true</useDefaultCommand>
 				<runAllBuilders>true</runAllBuilders>
 			</target>
-			<target name="ddserv" path="server" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+			<target name="ddserv functions main" path="server" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>make</buildCommand>
 				<buildArguments/>
-				<buildTarget>ddserv</buildTarget>
+				<buildTarget>ddserv functions main</buildTarget>
 				<stopOnError>true</stopOnError>
-				<useDefaultCommand>true</useDefaultCommand>
-				<runAllBuilders>true</runAllBuilders>
+				<useDefaultCommand>false</useDefaultCommand>
+				<runAllBuilders>false</runAllBuilders>
 			</target>
 		</buildTargets>
 	</storageModule>

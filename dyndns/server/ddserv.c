@@ -11,8 +11,8 @@
 
 static void splitDomain(char *userdomain, cfgdata_t * cfg);
 
-int ddserv(char * portno, char * zonedir, int logfd) {
-	int sockfd, cli_fd;
+int ddserv(char * portno, char * zonedir, int logfd, int sockfd) {
+	int cli_fd;
 	char * source_addr;
 	char * client_domain;
 	char zonepath[64];
@@ -26,16 +26,6 @@ int ddserv(char * portno, char * zonedir, int logfd) {
 	bzero(client_domain, 64 * sizeof(char));
 
 	strcpy(zonepath, zonedir);
-	sockfd = bindToInterface(atoi(portno));
-	if (sockfd < 0) {
-		sprintf(logmsg, "%s ERROR: Cannot bind to interface\n", timestamp(t_stamp));
-		write(logfd, logmsg, strlen(logmsg));
-		exit(1);
-	}
-	else {
-		sprintf(logmsg, "%s INFO: Listening on port: %s\n", timestamp(t_stamp), portno);
-		write(logfd, logmsg, strlen(logmsg));
-	}
 	if ((cli_fd = clientConn(sockfd, source_addr)) < 0) {
 		sprintf(logmsg, "%s ERROR: Connection failed from: %s\n", timestamp(t_stamp), source_addr);
 		write(logfd, logmsg, strlen(logmsg));

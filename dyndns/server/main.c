@@ -4,11 +4,14 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <string.h>
 #include "dynsrv.h"
 
 int main(int argc, char *argv[]) {
 	pid_t pid, sess;
-	int log_fd;
+	int log_fd, sockfd;
+	extern char logmsg[LOG_MSG_LEN];
+	extern char t_stamp[TIMESTAMP_LEN];
 
 	if (argc < 3) {
 		fprintf(stderr, "Usage: %s [port number] <zonedir> <logfile>\n", argv[0]);
@@ -31,8 +34,18 @@ int main(int argc, char *argv[]) {
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
 	log_fd = open(argv[3], O_RDWR|O_CREAT|O_APPEND, 0644);
+	sockfd = bindToInterface(atoi(argv[1]));
+	if (sockfd < 0) {
+		sprintf(logmsg, "%s ERROR: Cannot bind to interface\n", timestamp(t_stamp));
+		write(log_fd, logmsg, strlen(logmsg));
+		exit(1);
+	}
+	else {
+		sprintf(logmsg, "%s INFO: Listening on port: %s\n", timestamp(t_stamp), argv[1]);
+		write(log_fd, logmsg, strlen(logmsg));
+	}
 	while(1) {
-		ddserv(argv[1], argv[2], log_fd);
+		ddserv(argv[1], argv[2], log_fd, sockfd);
 	}
 	close(log_fd);
 	return 0;

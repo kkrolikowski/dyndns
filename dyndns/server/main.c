@@ -8,8 +8,8 @@
 #include "dynsrv.h"
 
 int main(int argc, char *argv[]) {
-	pid_t pid, sess;
-	int log_fd, sockfd;
+	pid_t pid, sess, dsrv;
+	int log_fd, sockfd, status;
 	extern char logmsg[LOG_MSG_LEN];
 	extern char t_stamp[TIMESTAMP_LEN];
 
@@ -45,7 +45,15 @@ int main(int argc, char *argv[]) {
 		write(log_fd, logmsg, strlen(logmsg));
 	}
 	while(1) {
-		ddserv(argv[1], argv[2], log_fd, sockfd);
+		dsrv = fork();
+		if(dsrv > 0)
+			wait(&status);
+		else if(dsrv == 0)
+			ddserv(argv[1], argv[2], log_fd, sockfd);
+		else {
+			perror("fork");
+			exit(-1);
+		}
 	}
 	close(log_fd);
 	return 0;

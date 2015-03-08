@@ -29,7 +29,7 @@ int ddserv(char * portno, char * zonedir, int logfd, int sockfd) {
 	if ((cli_fd = clientConn(sockfd, source_addr)) < 0) {
 		sprintf(logmsg, "%s ERROR: Connection failed from: %s\n", timestamp(t_stamp), source_addr);
 		write(logfd, logmsg, strlen(logmsg));
-		exit(1);
+		exit(-1);
 	}
 	else {
 		sprintf(logmsg, "%s INFO: Client: %s connected\n", timestamp(t_stamp), source_addr);
@@ -42,8 +42,9 @@ int ddserv(char * portno, char * zonedir, int logfd, int sockfd) {
 		else {
 			sprintf(logmsg, "%s ERROR: Read data failed from: %s\n", timestamp(t_stamp), source_addr);
 			write(logfd, logmsg, strlen(logmsg));
-			exit(1);
+			exit(-1);
 		}
+		close(cli_fd);
 	}
 	if(if_Exist(cf.subdomain, zonepath) == true) {
 		if(if_Exist(cf.ip_addr, zonepath) == false) {
@@ -62,7 +63,7 @@ int ddserv(char * portno, char * zonedir, int logfd, int sockfd) {
 
 	free(source_addr);
 	free(client_domain);
-	return 0;
+	exit(1);
 }
 static void splitDomain(char *userdomain, cfgdata_t * cfg) {
     char * dom;

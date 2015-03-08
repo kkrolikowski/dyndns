@@ -58,8 +58,11 @@ int ddserv(char * portno, char * zonedir, int logfd, int sockfd) {
 			}
 		}
 	}
-	else
+	else {
 		NewEntry(&cf, zonepath);
+		sprintf(logmsg, "%s INFO: New host added: %s.%s\n", timestamp(t_stamp), cf.subdomain, cf.domain);
+		write(logfd, logmsg, strlen(logmsg));
+	}
 
 	free(source_addr);
 	free(client_domain);

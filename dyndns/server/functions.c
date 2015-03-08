@@ -234,61 +234,59 @@ int apply(char * tmp_f, char * dst_f, const char * domain) {
     	perror("fork");
     	exit(-1);
     }
-    if(chld > 0) {
-    	waitpid(chld, &status, WNOHANG);
+	tmp = open(tmp_f, O_RDWR);
+	if(tmp < 0) {
+			perror("error opening tmp");
+			return -1;
+	}
+	dst = open(dst_f, O_WRONLY|O_TRUNC, 0644);
+	if(dst < 0) {
+			perror("error writing zonefile");
+			return -1;
+	}
+	fstat(tmp, &st);
+	buf_size = (int) st.st_size;
+	buf = (char *) malloc(buf_size);
+	if(buf == NULL) {
+			fprintf(stderr, "Memory allocation failed.\n");
+			return -1;
+	}
+	while(buf_size != 0 && (n = read(tmp, buf, buf_size)) < buf_size) {
+			if(n == -1) {
+					if(errno == EINTR)
+							continue;
+					perror("read tmp");
+					break;
+			}
+			buf_size -= n;
+			buf += n;
+	}
+	while(buf_size != 0 && (n = write(dst, buf, buf_size)) < buf_size) {
+			if(n == -1) {
+					if(errno == EINTR)
+							continue;
+					perror("write zone");
+					break;
+			}
+			buf_size -= n;
+			buf += n;
+	}
+	close(tmp);
+	close(dst);
+	free(buf);
+	if(unlink(tmp_f) < 0) {
+			perror("Warning: error deleting tmpfile");
+	}
+    if(chld == 0) {
     	ret = execl("/usr/sbin/rndc", "rndc", "reload", domain, NULL);
     	if(ret == -1) {
     		perror("execl");
-    		exit -1;
+    		exit(-1);
     	}
     }
-    else {
-		tmp = open(tmp_f, O_RDWR);
-		if(tmp < 0) {
-				perror("error opening tmp");
-				return -1;
-		}
-		dst = open(dst_f, O_WRONLY|O_TRUNC, 0644);
-		if(dst < 0) {
-				perror("error writing zonefile");
-				return -1;
-		}
-		fstat(tmp, &st);
-		buf_size = (int) st.st_size;
-		buf = (char *) malloc(buf_size);
-		if(buf == NULL) {
-				fprintf(stderr, "Memory allocation failed.\n");
-				return -1;
-		}
-		while(buf_size != 0 && (n = read(tmp, buf, buf_size)) < buf_size) {
-				if(n == -1) {
-						if(errno == EINTR)
-								continue;
-						perror("read tmp");
-						break;
-				}
-				buf_size -= n;
-				buf += n;
-		}
-		while(buf_size != 0 && (n = write(dst, buf, buf_size)) < buf_size) {
-				if(n == -1) {
-						if(errno == EINTR)
-								continue;
-						perror("write zone");
-						break;
-				}
-				buf_size -= n;
-				buf += n;
-		}
-		close(tmp);
-		close(dst);
-		free(buf);
-		if(unlink(tmp_f) < 0) {
-				perror("Warning: error deleting tmpfile");
-		}
-		exit(0);
-    }
-    exit(0);
+    wait(&status);
+
+    return 1;
 }
 char * timestamp(char * t_stamp) {
     time_t sec;

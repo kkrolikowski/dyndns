@@ -11,10 +11,8 @@ bool ReadCFG(PARAMS * cfg, char * filename) {
 	char buf[256];
 
 	cfgfile = fopen(filename, "r");
-	if(cfgfile == NULL) {
-		fprintf(stderr, "Error opening %s", filename);
+	if(cfgfile == NULL)
 		return false;
-	}
 	while(fgets(buf, sizeof(buf), cfgfile) != NULL) {
 		if(buf[0] == '#')
 			continue;

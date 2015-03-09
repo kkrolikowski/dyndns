@@ -16,11 +16,18 @@ int main(int argc, char *argv[]) {
 	struct hostent *server;
 	char buffer[256];
 
-	if(argc < 2) {
-		fprintf(stderr, "%s <configfile>\n", argv[0]);
+	if(argc < 3) {
+		fprintf(stderr, "%s -c <configfile>\n\t -h print this help\n", argv[0]);
 		exit(1);
 	}
-	ReadCFG(&config, argv[1]);
+	if(strcmp(argv[1], "-c") != 0) {
+		fprintf(stderr, "%s -c <configfile>\n\t -h print this help\n", argv[0]);
+		exit(1);
+	}
+	if(ReadCFG(&config, argv[2]) == false) {
+		fprintf(stderr, "Error reading file: %s\n", argv[2]);
+		exit(1);
+	}
 	portno = config.port;
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if(sockfd < 0)

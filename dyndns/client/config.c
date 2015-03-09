@@ -34,10 +34,10 @@ char * getVal(char * str) {
 	char * newstr = str;
 
 	while(*str) {
-		if(*str == '=' && *(str+1) == ' ')
+		newstr = ++str;
+		if(isspace(*str) && (isalpha(*(str+1)) || isdigit(*(str+1))))
 			break;
-		newstr = str++;
 	}
 	str = newstr;
-	return str;
+	return ++str;
 }

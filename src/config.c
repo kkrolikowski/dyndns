@@ -37,5 +37,6 @@ char * getVal(char * str) {
 			break;
 	}
 	str = newstr;
+	*(str+(strlen(str)-1)) = '\0';
 	return ++str;
 }

@@ -8,5 +8,6 @@ typedef struct params {
 	int port;
 } PARAMS;
 bool ReadCFG(PARAMS * cfg, char * filename);
+char * getVal(char * str);
 
 #endif /* DYNDNS_H_ */

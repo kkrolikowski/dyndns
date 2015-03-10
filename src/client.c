@@ -10,7 +10,7 @@
 #include "dyndns.h"
 
 int main(int argc, char *argv[]) {
-	PARAMS config;
+	userconfig_t config;
 	int sockfd, portno, n;
 	struct sockaddr_in srv_addr;
 	struct hostent *server;

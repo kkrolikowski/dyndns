@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include "dyndns.h"
 
-bool ReadCFG(PARAMS * cfg, char * filename) {
+bool ReadCFG(userconfig_t * cfg, char * filename) {
 	FILE * cfgfile;
 	char opt[50];
 	char val[50];

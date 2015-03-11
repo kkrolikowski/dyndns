@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "dyndns.h"
+#include "config.h"
 
-bool ReadCFG(userconfig_t * cfg, char * filename) {
+bool ReadCFG(config_t * cfg, char * filename) {
 	FILE * cfgfile;
 	char opt[50];
 	char val[50];
@@ -18,12 +18,12 @@ bool ReadCFG(userconfig_t * cfg, char * filename) {
 			continue;
 		if(strstr(buf, "server =")) {
 			printf("%s\n", getVal(buf));
-			strcpy(cfg->host, getVal(buf));
+			strcpy(cfg->client->host, getVal(buf));
 		}
 		if(strstr(buf, "port ="))
-			cfg->port = atoi(getVal(buf));
+			cfg->client->port = atoi(getVal(buf));
 		if(strstr(buf, "domain ="))
-			strcpy(cfg->domain, getVal(buf));
+			strcpy(cfg->client->host, getVal(buf));
 	}
 	fclose(cfgfile);
 	return true;

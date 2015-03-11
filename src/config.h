@@ -20,11 +20,11 @@ typedef struct serverconfig {
 	char logfile [PATH_MAX];
 	int port;
 } serverconfig_t;
-union config {
+typedef union config {
 	serverconfig_t server;
 	userconfig_t client;
 } config_t;
 
-bool ReadCFG(userconfig_t * cfg, char * filename);
+bool ReadCFG(config_t * cfg, char * filename);
 char * getVal(char * str);
 #endif

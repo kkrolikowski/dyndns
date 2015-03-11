@@ -16,14 +16,12 @@ bool ReadCFG(config_t * cfg, char * filename) {
 	while(fgets(buf, sizeof(buf), cfgfile) != NULL) {
 		if(buf[0] == '#')
 			continue;
-		if(strstr(buf, "server =")) {
-			printf("%s\n", getVal(buf));
+		if(strstr(buf, "server ="))
 			strcpy(cfg->client.host, getVal(buf));
-		}
 		if(strstr(buf, "port ="))
 			cfg->client.port = atoi(getVal(buf));
 		if(strstr(buf, "domain ="))
-			strcpy(cfg->client.host, getVal(buf));
+			strcpy(cfg->client.domain, getVal(buf));
 	}
 	fclose(cfgfile);
 	return true;

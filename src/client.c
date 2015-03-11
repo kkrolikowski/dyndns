@@ -7,10 +7,10 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include "dyndns.h"
+#include "config.h"
 
 int main(int argc, char *argv[]) {
-	userconfig_t config;
+	config_t config;
 	int sockfd, portno, n;
 	struct sockaddr_in srv_addr;
 	struct hostent *server;
@@ -28,11 +28,11 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "Error reading file: %s\n", argv[2]);
 		exit(1);
 	}
-	portno = config.port;
+	portno = config.client.port;
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if(sockfd < 0)
 		perror("Error opening socket");
-	server = gethostbyname(config.host);
+	server = gethostbyname(config.client.host);
 	if(server == NULL) {
 		fprintf(stderr, "Unknown host\n");
 		exit(1);
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 	bzero(buffer, 256);
-	strcpy(buffer, config.domain);
+	strcpy(buffer, config.client.domain);
 	n = write(sockfd, buffer, strlen(buffer) +1);
 	if(n < 0) {
 		fprintf(stderr, "Error sending data.");

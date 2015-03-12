@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 	else {
-		sprintf(logmsg, "%s INFO: Listening on port: %s\n", timestamp(t_stamp), argv[1]);
+		sprintf(logmsg, "%s INFO: Listening on port: %d\n", timestamp(t_stamp), config.port);
 		write(log_fd, logmsg, strlen(logmsg));
 	}
 	while(1) {

@@ -16,9 +16,9 @@ typedef struct userconfig {
 } userconfig_t;
 typedef struct serverconfig {
 	char zonedir[PATH_MAX];
-	char logfile [PATH_MAX];
+	char logfile[PATH_MAX];
 } serverconfig_t;
-typedef union config {
+typedef struct config {
 	serverconfig_t server;
 	userconfig_t client;
 	int port;

@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
 	log_fd = open(config.server.logfile, O_RDWR|O_CREAT|O_APPEND, 0644);
-	sockfd = bindToInterface(config.server.port);
+	sockfd = bindToInterface(config.port);
 	if (sockfd < 0) {
 		sprintf(logmsg, "%s ERROR: Cannot bind to interface\n", timestamp(t_stamp));
 		write(log_fd, logmsg, strlen(logmsg));

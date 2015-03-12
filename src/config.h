@@ -13,16 +13,15 @@ typedef struct clientdata {
 typedef struct userconfig {
 	char host[50];
 	char domain[64];
-	int port;
 } userconfig_t;
 typedef struct serverconfig {
 	char zonedir[PATH_MAX];
 	char logfile [PATH_MAX];
-	int port;
 } serverconfig_t;
 typedef union config {
 	serverconfig_t server;
 	userconfig_t client;
+	int port;
 } config_t;
 
 bool ReadCFG(config_t * cfg, char * filename);

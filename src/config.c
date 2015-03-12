@@ -18,10 +18,8 @@ bool ReadCFG(config_t * cfg, char * filename) {
 			continue;
 		if(strstr(buf, "server ="))
 			strcpy(cfg->client.host, getVal(buf));
-		if(strstr(buf, "port =")) {
-			cfg->client.port = atoi(getVal(buf));
-			cfg->server.port = atoi(getVal(buf));
-		}
+		if(strstr(buf, "port ="))
+			cfg->port = atoi(getVal(buf));
 		if(strstr(buf, "domain ="))
 			strcpy(cfg->client.domain, getVal(buf));
 		if(strstr(buf, "zones ="))

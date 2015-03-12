@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "Error reading file: %s\n", argv[2]);
 		exit(1);
 	}
-	portno = config.client.port;
+	portno = config.port;
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if(sockfd < 0)
 		perror("Error opening socket");

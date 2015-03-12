@@ -11,7 +11,7 @@
 
 static void splitDomain(char *userdomain, cfgdata_t * cfg);
 
-int ddserv(char * portno, char * zonedir, int logfd, int sockfd) {
+int ddserv(char * zonedir, int logfd, int sockfd) {
 	int cli_fd;
 	char * source_addr;
 	char * client_domain;

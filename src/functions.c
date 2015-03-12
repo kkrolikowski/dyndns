@@ -226,14 +226,9 @@ int apply(char * tmp_f, char * dst_f, const char * domain) {
     char * buf;
     int buf_size;
     ssize_t n;
-    pid_t chld;
+    pid_t reload_pid;
     int status, ret;
 
-    chld = fork();
-    if(chld < 0) {
-    	perror("fork");
-    	exit(-1);
-    }
 	tmp = open(tmp_f, O_RDWR);
 	if(tmp < 0) {
 			perror("error opening tmp");
@@ -277,14 +272,18 @@ int apply(char * tmp_f, char * dst_f, const char * domain) {
 	if(unlink(tmp_f) < 0) {
 			perror("Warning: error deleting tmpfile");
 	}
-    if(chld == 0) {
+	reload_pid = fork();
+    if(reload_pid == 0) {
     	ret = execl("/usr/sbin/rndc", "rndc", "reload", domain, NULL);
     	if(ret == -1) {
     		perror("execl");
     		exit(-1);
     	}
     }
-    wait(&status);
+    else if(reload_pid > 0)
+    	waitpid(reload_pid, NULL, WNOHANG);
+    else
+    	perror("fork");
 
     return 1;
 }

@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #define LOG_MSG_LEN 256
 #define TIMESTAMP_LEN 32
-#define PATH_MAX 256
+#define FPATH_MAX 256
 
 typedef struct clientdata {
 	char domain[64];
@@ -15,8 +15,8 @@ typedef struct userconfig {
 	char domain[64];
 } userconfig_t;
 typedef struct serverconfig {
-	char zonedir[PATH_MAX];
-	char logfile[PATH_MAX];
+	char zonedir[FPATH_MAX];
+	char logfile[FPATH_MAX];
 } serverconfig_t;
 typedef struct config {
 	serverconfig_t server;

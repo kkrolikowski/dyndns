@@ -1,9 +1,9 @@
 all:
-	gcc -o server ddserv.c functions.c server.c config.c
-	gcc -o client client.c config.c
+	gcc -o ddns-server ddserv.c functions.c server.c config.c
+	gcc -o ddns-client client.c config.c
 client:
-	gcc -o client client.c config.c
+	gcc -o ddns-client client.c config.c
 server:
-	gcc -o server ddserv.c functions.c server.c config.c
+	gcc -o ddns-server ddserv.c functions.c server.c config.c
 clean:
-	rm -f client server
+	rm -f ddns-client ddns-server

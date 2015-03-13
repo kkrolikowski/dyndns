@@ -26,6 +26,8 @@ bool ReadCFG(config_t * cfg, char * filename) {
 			strcpy(cfg->server.zonedir, getVal(buf));
 		if(strstr(buf, "log ="))
 			strcpy(cfg->server.logfile, getVal(buf));
+		if(strstr(buf, "interval ="))
+			cfg->client.interval = atoi(getVal(buf));
 	}
 	fclose(cfgfile);
 	return true;

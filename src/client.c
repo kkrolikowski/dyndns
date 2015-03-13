@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 			exit(1);
 		}
 		close(sockfd);
-		sleep(30);
+		sleep(config.client.interval);
 	}
 	return 0;
 }

@@ -13,6 +13,7 @@ typedef struct clientdata {
 typedef struct userconfig {
 	char host[50];
 	char domain[64];
+	int interval;
 } userconfig_t;
 typedef struct serverconfig {
 	char zonedir[FPATH_MAX];

@@ -35,7 +35,7 @@ char * getVal(char * str) {
 
 	while(*str) {
 		newstr = ++str;
-		if(isspace(*str) && (isalpha(*(str+1)) || isdigit(*(str+1))))
+		if(isspace(*str) && (isalpha(*(str+1)) || isdigit(*(str+1)) || *(str+1) == '/'))
 			break;
 	}
 	str = newstr;

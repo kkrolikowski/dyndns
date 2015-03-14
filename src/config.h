@@ -13,6 +13,8 @@ typedef struct clientdata {
 typedef struct userconfig {
 	char host[50];
 	char domain[64];
+	char username[12];
+	char password[24];
 	int interval;
 } userconfig_t;
 typedef struct serverconfig {

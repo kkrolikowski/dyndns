@@ -28,6 +28,10 @@ bool ReadCFG(config_t * cfg, char * filename) {
 			strcpy(cfg->server.logfile, getVal(buf));
 		if(strstr(buf, "interval ="))
 			cfg->client.interval = atoi(getVal(buf));
+		if(strstr(buf, "login ="))
+			strcpy(cfg->client.username = getVal(buf));
+		if(strstr(buf, "pass ="))
+			strcpy(cfg->client.password, getVal(buf));
 	}
 	fclose(cfgfile);
 	return true;

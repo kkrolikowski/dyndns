@@ -15,6 +15,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "dynsrv.h"
+#include "auth.h"
 
 int bindToInterface(int portno) {
 	int sockfd;

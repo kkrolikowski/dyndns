@@ -14,6 +14,7 @@ static void splitDomain(char *userdomain, cfgdata_t * cfg);
 
 int ddserv(char * zonedir, int logfd, int sockfd) {
 	int cli_fd;
+	int authstatus;
 	char * source_addr;
 	char * client_domain;
 	char zonepath[64];
@@ -42,14 +43,25 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 			write(logfd, logmsg, strlen(logmsg));
 			exit(-1);
 		}
-		if (readData(cli_fd, client_domain) > 0) {
-			splitDomain(client_domain, &cf);
-			strcat(zonepath, cf.domain);
+		authstatus = userauth(authdata[0].iov_base, authdata[1].iov_base);
+		if(authstatus == 0) {
+			if (readData(cli_fd, client_domain) > 0) {
+				splitDomain(client_domain, &cf);
+				strcat(zonepath, cf.domain);
+			}
+			else {
+				sprintf(logmsg, "%s ERROR: Read data failed from: %s\n", timestamp(t_stamp), source_addr);
+				write(logfd, logmsg, strlen(logmsg));
+				exit(-1);
+			}
 		}
-		else {
-			sprintf(logmsg, "%s ERROR: Read data failed from: %s\n", timestamp(t_stamp), source_addr);
+		else if(authstatus == 1) {
+			sprintf(logmsg, "%s ERROR: Unknown user: %s\n", timestamp(t_stamp), (char *) authdata[0].iov_base);
 			write(logfd, logmsg, strlen(logmsg));
-			exit(-1);
+		}
+		else if(authstatus == 2) {
+			sprintf(logmsg, "%s ERROR: Incorrect password for user: %s\n", timestamp(t_stamp), (char *) authdata[0].iov_base);
+			write(logfd, logmsg, strlen(logmsg));
 		}
 		close(cli_fd);
 	}

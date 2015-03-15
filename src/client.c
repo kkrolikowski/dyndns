@@ -68,9 +68,9 @@ int main(int argc, char *argv[]) {
 		}
 
 		authdata[0].iov_base = config.client.username;
-		authdata[0].iov_len = strlen(config.client.username);
+		authdata[0].iov_len = strlen(config.client.username)+1;
 		authdata[1].iov_base = config.client.password;
-		authdata[1].iov_len = strlen(config.client.password);
+		authdata[1].iov_len = strlen(config.client.password)+1;
 
 		n = writev(sockfd, authdata, 2);
 		if(n < 0) {

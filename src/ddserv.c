@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <fcntl.h>
 #include "dynsrv.h"
+#include "auth.h"
 
 static void splitDomain(char *userdomain, cfgdata_t * cfg);
 
@@ -43,46 +44,45 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 			write(logfd, logmsg, strlen(logmsg));
 			exit(-1);
 		}
-		authstatus = userauth(authdata[0].iov_base, authdata[1].iov_base);
-		if(authstatus == 0) {
-			if (readData(cli_fd, client_domain) > 0) {
-				splitDomain(client_domain, &cf);
-				strcat(zonepath, cf.domain);
-			}
-			else {
+	}
+	authstatus = userauth((char *) authdata[0].iov_base, (char *) authdata[1].iov_base);
+	if(authstatus == 0) {
+		if (readData(cli_fd, client_domain) > 0) {
+			splitDomain(client_domain, &cf);
+			strcat(zonepath, cf.domain);
+		}
+		else {
 				sprintf(logmsg, "%s ERROR: Read data failed from: %s\n", timestamp(t_stamp), source_addr);
 				write(logfd, logmsg, strlen(logmsg));
 				exit(-1);
-			}
 		}
-		else if(authstatus == 1) {
-			sprintf(logmsg, "%s ERROR: Unknown user: %s\n", timestamp(t_stamp), (char *) authdata[0].iov_base);
-			write(logfd, logmsg, strlen(logmsg));
-		}
-		else if(authstatus == 2) {
-			sprintf(logmsg, "%s ERROR: Incorrect password for user: %s\n", timestamp(t_stamp), (char *) authdata[0].iov_base);
-			write(logfd, logmsg, strlen(logmsg));
-		}
-		close(cli_fd);
-	}
-	if(if_Exist(cf.subdomain, zonepath) == true) {
-		if(if_Exist(cf.ip_addr, zonepath) == false) {
-			if(updateZone(&cf, zonepath)) {
-				sprintf(logmsg, "%s INFO: %s IP Address updated\n", timestamp(t_stamp), cf.subdomain);
-				write(logfd, logmsg, strlen(logmsg));
+		if(if_Exist(cf.subdomain, zonepath) == true) {
+			if(if_Exist(cf.ip_addr, zonepath) == false) {
+				if(updateZone(&cf, zonepath)) {
+					sprintf(logmsg, "%s INFO: %s IP Address updated\n", timestamp(t_stamp), cf.subdomain);
+					write(logfd, logmsg, strlen(logmsg));
+				}
+				else {
+					sprintf(logmsg, "%s ERROR: %s update failed\n", timestamp(t_stamp), cf.subdomain);
+					write(logfd, logmsg, strlen(logmsg));
+				}
 			}
 			else {
-				sprintf(logmsg, "%s ERROR: %s update failed\n", timestamp(t_stamp), cf.subdomain);
+				NewEntry(&cf, zonepath);
+				sprintf(logmsg, "%s INFO: New host added: %s.%s\n", timestamp(t_stamp), cf.subdomain, cf.domain);
 				write(logfd, logmsg, strlen(logmsg));
 			}
 		}
 	}
-	else {
-		NewEntry(&cf, zonepath);
-		sprintf(logmsg, "%s INFO: New host added: %s.%s\n", timestamp(t_stamp), cf.subdomain, cf.domain);
+	else if(authstatus == 1) {
+		sprintf(logmsg, "%s ERROR: Unknown user: %s\n", timestamp(t_stamp), (char *) authdata[0].iov_base);
 		write(logfd, logmsg, strlen(logmsg));
 	}
-
+	else if(authstatus == 2) {
+		sprintf(logmsg, "%s ERROR: Incorrect password for user: %s\n", timestamp(t_stamp), (char *) authdata[0].iov_base);
+		write(logfd, logmsg, strlen(logmsg));
+	}
+	close(cli_fd);
 	free(source_addr);
 	free(client_domain);
 	exit(1);

@@ -17,9 +17,9 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 	int cli_fd, n;
 	int authstatus;
 	char * source_addr;
-	char * client_domain;
-	char * login;
-	char * pass;
+	char client_domain[64];
+	char login[12];
+	char pass[24];
 
 	char zonepath[64];
 	extern char logmsg[LOG_MSG_LEN];
@@ -28,10 +28,6 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 	struct iovec client_data[3];
 
 	source_addr = (char *) malloc(16 * sizeof(char));
-	client_domain = (char *) malloc(64 * sizeof(char));
-	login = (char *) malloc(12 * sizeof(char));
-	pass = (char *) malloc(24 * sizeof(char));
-
 	bzero(source_addr, 16 * sizeof(char));
 	client_data[0].iov_base = login;
 	client_data[0].iov_len = sizeof(login);
@@ -89,9 +85,6 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 	}
 	close(cli_fd);
 	free(source_addr);
-	free(client_domain);
-	free(login);
-	free(pass);
 	exit(1);
 }
 static void splitDomain(char *userdomain, cfgdata_t * cfg) {

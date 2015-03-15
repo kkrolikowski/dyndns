@@ -50,11 +50,11 @@ int main(int argc, char *argv[]) {
 	portno = config.port;
 
 	config_data[0].iov_base = config.client.username;
-	config_data[0].iov_len = sizeof(config.client.username) + 1;
+	config_data[0].iov_len = strlen(config.client.username) + 1;
 	config_data[1].iov_base = config.client.password;
-	config_data[1].iov_len = sizeof(config.client.password) + 1;
+	config_data[1].iov_len = strlen(config.client.password) + 1;
 	config_data[2].iov_base = config.client.domain;
-	config_data[2].iov_len = sizeof(config.client.domain) + 1;
+	config_data[2].iov_len = strlen(config.client.domain) + 1;
 
 	while(1) {
 		sockfd = socket(AF_INET, SOCK_STREAM, 0);

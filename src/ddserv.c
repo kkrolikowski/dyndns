@@ -14,7 +14,7 @@
 static void splitDomain(char *userdomain, cfgdata_t * cfg);
 
 int ddserv(char * zonedir, int logfd, int sockfd) {
-	int cli_fd;
+	int cli_fd, n;
 	int authstatus;
 	char * source_addr;
 	char * client_domain;
@@ -22,7 +22,7 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 	extern char logmsg[LOG_MSG_LEN];
 	extern char t_stamp[TIMESTAMP_LEN];
 	cfgdata_t cf;
-	struct iovec authdata[2];
+	struct iovec client_data[3];
 
 	source_addr = (char *) malloc(16 * sizeof(char));
 	client_domain = (char *) malloc(64 * sizeof(char));
@@ -39,24 +39,17 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 		sprintf(logmsg, "%s INFO: Client: %s connected\n", timestamp(t_stamp), source_addr);
 		write(logfd, logmsg, strlen(logmsg));
 		strcpy(cf.ip_addr, source_addr);
-		if(readAuthData(cli_fd, authdata) != 0) {
-			sprintf(logmsg, "%s ERROR: Read authdata failed from: %s\n", timestamp(t_stamp), source_addr);
-			write(logfd, logmsg, strlen(logmsg));
-			exit(-1);
-		}
 	}
-	authstatus = userauth((char *) authdata[0].iov_base, (char *) authdata[1].iov_base);
+	n = readv(cli_fd, client_data, 3);
+	if(n < 0) {
+		sprintf(logmsg, "%s ERROR: Read data failed from: %s\n", timestamp(t_stamp), source_addr);
+		write(logfd, logmsg, strlen(logmsg));
+		exit(-1);
+	}
+	authstatus = userauth((char *) client_data[0].iov_base, (char *) client_data[1].iov_base);
 	if(authstatus == 0) {
-		write(cli_fd, "authok", 7);
-		if (readData(cli_fd, client_domain) > 0) {
-			splitDomain(client_domain, &cf);
-			strcat(zonepath, cf.domain);
-		}
-		else {
-				sprintf(logmsg, "%s ERROR: Read data failed from: %s\n", timestamp(t_stamp), source_addr);
-				write(logfd, logmsg, strlen(logmsg));
-				exit(-1);
-		}
+		splitDomain((char *) client_data[2].iov_base, &cf);
+		strcat(zonepath, cf.domain);
 		if(if_Exist(cf.subdomain, zonepath) == true) {
 			if(if_Exist(cf.ip_addr, zonepath) == false) {
 				if(updateZone(&cf, zonepath)) {
@@ -76,11 +69,11 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 		}
 	}
 	else if(authstatus == 1) {
-		sprintf(logmsg, "%s ERROR: Unknown user: %s\n", timestamp(t_stamp), (char *) authdata[0].iov_base);
+		sprintf(logmsg, "%s ERROR: Unknown user: %s\n", timestamp(t_stamp), (char *) client_data[0].iov_base);
 		write(logfd, logmsg, strlen(logmsg));
 	}
 	else if(authstatus == 2) {
-		sprintf(logmsg, "%s ERROR: Incorrect password for user: %s\n", timestamp(t_stamp), (char *) authdata[0].iov_base);
+		sprintf(logmsg, "%s ERROR: Incorrect password for user: %s\n", timestamp(t_stamp), (char *) client_data[0].iov_base);
 		write(logfd, logmsg, strlen(logmsg));
 	}
 	close(cli_fd);

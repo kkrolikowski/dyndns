@@ -61,13 +61,3 @@ void get_salt(char *p, char *salt) {
 	}
 	*salt = '\0';
 }
-int readAuthData(int fd, struct iovec * authdata) {
-	ssize_t n;
-
-	n = readv(fd, authdata, 2);
-	if(n < 0) {
-		fprintf(stderr, "Error reading from socket");
-		return -1;
-	}
-	return 0;
-}

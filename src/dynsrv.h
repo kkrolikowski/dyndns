@@ -13,7 +13,6 @@ char t_stamp[TIMESTAMP_LEN];
 
 int bindToInterface(int portno);
 int clientConn(int fd, char * cliaddr);
-int readData(int fd, char * domain);
 int updateZone(cfgdata_t * cf, char * file);
 int updateSerialNo(char * fromfile, char * newserial);
 void RandomFilename(char *filename);

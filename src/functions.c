@@ -52,18 +52,6 @@ int clientConn(int fd, char * cliaddr) {
 		return clifd;
 	}
 }
-int readData(int fd, char * domain) {
-	char buf[256];
-	int n;
-
-	n = read(fd, buf, 255);
-	if(n < 0) {
-		fprintf(stderr, "Error reading from socket");
-		return -1;
-	}
-	strcpy(domain, buf);
-	return n;
-}
 int updateZone(cfgdata_t * cf, char * file) {
     FILE *zf;
     FILE *tmp;

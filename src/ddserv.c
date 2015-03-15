@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/uio.h>
 #include <unistd.h>
 #include <strings.h>
 #include <string.h>
@@ -19,6 +20,7 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 	extern char logmsg[LOG_MSG_LEN];
 	extern char t_stamp[TIMESTAMP_LEN];
 	cfgdata_t cf;
+	struct iovec authdata[2];
 
 	source_addr = (char *) malloc(16 * sizeof(char));
 	client_domain = (char *) malloc(64 * sizeof(char));
@@ -35,6 +37,11 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 		sprintf(logmsg, "%s INFO: Client: %s connected\n", timestamp(t_stamp), source_addr);
 		write(logfd, logmsg, strlen(logmsg));
 		strcpy(cf.ip_addr, source_addr);
+		if(readAuthData(cli_fd, authdata) != 0) {
+			sprintf(logmsg, "%s ERROR: Read authdata failed from: %s\n", timestamp(t_stamp), source_addr);
+			write(logfd, logmsg, strlen(logmsg));
+			exit(-1);
+		}
 		if (readData(cli_fd, client_domain) > 0) {
 			splitDomain(client_domain, &cf);
 			strcat(zonepath, cf.domain);

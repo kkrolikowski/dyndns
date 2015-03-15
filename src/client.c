@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/wait.h>
+#include <sys/uio.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
@@ -17,6 +18,7 @@ int main(int argc, char *argv[]) {
 	int sockfd, portno, n;
 	struct sockaddr_in srv_addr;
 	struct hostent *server;
+	struct iovec authdata[2];
 	char buffer[256];
 
 	if(argc < 3) {
@@ -62,6 +64,17 @@ int main(int argc, char *argv[]) {
 		srv_addr.sin_port = htons(portno);
 		if(connect(sockfd, (struct sockaddr *) &srv_addr, sizeof(srv_addr)) < 0) {
 			fprintf(stderr, "Error connecting to server\n");
+			exit(1);
+		}
+
+		authdata[0].iov_base = config.client.username;
+		authdata[0].iov_len = strlen(config.client.username);
+		authdata[1].iov_base = config.client.password;
+		authdata[1].iov_len = strlen(config.client.password);
+
+		n = writev(sockfd, authdata, 2);
+		if(n < 0) {
+			fprintf(stderr, "error sending authdata");
 			exit(1);
 		}
 		bzero(buffer, 256);

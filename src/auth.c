@@ -9,8 +9,10 @@
 #include <sys/uio.h>
 #define _XOPEN_SOURCE
 #include <unistd.h>
+#ifndef __FreeBSD__
 #define _GNU_SOURCE
 #include <crypt.h>
+#endif
 #include "auth.h"
 
 int userauth(char *login, char *pass) {

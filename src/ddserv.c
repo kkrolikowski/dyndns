@@ -70,9 +70,15 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 			}
 		}
 		else {
-			NewEntry(&cf, zonepath);
-			sprintf(logmsg, "%s INFO: New host added: %s.%s\n", timestamp(t_stamp), cf.subdomain, cf.domain);
-			write(logfd, logmsg, strlen(logmsg));
+			if(isAuthorized(login, client_domain)) {
+				NewEntry(&cf, zonepath);
+				sprintf(logmsg, "%s INFO: New host added: %s.%s\n", timestamp(t_stamp), cf.subdomain, cf.domain);
+				write(logfd, logmsg, strlen(logmsg));
+			}
+			else {
+				sprintf(logmsg, "%s ERROR: You are not allowed to create: %s.%s\n", timestamp(t_stamp), cf.subdomain, cf.domain);
+				write(logfd, logmsg, strlen(logmsg));
+			}
 		}
 	}
 	else if(authstatus == 1) {

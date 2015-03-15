@@ -17,9 +17,9 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 	int cli_fd, n;
 	int authstatus;
 	char * source_addr;
-	char client_domain[64];
 	char login[12];
 	char pass[24];
+	char client_domain[64];
 
 	char zonepath[64];
 	extern char logmsg[LOG_MSG_LEN];
@@ -68,19 +68,19 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 					write(logfd, logmsg, strlen(logmsg));
 				}
 			}
-			else {
-				NewEntry(&cf, zonepath);
-				sprintf(logmsg, "%s INFO: New host added: %s.%s\n", timestamp(t_stamp), cf.subdomain, cf.domain);
-				write(logfd, logmsg, strlen(logmsg));
-			}
+		}
+		else {
+			NewEntry(&cf, zonepath);
+			sprintf(logmsg, "%s INFO: New host added: %s.%s\n", timestamp(t_stamp), cf.subdomain, cf.domain);
+			write(logfd, logmsg, strlen(logmsg));
 		}
 	}
 	else if(authstatus == 1) {
-		sprintf(logmsg, "%s ERROR: Unknown user: %s\n", timestamp(t_stamp), (char *) client_data[0].iov_base);
+		sprintf(logmsg, "%s ERROR: Unknown user: %s\n", timestamp(t_stamp), login);
 		write(logfd, logmsg, strlen(logmsg));
 	}
 	else if(authstatus == 2) {
-		sprintf(logmsg, "%s ERROR: Incorrect password for user: %s\n", timestamp(t_stamp), (char *) client_data[0].iov_base);
+		sprintf(logmsg, "%s ERROR: Incorrect password for user: %s\n", timestamp(t_stamp), login);
 		write(logfd, logmsg, strlen(logmsg));
 	}
 	close(cli_fd);

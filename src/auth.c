@@ -61,3 +61,13 @@ void get_salt(char *p, char *salt) {
 	}
 	*salt = '\0';
 }
+int isAuthorized(char *user, char *domain) {
+	struct passwd * pw;
+
+	if((pw = getpwnam(user)) == NULL)
+		return -1;
+	if(strcmp(domain, pw->pw_gecos) == 0)
+		return 1;
+	else
+		return -1;
+}

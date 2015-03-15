@@ -59,7 +59,7 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 		strcat(zonepath, cf.domain);
 		if(if_Exist(cf.subdomain, zonepath) == true) {
 			if(if_Exist(cf.ip_addr, zonepath) == false) {
-				if(updateZone(&cf, zonepath)) {
+				if(updateZone(&cf, zonepath) && isAuthorized(login, client_domain)) {
 					sprintf(logmsg, "%s INFO: %s IP Address updated\n", timestamp(t_stamp), cf.subdomain);
 					write(logfd, logmsg, strlen(logmsg));
 				}

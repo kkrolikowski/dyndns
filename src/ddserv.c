@@ -59,7 +59,7 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 		strcat(zonepath, cf.domain);
 		if(if_Exist(cf.subdomain, zonepath) == true) {
 			if(if_Exist(cf.ip_addr, zonepath) == false) {
-				if(updateZone(&cf, zonepath) && isAuthorized(login, client_domain)) {
+				if(updateZone(&cf, zonepath) && isAuthorized(login, client_domain) > 0) {
 					sprintf(logmsg, "%s INFO: %s IP Address updated\n", timestamp(t_stamp), cf.subdomain);
 					write(logfd, logmsg, strlen(logmsg));
 				}
@@ -70,7 +70,7 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 			}
 		}
 		else {
-			if(isAuthorized(login, client_domain)) {
+			if(isAuthorized(login, client_domain) > 0) {
 				NewEntry(&cf, zonepath);
 				sprintf(logmsg, "%s INFO: New host added: %s.%s\n", timestamp(t_stamp), cf.subdomain, cf.domain);
 				write(logfd, logmsg, strlen(logmsg));

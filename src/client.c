@@ -20,6 +20,7 @@ int main(int argc, char *argv[]) {
 	struct hostent *server;
 	struct iovec authdata[2];
 	char buffer[256];
+	char ack[8];
 
 	if(argc < 3) {
 		fprintf(stderr, "%s -c <configfile>\n\t -h print this help\n", argv[0]);
@@ -77,12 +78,15 @@ int main(int argc, char *argv[]) {
 			fprintf(stderr, "error sending authdata");
 			exit(1);
 		}
-		bzero(buffer, 256);
-		strcpy(buffer, config.client.domain);
-		n = write(sockfd, buffer, strlen(buffer) +1);
-		if(n < 0) {
-			fprintf(stderr, "Error sending data.");
-			exit(1);
+		n = read(sockfd, ack, 8);
+		if(strcmp(ack, "authok") == 0) {
+			bzero(buffer, 256);
+			strcpy(buffer, config.client.domain);
+			n = write(sockfd, buffer, strlen(buffer) +1);
+			if(n < 0) {
+				fprintf(stderr, "Error sending data.");
+				exit(1);
+			}
 		}
 		close(sockfd);
 		sleep(config.client.interval);

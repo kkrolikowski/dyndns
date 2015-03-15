@@ -47,6 +47,7 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 	}
 	authstatus = userauth((char *) authdata[0].iov_base, (char *) authdata[1].iov_base);
 	if(authstatus == 0) {
+		write(cli_fd, "authok", 7);
 		if (readData(cli_fd, client_domain) > 0) {
 			splitDomain(client_domain, &cf);
 			strcat(zonepath, cf.domain);

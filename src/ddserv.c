@@ -18,6 +18,9 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 	int authstatus;
 	char * source_addr;
 	char * client_domain;
+	char * login;
+	char * pass;
+
 	char zonepath[64];
 	extern char logmsg[LOG_MSG_LEN];
 	extern char t_stamp[TIMESTAMP_LEN];
@@ -26,8 +29,16 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 
 	source_addr = (char *) malloc(16 * sizeof(char));
 	client_domain = (char *) malloc(64 * sizeof(char));
+	login = (char *) malloc(12 * sizeof(char));
+	pass = (char *) malloc(24 * sizeof(char));
+
 	bzero(source_addr, 16 * sizeof(char));
-	bzero(client_domain, 64 * sizeof(char));
+	client_data[0].iov_base = login;
+	client_data[0].iov_len = sizeof(login);
+	client_data[1].iov_base = pass;
+	client_data[1].iov_len = sizeof(pass);
+	client_data[2].iov_base = client_domain;
+	client_data[2].iov_len = sizeof(client_domain);
 
 	strcpy(zonepath, zonedir);
 	if ((cli_fd = clientConn(sockfd, source_addr)) < 0) {
@@ -46,9 +57,9 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 		write(logfd, logmsg, strlen(logmsg));
 		exit(-1);
 	}
-	authstatus = userauth((char *) client_data[0].iov_base, (char *) client_data[1].iov_base);
+	authstatus = userauth(login, pass);
 	if(authstatus == 0) {
-		splitDomain((char *) client_data[2].iov_base, &cf);
+		splitDomain(client_domain, &cf);
 		strcat(zonepath, cf.domain);
 		if(if_Exist(cf.subdomain, zonepath) == true) {
 			if(if_Exist(cf.ip_addr, zonepath) == false) {
@@ -79,6 +90,8 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 	close(cli_fd);
 	free(source_addr);
 	free(client_domain);
+	free(login);
+	free(pass);
 	exit(1);
 }
 static void splitDomain(char *userdomain, cfgdata_t * cfg) {

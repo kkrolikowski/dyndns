@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdarg.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -16,6 +17,7 @@ int main(int argc, char *argv[]) {
 	extern char logmsg[LOG_MSG_LEN];
 	extern char t_stamp[TIMESTAMP_LEN];
 	config_t config;
+	char port_str[8];
 
 	if(argc < 3) {
 		fprintf(stderr, "%s -c <configfile>\n\t -h print this help\n", argv[0]);
@@ -46,12 +48,13 @@ int main(int argc, char *argv[]) {
 	close(STDERR_FILENO);
 	log_fd = open(config.server.logfile, O_RDWR|O_CREAT|O_APPEND, 0644);
 	sockfd = bindToInterface(config.port);
+	sprintf(port_str, "%d", config.port);
 	if (sockfd < 0) {
 		log_event(log_fd, " ERROR: Cannot bind to interface\n", NULL);
 		exit(1);
 	}
 	else
-		log_event(log_fd, " INFO: Listening on port: ", config.port, "\n", NULL);
+		log_event(log_fd, " INFO: Listening on port: ", port_str, "\n", NULL);
 	while(1) {
 		dsrv = fork();
 		if(dsrv > 0)

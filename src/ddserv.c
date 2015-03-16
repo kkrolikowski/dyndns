@@ -44,9 +44,9 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 		exit(-1);
 	}
 	else {
-//		log_event(logfd, " INFO: ", source_addr, " connected\n", NULL);
-		sprintf(logmsg, "%s INFO: Client: %s connected\n", timestamp(t_stamp), source_addr);
-		write(logfd, logmsg, strlen(logmsg));
+		log_event(logfd, " INFO: ", source_addr, " connected\n", NULL);
+//		sprintf(logmsg, "%s INFO: Client: %s connected\n", timestamp(t_stamp), source_addr);
+//		write(logfd, logmsg, strlen(logmsg));
 		strcpy(cf.ip_addr, source_addr);
 	}
 	n = readv(cli_fd, client_data, 3);

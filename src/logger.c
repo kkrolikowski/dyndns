@@ -14,8 +14,8 @@ void log_event(int logfd, char *first, ...) {
 	va_start(msgs, first);
 	strcpy(logmsg, timestamp_new(t_stamp));
 	while(next != NULL) {
-		next = va_arg(msgs, char *);
 		strcat(logmsg, next);
+		next = va_arg(msgs, char *);
 	}
 	va_end(msgs);
 	write(logfd, logmsg, strlen(logmsg));

@@ -8,6 +8,7 @@
 #include <string.h>
 #include "dynsrv.h"
 #include "config.h"
+#include "logger.h"
 
 int main(int argc, char *argv[]) {
 	pid_t pid, sess, dsrv;
@@ -46,14 +47,11 @@ int main(int argc, char *argv[]) {
 	log_fd = open(config.server.logfile, O_RDWR|O_CREAT|O_APPEND, 0644);
 	sockfd = bindToInterface(config.port);
 	if (sockfd < 0) {
-		sprintf(logmsg, "%s ERROR: Cannot bind to interface\n", timestamp(t_stamp));
-		write(log_fd, logmsg, strlen(logmsg));
+		log_event(log_fd, " ERROR: Cannot bind to interface\n", NULL);
 		exit(1);
 	}
-	else {
-		sprintf(logmsg, "%s INFO: Listening on port: %d\n", timestamp(t_stamp), config.port);
-		write(log_fd, logmsg, strlen(logmsg));
-	}
+	else
+		log_event(log_fd, " INFO: Listening on port: ", config.port, "\n", NULL);
 	while(1) {
 		dsrv = fork();
 		if(dsrv > 0)

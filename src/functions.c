@@ -276,13 +276,3 @@ int apply(char * tmp_f, char * dst_f, const char * domain) {
 
     return 1;
 }
-char * timestamp(char * t_stamp) {
-    time_t sec;
-    struct tm st_time;
-
-    time(&sec);
-    localtime_r(&sec, &st_time);
-    strftime(t_stamp, TIMESTAMP_LEN * sizeof(t_stamp), "[%d/%B/%Y %T]", &st_time);
-
-    return t_stamp;
-}

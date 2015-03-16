@@ -23,8 +23,6 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 	char client_domain[64];
 
 	char zonepath[64];
-	extern char logmsg[LOG_MSG_LEN];
-	extern char t_stamp[TIMESTAMP_LEN];
 	cfgdata_t cf;
 	struct iovec client_data[3];
 
@@ -39,8 +37,7 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 
 	strcpy(zonepath, zonedir);
 	if ((cli_fd = clientConn(sockfd, source_addr)) < 0) {
-		sprintf(logmsg, "%s ERROR: Connection failed from: %s\n", timestamp(t_stamp), source_addr);
-		write(logfd, logmsg, strlen(logmsg));
+		log_event(logfd, " ERROR: Connection failed from: ", source_addr, "\n", NULL);
 		exit(-1);
 	}
 	else {
@@ -49,8 +46,7 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 	}
 	n = readv(cli_fd, client_data, 3);
 	if(n < 0) {
-		sprintf(logmsg, "%s ERROR: Read data failed from: %s\n", timestamp(t_stamp), source_addr);
-		write(logfd, logmsg, strlen(logmsg));
+		log_event(logfd, " ERROR: Read data failed from: ", source_addr, "\n", NULL);
 		exit(-1);
 	}
 	authstatus = userauth(login, pass);
@@ -59,36 +55,25 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 		strcat(zonepath, cf.domain);
 		if(if_Exist(cf.subdomain, zonepath) == true) {
 			if(if_Exist(cf.ip_addr, zonepath) == false) {
-				if(updateZone(&cf, zonepath) && isAuthorized(login, client_domain) > 0) {
-					sprintf(logmsg, "%s INFO: %s IP Address updated\n", timestamp(t_stamp), cf.subdomain);
-					write(logfd, logmsg, strlen(logmsg));
-				}
-				else {
-					sprintf(logmsg, "%s ERROR: %s update failed\n", timestamp(t_stamp), cf.subdomain);
-					write(logfd, logmsg, strlen(logmsg));
-				}
+				if(updateZone(&cf, zonepath) && isAuthorized(login, client_domain) > 0)
+					log_event(logfd, " INFO: ", cf.subdomain, " IP Address updated\n", NULL);
+				else
+					log_event(logfd, " ERROR: ", cf.subdomain, " update failed\n", NULL);
 			}
 		}
 		else {
 			if(isAuthorized(login, client_domain) > 0) {
 				NewEntry(&cf, zonepath);
-				sprintf(logmsg, "%s INFO: New host added: %s.%s\n", timestamp(t_stamp), cf.subdomain, cf.domain);
-				write(logfd, logmsg, strlen(logmsg));
+				log_event(logfd, " INFO: New host added: ", cf.subdomain, ".", cf.domain, "\n", NULL);
 			}
-			else {
-				sprintf(logmsg, "%s ERROR: You are not allowed to create: %s.%s\n", timestamp(t_stamp), cf.subdomain, cf.domain);
-				write(logfd, logmsg, strlen(logmsg));
-			}
+			else
+				log_event(logfd, " ERROR: You are not allowed to create: ", cf.subdomain, ".", cf.domain, "\n", NULL);
 		}
 	}
-	else if(authstatus == 1) {
-		sprintf(logmsg, "%s ERROR: Unknown user: %s\n", timestamp(t_stamp), login);
-		write(logfd, logmsg, strlen(logmsg));
-	}
-	else if(authstatus == 2) {
-		sprintf(logmsg, "%s ERROR: Incorrect password for user: %s\n", timestamp(t_stamp), login);
-		write(logfd, logmsg, strlen(logmsg));
-	}
+	else if(authstatus == 1)
+		log_event(logfd, " ERROR: Unknown user: ", login, "\n", NULL);
+	else if(authstatus == 2)
+		log_event(logfd, " ERROR: Incorrect password for user: ", login, "\n", NULL);
 	close(cli_fd);
 	free(source_addr);
 	exit(1);

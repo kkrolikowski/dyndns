@@ -10,12 +10,15 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <stdarg.h>
 #include "config.h"
+#include "logger.h"
 
 int main(int argc, char *argv[]) {
 	config_t config;
 	pid_t pid, sess;
-	int sockfd, portno, n;
+	int sockfd, portno, n, logfd;
 	struct sockaddr_in srv_addr;
 	struct hostent *server;
 	struct iovec config_data[3];
@@ -56,13 +59,14 @@ int main(int argc, char *argv[]) {
 	config_data[2].iov_base = config.client.domain;
 	config_data[2].iov_len = sizeof(config.client.domain);
 
+	logfd = open(config.logfile, O_RDWR|O_CREAT|O_APPEND, 0644);
 	while(1) {
 		sockfd = socket(AF_INET, SOCK_STREAM, 0);
 		if(sockfd < 0)
-			perror("Error opening socket");
+			log_event(logfd, " Error opening socket\n", NULL);
 		server = gethostbyname(config.client.host);
 		if(server == NULL) {
-			fprintf(stderr, "Unknown host\n");
+			log_event(logfd, " Unknown host\n", NULL);
 			exit(1);
 		}
 		bzero((char *) &srv_addr, sizeof(srv_addr));
@@ -70,16 +74,17 @@ int main(int argc, char *argv[]) {
 		bcopy((char *) server->h_addr, (char *) &srv_addr.sin_addr.s_addr, server->h_length);
 		srv_addr.sin_port = htons(portno);
 		if(connect(sockfd, (struct sockaddr *) &srv_addr, sizeof(srv_addr)) < 0) {
-			fprintf(stderr, "Error connecting to server\n");
+			log_event(logfd, " Error connecting to server\n", NULL);
 			exit(1);
 		}
 		n = writev(sockfd, config_data, 3);
 		if(n < 0) {
-			fprintf(stderr, "Error sending data.");
+			log_event(logfd, " Error sending data.\n", NULL);
 			exit(1);
 		}
 		close(sockfd);
 		sleep(config.client.interval);
 	}
+	close(logfd);
 	return 0;
 }

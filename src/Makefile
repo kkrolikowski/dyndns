@@ -1,8 +1,8 @@
 all:
 	gcc -o ddns-server ddserv.c functions.c server.c config.c auth.c logger.c -lcrypt
-	gcc -o ddns-client client.c config.c
+	gcc -o ddns-client client.c config.c logger.c
 client:
-	gcc -o ddns-client client.c config.c
+	gcc -o ddns-client client.c config.c logger.c
 server:
 	gcc -o ddns-server ddserv.c functions.c server.c config.c auth.c logger.c -lcrypt
 clean:

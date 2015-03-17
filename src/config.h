@@ -19,11 +19,11 @@ typedef struct userconfig {
 } userconfig_t;
 typedef struct serverconfig {
 	char zonedir[FPATH_MAX];
-	char logfile[FPATH_MAX];
 } serverconfig_t;
 typedef struct config {
 	serverconfig_t server;
 	userconfig_t client;
+	char logfile[FPATH_MAX];
 	int port;
 } config_t;
 

@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
-	log_fd = open(config.server.logfile, O_RDWR|O_CREAT|O_APPEND, 0644);
+	log_fd = open(config.logfile, O_RDWR|O_CREAT|O_APPEND, 0644);
 	sockfd = bindToInterface(config.port);
 	sprintf(port_str, "%d", config.port);
 	if (sockfd < 0) {

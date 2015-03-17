@@ -25,7 +25,7 @@ bool ReadCFG(config_t * cfg, char * filename) {
 		if(strstr(buf, "zones ="))
 			strcpy(cfg->server.zonedir, getVal(buf));
 		if(strstr(buf, "log ="))
-			strcpy(cfg->server.logfile, getVal(buf));
+			strcpy(cfg->logfile, getVal(buf));
 		if(strstr(buf, "interval ="))
 			cfg->client.interval = atoi(getVal(buf));
 		if(strstr(buf, "login ="))

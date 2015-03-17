@@ -55,8 +55,10 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 		strcat(zonepath, cf.domain);
 		if(if_Exist(cf.subdomain, zonepath) == true) {
 			if(if_Exist(cf.ip_addr, zonepath) == false) {
-				if(updateZone(&cf, zonepath) && isAuthorized(login, client_domain) > 0)
+				if(isAuthorized(login, client_domain) > 0) {
+					updateZone(&cf, zonepath);
 					log_event(logfd, " INFO: ", cf.subdomain, " IP Address updated\n", NULL);
+				}
 				else
 					log_event(logfd, " ERROR: ", cf.subdomain, " update failed\n", NULL);
 			}

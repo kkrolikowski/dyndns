@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "config.h"
+#include "common.h"
 
 bool ReadCFG(config_t * cfg, char * filename) {
 	FILE * cfgfile;

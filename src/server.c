@@ -8,7 +8,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include "dynsrv.h"
-#include "config.h"
+#include "common.h"
 #include "logger.h"
 
 int main(int argc, char *argv[]) {

@@ -17,7 +17,8 @@
 int main(int argc, char *argv[]) {
 	config_t config;
 	pid_t pid, sess;
-	int sockfd, portno, n, logfd;
+	int sockfd, portno, n, logfd, pidfd;
+	char * pidf;
 	struct sockaddr_in srv_addr;
 	struct hostent *server;
 	struct iovec config_data[3];
@@ -41,6 +42,7 @@ int main(int argc, char *argv[]) {
 	}
 	if(pid > 0) {
 		printf("Starting DynDNS client, PID: %d\n", pid);
+		pidfd = pidfile(pid, config.pid);
 		exit(0);
 	}
 	umask(0);
@@ -67,6 +69,7 @@ int main(int argc, char *argv[]) {
 		if(server == NULL) {
 			log_event(logfd, " Unknown host\n", NULL);
 			close(sockfd);
+			unlink(config.pid);
 			exit(1);
 		}
 		bzero((char *) &srv_addr, sizeof(srv_addr));
@@ -80,11 +83,13 @@ int main(int argc, char *argv[]) {
 		n = writev(sockfd, config_data, 3);
 		if(n < 0) {
 			log_event(logfd, " Error sending data.\n", NULL);
+			unlink(config.pid);
 			exit(1);
 		}
 		close(sockfd);
 		sleep(config.client.interval);
 	}
 	close(logfd);
+	unlink(config.pid);
 	return 0;
 }

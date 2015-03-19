@@ -35,6 +35,8 @@ bool ReadCFG(config_t * cfg, char * filename) {
 			strcpy(cfg->client.username, getVal(buf));
 		if(strstr(buf, "pass ="))
 			strcpy(cfg->client.password, getVal(buf));
+		if(strstr(buf, "pid ="))
+			strcpy(cfg->pid, getVal(buf));
 	}
 	fclose(cfgfile);
 	return true;
@@ -75,4 +77,15 @@ char * timestamp_new(char * t_stamp) {
     strftime(t_stamp, TIMESTAMP_LEN * sizeof(t_stamp), "[%d/%B/%Y %T]", &st_time);
 
     return t_stamp;
+}
+int pidfile(pid_t pid, char *path) {
+	int pfd;
+	char buf[16];
+
+	sprintf(buf, "%d", (int) pid);
+	pfd = open(path, O_CREAT|O_RDWR, 0644);
+	write(pfd, buf, strlen(buf)+1);
+	
+	close(pfd);
+	return pfd;
 }

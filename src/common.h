@@ -24,6 +24,7 @@ typedef struct config {
 	serverconfig_t server;
 	userconfig_t client;
 	char logfile[FPATH_MAX];
+	char pid[FPATH_MAX];
 	int port;
 } config_t;
 char logmsg[LOG_MSG_LEN];
@@ -33,4 +34,5 @@ char * timestamp_new(char * t_stamp);
 void log_event(int logfd, char *first, ...);
 bool ReadCFG(config_t * cfg, char * filename);
 char * getVal(char * str);
+int pidfile(pid_t pid, char *name);
 #endif

@@ -10,7 +10,7 @@
 #include <fcntl.h>
 #include "dynsrv.h"
 #include "auth.h"
-#include "logger.h"
+#include "common.h"
 
 static void splitDomain(char *userdomain, cfgdata_t * cfg);
 

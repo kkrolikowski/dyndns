@@ -13,7 +13,6 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include "common.h"
-#include "logger.h"
 
 int main(int argc, char *argv[]) {
 	config_t config;

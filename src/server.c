@@ -9,7 +9,6 @@
 #include <string.h>
 #include "dynsrv.h"
 #include "common.h"
-#include "logger.h"
 
 int main(int argc, char *argv[]) {
 	pid_t pid, sess, dsrv;

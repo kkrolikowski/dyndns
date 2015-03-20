@@ -79,9 +79,9 @@ int updateZone(cfgdata_t * cf, char * file) {
 	    }
 	    if(strstr(buf, cf->subdomain) != NULL) {
 		    if(strlen(cf->subdomain) < 8)
-		    	sprintf(buf, "%s\t\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
+		    	sprintf(buf, "%s\t300\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
 		    else
-		    	sprintf(buf, "%s\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
+		    	sprintf(buf, "%s\t300\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
 	    }
 	    fputs(buf, tmp);
     }
@@ -198,9 +198,9 @@ int NewEntry(cfgdata_t * cf, char * file) {
 	    fputs(buf, tmp);
     }
 	if(strlen(cf->subdomain) < 8)
-		sprintf(buf, "%s\t\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
+		sprintf(buf, "%s\t300\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
 	else
-		sprintf(buf, "%s\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
+		sprintf(buf, "%s\t300\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
 	fputs(buf, tmp);
 
 	fclose(zf);

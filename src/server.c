@@ -37,6 +37,7 @@ int main(int argc, char *argv[]) {
 	}
 	if(pid > 0) {
 		printf("Starting DynDNS service, PID: %d\n", pid);
+		pidfile(pid, config.pid);
 		exit(0);
 	}
 	umask(0);
@@ -50,6 +51,7 @@ int main(int argc, char *argv[]) {
 	sprintf(port_str, "%d", config.port);
 	if (sockfd < 0) {
 		log_event(log_fd, " ERROR: Cannot bind to interface\n", NULL);
+		unlink(config.pid);
 		exit(1);
 	}
 	else
@@ -62,9 +64,11 @@ int main(int argc, char *argv[]) {
 			ddserv(config.server.zonedir, log_fd, sockfd);
 		else {
 			perror("fork");
+			unlink(config.pid);
 			exit(-1);
 		}
 	}
 	close(log_fd);
+	unlink(config.pid);
 	return 0;
 }

@@ -22,6 +22,7 @@ int main(int argc, char *argv[]) {
 	struct sockaddr_in srv_addr;
 	struct hostent *server;
 	struct iovec config_data[3];
+	int delay = 1;
 
 	if(argc < 3) {
 		fprintf(stderr, "%s -c <configfile>\n\t -h print this help\n", argv[0]);
@@ -78,7 +79,13 @@ int main(int argc, char *argv[]) {
 		srv_addr.sin_port = htons(portno);
 		if(connect(sockfd, (struct sockaddr *) &srv_addr, sizeof(srv_addr)) < 0) {
 			log_event(logfd, " Error connecting to server, retrying...\n", NULL);
+			delay++;
 			continue;
+		}
+		else {
+			if(delay > 1)
+				log_event(logfd, " Connected to server, sending data\n", NULL);
+			delay = 1;
 		}
 		n = writev(sockfd, config_data, 3);
 		if(n < 0) {
@@ -87,7 +94,7 @@ int main(int argc, char *argv[]) {
 			exit(1);
 		}
 		close(sockfd);
-		sleep(config.client.interval);
+		sleep(config.client.interval * delay);
 	}
 	close(logfd);
 	unlink(config.pid);

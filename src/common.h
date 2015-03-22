@@ -6,14 +6,6 @@
 #define FPATH_MAX 256				// lenght of file path
 
 /*
- * clientdata_t stores information provided by a client
- */
-typedef struct clientdata {
-	char domain[64];
-	char subdomain[16];
-	char ip_addr[16];
-} clientdata_t;
-/*
  * userconfig_t stores client configuration data
  */
 typedef struct userconfig {

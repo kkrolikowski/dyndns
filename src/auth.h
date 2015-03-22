@@ -17,10 +17,10 @@ void get_salt(char *p, char *salt);
 int userauth(char *login, char *pass);
 /*
  * isAuthorized -- check if user is authorized to update domain
- * It Takes two argument *login and *domain.
+ * It Takes two arguments *login and *domain.
  * Returned values:
  * -1 - user unknown or unauthorized to update domain
- * 1 - if user is authorize to update domain or create newone
+ *  1 - if user is authorize to update domain or create newone
  */
 int isAuthorized(char *user, char *domain);
 #endif

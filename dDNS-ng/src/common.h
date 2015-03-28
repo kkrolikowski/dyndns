@@ -20,6 +20,10 @@ typedef struct userconfig {
  */
 typedef struct serverconfig {
 	char zonedir[FPATH_MAX];
+	char db_host[16];
+	char db_name[16];
+	char db_login[16];
+	char db_pass[24];
 } serverconfig_t;
 /*
  * config_t common client/server configuration

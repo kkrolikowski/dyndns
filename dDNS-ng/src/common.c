@@ -37,6 +37,14 @@ bool ReadCFG(config_t * cfg, char * filename) {
 			strcpy(cfg->client.password, getVal(buf));
 		if(strstr(buf, "pid ="))
 			strcpy(cfg->pid, getVal(buf));
+		if(strstr(buf, "db_host ="))
+			strcpy(cfg->server.db_host, getVal(buf));
+		if(strstr(buf, "db_name ="))
+			strcpy(cfg->server.db_name, getVal(buf));
+		if(strstr(buf, "db_login ="))
+			strcpy(cfg->server.db_login, getVal(buf));
+		if(strstr(buf, "db_pass ="))
+			strcpy(cfg->server.db_pass, getVal(buf));
 	}
 	fclose(cfgfile);
 	return true;

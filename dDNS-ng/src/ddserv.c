@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/uio.h>
@@ -14,16 +15,16 @@
 
 static void splitDomain(char *userdomain, cfgdata_t * cfg);
 
-int ddserv(char * zonedir, int logfd, int sockfd) {
+int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 	int cli_fd, n;
 	int authstatus;
 	char * source_addr;
 	char login[12];
 	char pass[24];
 	char client_domain[64];
-
 	char zonepath[64];
 	cfgdata_t cf;
+	sqldata_t db_userdata;
 	struct iovec client_data[3];
 
 	source_addr = (char *) malloc(16 * sizeof(char));
@@ -35,7 +36,7 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 	client_data[2].iov_base = client_domain;
 	client_data[2].iov_len = sizeof(client_domain);
 
-	strcpy(zonepath, zonedir);
+	strcpy(zonepath, cfg_file->server.zonedir);
 	if ((cli_fd = clientConn(sockfd, source_addr)) < 0) {
 		log_event(logfd, " ERROR: Connection failed from: ", source_addr, "\n", NULL);
 		exit(-1);
@@ -49,13 +50,17 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 		log_event(logfd, " ERROR: Read data failed from: ", source_addr, "\n", NULL);
 		exit(-1);
 	}
-	authstatus = userauth(login, pass);
+	if(getUserData(cfg_file, &db_userdata, login) == false) {
+		log_event(logfd, " ERROR: Fetch SQL Data\n", NULL);
+		exit(-1);
+	}
+	authstatus = userauth(&db_userdata, login, pass);
 	if(authstatus == 0) {
 		splitDomain(client_domain, &cf);
 		strcat(zonepath, cf.domain);
 		if(if_Exist(cf.subdomain, zonepath) == true) {
 			if(if_Exist(cf.ip_addr, zonepath) == false) {
-				if(isAuthorized(login, client_domain) > 0) {
+				if(isAuthorized(&db_userdata, login, client_domain) > 0) {
 					updateZone(&cf, zonepath);
 					log_event(logfd, " INFO: ", cf.subdomain, " IP Address updated\n", NULL);
 				}
@@ -64,7 +69,7 @@ int ddserv(char * zonedir, int logfd, int sockfd) {
 			}
 		}
 		else {
-			if(isAuthorized(login, client_domain) > 0) {
+			if(isAuthorized(&db_userdata, login, client_domain) > 0) {
 				NewEntry(&cf, zonepath);
 				log_event(logfd, " INFO: New host added: ", cf.subdomain, ".", cf.domain, "\n", NULL);
 			}

@@ -1,5 +1,6 @@
 #ifndef AUTH_H_
 #define AUTH_H_
+#include "dynsrv.h"
 /*
  * get_salt -- strips salt from passwd/shadow file
  * It takes two arguments: *p which is encrypted password
@@ -14,7 +15,7 @@ void get_salt(char *p, char *salt);
  * 1 - unknown user
  * 2 - incorrect password
  */
-int userauth(char *login, char *pass);
+int userauth(sqldata_t *dbdata, char *login, char *pass);
 /*
  * isAuthorized -- check if user is authorized to update domain
  * It Takes two arguments *login and *domain.
@@ -22,5 +23,5 @@ int userauth(char *login, char *pass);
  * -1 - user unknown or unauthorized to update domain
  *  1 - if user is authorize to update domain or create newone
  */
-int isAuthorized(char *user, char *domain);
+int isAuthorized(sqldata_t *dbdata, char *user, char *domain);
 #endif

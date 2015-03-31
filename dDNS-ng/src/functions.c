@@ -14,8 +14,10 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <mysql.h>
 #include "dynsrv.h"
 #include "auth.h"
+#include "common.h"
 
 int bindToInterface(int portno) {
 	int sockfd;
@@ -275,4 +277,47 @@ int apply(char * tmp_f, char * dst_f, const char * domain) {
     	perror("fork");
 
     return 1;
+}
+bool getUserData(config_t * cf, sqldata_t *info, char *login) {
+	MYSQL * sql;
+	MYSQL_RES * res;
+	MYSQL_ROW row;
+
+	char * check_user_query = "SELECT * FROM users WHERE login = ";
+	char * query;
+
+	query = (char *) malloc((strlen(check_user_query) + strlen(login) + 1) * sizeof(char));
+	strcat(query, login);
+
+	sql = mysql_init(NULL);
+	if(sql == NULL) {
+		fprintf(stderr, "Initialization failed\n");
+		exit(1);
+	}
+	 if(mysql_real_connect(sql, cf->server.db_host,
+			cf->server.db_login, cf->server.db_pass, cf->server.db_name, 3306, NULL, 0) == NULL)
+		return false;
+	 if(mysql_query(sql, query) != 0) {
+	 	return false;
+	 }
+	 res = mysql_store_result(sql);
+	 if(res == NULL) {
+	 	return false;
+	 }
+	 if(mysql_field_count(sql) == 0) {
+	 	free(query);
+	 	return false;
+	 }
+	 if((row = mysql_fetch_row(res)) != 0) {
+		 strcpy(info->login, row[1]);
+		 strcpy(info->pass, row[2]);
+		 strcpy(info->subdomain, row[7]);
+		 info->isactive = atoi(row[4]);
+	 }
+	 else
+		 return false;
+
+	 free(query);
+	 mysql_close(sql);
+	 return true;
 }

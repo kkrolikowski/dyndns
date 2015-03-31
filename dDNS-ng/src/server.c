@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
 		if(dsrv > 0)
 			wait(&status);
 		else if(dsrv == 0)
-			ddserv(config.server.zonedir, log_fd, sockfd);
+			ddserv(&config, log_fd, sockfd);
 		else {
 			perror("fork");
 			unlink(config.pid);

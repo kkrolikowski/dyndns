@@ -1,10 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pwd.h>
-#ifndef __FreeBSD__
-#include <shadow.h>
-#endif
 #include <sys/types.h>
 #include <sys/uio.h>
 #define _XOPEN_SOURCE
@@ -13,42 +9,23 @@
 #define _GNU_SOURCE
 #include <crypt.h>
 #endif
+#include "common.h"
 #include "auth.h"
 
-int userauth(char *login, char *pass) {
-	char * epass;
+int userauth(sqldata_t *dbdata, char *login, char *pass) {
 	char * salt;
-#ifndef __FreeBSD__
-	struct spwd *pw;
-#else
-	struct passwd *pw;
-#endif
-	epass = (char *) malloc(36 * sizeof(char));
-	salt = (char *) malloc(16 * sizeof(char));
 
-#ifndef __FreeBSD__
-	if((pw = getspnam(login)) == NULL) {
-#else
-	if((pw = getpwnam(login)) == NULL) {
-#endif
+	salt = (char *) malloc(16 * sizeof(char));
+	if(strcmp(dbdata->login, login) != 0) {
 		free(salt);
-		free(epass);
 		return 1;
 	}
-#ifndef __FreeBSD__
-	get_salt(pw->sp_pwdp, salt);
-	if(strcmp(pw->sp_pwdp, (char *)crypt(pass, salt)) != 0) {
-#else
-	get_salt(pw->pw_passwd, salt);
-	if(strcmp(pw->pw_passwd, (char *)crypt(pass, salt)) != 0) {
-#endif
+	get_salt(dbdata->pass, salt);
+	if(strcmp((char *) dbdata->pass, (char *) crypt(pass, salt)) != 0) {
 		free(salt);
-		free(epass);
 		return 2;
 	}
-	free(epass);
 	free(salt);
-
 	return 0;
 }
 void get_salt(char *p, char *salt) {
@@ -61,12 +38,11 @@ void get_salt(char *p, char *salt) {
 	}
 	*salt = '\0';
 }
-int isAuthorized(char *user, char *domain) {
-	struct passwd * pw;
+int isAuthorized(sqldata_t *dbdata, char *user, char *domain) {
 
-	if((pw = getpwnam(user)) == NULL)
+	if(strcmp(user, dbdata->login) != 0)
 		return -1;
-	if(strcmp(domain, pw->pw_gecos) == 0)
+	if(strcmp(domain, dbdata->subdomain) == 0)
 		return 1;
 	else
 		return -1;

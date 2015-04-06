@@ -1,9 +1,19 @@
+OS := $(shell uname)
+ifeq ($(OS), FreeBSD)
+	LIBB = -L/usr/local/lib/mysql
+	HEADER = -I/usr/local/include/mysql
+else
+	HEADER = -I/usr/include/mysql
+	LIBB = -L/usr/lib/x86_64-linux-gnu
+endif
+	LIBRA = -lcrypt -lmysqlclient
+
 all:
-	gcc -o ddns-server ddserv.c functions.c server.c common.c auth.c -lcrypt -lmysqlclient -L/usr/lib/x86_64-linux-gnu -I/usr/include/mysql
+	gcc -o ddns-server ddserv.c functions.c server.c common.c auth.c $(LIBRA) $(LIBB) $(HEADER)
 	gcc -o ddns-client client.c common.c
 client:
 	gcc -o ddns-client client.c common.c
 server:
-	gcc -o ddns-server ddserv.c functions.c server.c common.c auth.c -lcrypt -lmysqlclient -L/usr/lib/x86_64-linux-gnu -I/usr/include/mysql
+	gcc -o ddns-server ddserv.c functions.c server.c common.c auth.c $(LIBRA) $(LIBB) $(HEADER)
 clean:
 	rm -f ddns-client ddns-server

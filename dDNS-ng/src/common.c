@@ -50,16 +50,13 @@ bool ReadCFG(config_t * cfg, char * filename) {
 	return true;
 }
 char * getVal(char * str) {
-	char * newstr = str;
-
 	while(*str) {
-		newstr = ++str;
-		if(isspace(*str) && (isalpha(*(str+1)) || isdigit(*(str+1)) || *(str+1) == '/'))
+		if(isspace(*str) && (isalnum(*(str+1)) || *(str+1) == '/')) {
+			str++;
 			break;
+		}
 	}
-	str = newstr;
-	*(str+(strlen(str)-1)) = '\0';
-	return ++str;
+	return str;
 }
 void log_event(int logfd, char *first, ...) {
 	va_list msgs;

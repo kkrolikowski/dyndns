@@ -13,7 +13,7 @@ typedef struct cfgdata {
 } cfgdata_t;
 typedef struct sqldata {
 	char login[12];
-	char pass[32];
+	char pass[36];
 	char subdomain[64];
 	int isactive;
 } sqldata_t;

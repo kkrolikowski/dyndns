@@ -267,8 +267,11 @@ int apply(char * tmp_f, char * dst_f, const char * domain) {
     if(reload_pid == 0) {
     	ret = execl("/usr/sbin/rndc", "rndc", "reload", domain, NULL);
     	if(ret == -1) {
-    		perror("execl");
-    		exit(-1);
+    		ret = execl("/usr/local/sbin/rndc", "rndc", "reload", domain, NULL);
+    		if(ret == -1) {
+    			perror("execl");
+    			exit(-1);
+    		}
     	}
     }
     else if(reload_pid > 0)
@@ -286,9 +289,11 @@ bool getUserData(config_t * cf, sqldata_t *info, char *login) {
 	char * check_user_query = "SELECT * FROM users WHERE login = ";
 	char * query;
 
-	query = (char *) malloc((strlen(check_user_query) + strlen(login) + 1) * sizeof(char));
+	query = (char *) malloc((strlen(check_user_query) + strlen(login) + 3) * sizeof(char));
+	strcpy(query, check_user_query);
+	strcat(query,"'");
 	strcat(query, login);
-
+	strcat(query,"'");
 	sql = mysql_init(NULL);
 	if(sql == NULL) {
 		fprintf(stderr, "Initialization failed\n");

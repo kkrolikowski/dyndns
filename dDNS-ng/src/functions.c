@@ -294,7 +294,7 @@ bool getUserData(config_t * cf, sqldata_t *info, char *login) {
 		fprintf(stderr, "Initialization failed\n");
 		exit(1);
 	}
-	 if(mysql_real_connect(sql, cf->server.db_host,
+	if(mysql_real_connect(sql, cf->server.db_host,
 			cf->server.db_login, cf->server.db_pass, cf->server.db_name, 3306, NULL, 0) == NULL)
 		return false;
 	 if(mysql_query(sql, query) != 0) {

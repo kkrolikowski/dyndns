@@ -5,12 +5,11 @@
 #include <stdarg.h>
 #include <time.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include "common.h"
 
 bool ReadCFG(config_t * cfg, char * filename) {
 	FILE * cfgfile;
-	char opt[50];
-	char val[50];
 	char buf[256];
 
 	cfgfile = fopen(filename, "r");
@@ -41,22 +40,21 @@ bool ReadCFG(config_t * cfg, char * filename) {
 			strcpy(cfg->server.db_host, getVal(buf));
 		if(strstr(buf, "db_name ="))
 			strcpy(cfg->server.db_name, getVal(buf));
-		if(strstr(buf, "db_login ="))
+		if(strstr(buf, "db_user ="))
 			strcpy(cfg->server.db_login, getVal(buf));
-		if(strstr(buf, "db_pass ="))
+		if(strstr(buf, "db_secret ="))
 			strcpy(cfg->server.db_pass, getVal(buf));
 	}
 	fclose(cfgfile);
 	return true;
 }
 char * getVal(char * str) {
-	while(*str) {
-		if(isspace(*str) && (isalnum(*(str+1)) || *(str+1) == '/')) {
-			str++;
+	while(*str++) {
+		if(isspace(*str) && (isalnum(*(str+1)) || *(str+1) == '/'))
 			break;
-		}
 	}
-	return str;
+	*(str+(strlen(str)-1)) = '\0';
+	return ++str;
 }
 void log_event(int logfd, char *first, ...) {
 	va_list msgs;

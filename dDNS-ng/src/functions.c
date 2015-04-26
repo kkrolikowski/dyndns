@@ -326,3 +326,34 @@ bool getUserData(config_t * cf, sqldata_t *info, char *login) {
 	 mysql_close(sql);
 	 return true;
 }
+bool updateDB(config_t * cf, sqldata_t *info, char *login, char *ip, char * timestamp) {
+	MYSQL * sql;
+
+	char * query;
+	char * update_query = "UPDATE users set ip = '";
+	query = (char *) malloc((strlen(update_query) + strlen(ip) + strlen(timestamp) + strlen(login) + 36) * sizeof(char));
+
+	strcpy(query, update_query);
+	strcat(query, ip);
+	strcat(query, "', lastupdate = '");
+	strcat(query, timestamp);
+	strcat(query,"'");
+	strcat(query, " WHERE login = '");
+	strcat(query, login);
+	strcat(query, "'");
+
+	sql = mysql_init(NULL);
+	if(sql == NULL) {
+		fprintf(stderr, "Initialization failed\n");
+		exit(1);
+	}
+	if(mysql_real_connect(sql, cf->server.db_host,
+			cf->server.db_login, cf->server.db_pass, cf->server.db_name, 3306, NULL, 0) == NULL)
+		return false;
+	 if(mysql_query(sql, query) != 0) {
+	 	return false;
+	 }
+	 free(query);
+	 mysql_close(sql);
+	 return true;
+}

@@ -25,6 +25,7 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 	char zonepath[64];
 	cfgdata_t cf;
 	sqldata_t db_userdata;
+	extern char t_stamp[TIMESTAMP_LEN];
 	struct iovec client_data[3];
 
 	source_addr = (char *) malloc(16 * sizeof(char));
@@ -62,6 +63,7 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 			if(if_Exist(cf.ip_addr, zonepath) == false) {
 				if(isAuthorized(&db_userdata, login, client_domain) > 0) {
 					updateZone(&cf, zonepath);
+					updateDB(cfg_file, &db_userdata, login, source_addr, timestamp_new(t_stamp));
 					log_event(logfd, " INFO: ", cf.subdomain, " IP Address updated\n", NULL);
 				}
 				else
@@ -71,6 +73,7 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 		else {
 			if(isAuthorized(&db_userdata, login, client_domain) > 0) {
 				NewEntry(&cf, zonepath);
+				updateDB(cfg_file, &db_userdata, login, source_addr, timestamp_new(t_stamp));
 				log_event(logfd, " INFO: New host added: ", cf.subdomain, ".", cf.domain, "\n", NULL);
 			}
 			else

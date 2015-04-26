@@ -32,4 +32,5 @@ int NewEntry(cfgdata_t * cf, char * file);
 int apply(char * tmp_f, char * dst_f, const char * domain);
 int ddserv(config_t * cfg_file, int logfd, int sockfd);
 bool getUserData(config_t * cf, sqldata_t *info, char * login);
+bool updateDB(config_t * cf, sqldata_t *info, char *login, char *ip, char * timestamp);
 #endif

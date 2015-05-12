@@ -31,7 +31,9 @@ bool if_Exist(char *item, char *zfname);
 int NewEntry(cfgdata_t * cf, char * file);
 int apply(char * tmp_f, char * dst_f, const char * domain);
 int ddserv(config_t * cfg_file, int logfd, int sockfd);
-bool getUserData(config_t * cf, sqldata_t *info, char * login);
-bool updateDB(config_t * cf, sqldata_t *info, char *login, char *ip, char * timestamp);
-bool dbLogin(config_t * cf, MYSQL * db);
+bool getUserData(MYSQL * dbh, sqldata_t *info, char *login);
+bool updateDB(MYSQL * dbh, sqldata_t *info, char *login, char *ip, char * timestamp);
+MYSQL * dbLogin(config_t * cf);
+int getUserID(MYSQL * dbh, char * login);
+bool userlog(MYSQL * dbh, int userid, char *ip, char * timestamp);
 #endif

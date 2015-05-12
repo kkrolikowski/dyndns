@@ -281,8 +281,7 @@ int apply(char * tmp_f, char * dst_f, const char * domain) {
 
     return 1;
 }
-bool getUserData(config_t * cf, sqldata_t *info, char *login) {
-	MYSQL * sql;
+bool getUserData(MYSQL * dbh, sqldata_t *info, char *login) {
 	MYSQL_RES * res;
 	MYSQL_ROW row;
 
@@ -294,23 +293,18 @@ bool getUserData(config_t * cf, sqldata_t *info, char *login) {
 	strcat(query,"'");
 	strcat(query, login);
 	strcat(query,"'");
-	sql = mysql_init(NULL);
-	if(sql == NULL) {
-		fprintf(stderr, "Initialization failed\n");
-		exit(1);
-	}
-	if(mysql_real_connect(sql, cf->server.db_host,
-			cf->server.db_login, cf->server.db_pass, cf->server.db_name, 3306, NULL, 0) == NULL)
-		return false;
-	 if(mysql_query(sql, query) != 0) {
+	 if(mysql_query(dbh, query) != 0) {
+		mysql_close(dbh);
 	 	return false;
 	 }
-	 res = mysql_store_result(sql);
+	 res = mysql_store_result(dbh);
 	 if(res == NULL) {
+		 mysql_close(dbh);
 	 	return false;
 	 }
-	 if(mysql_field_count(sql) == 0) {
+	 if(mysql_field_count(dbh) == 0) {
 	 	free(query);
+	 	mysql_close(dbh);
 	 	return false;
 	 }
 	 if((row = mysql_fetch_row(res)) != 0) {
@@ -319,16 +313,15 @@ bool getUserData(config_t * cf, sqldata_t *info, char *login) {
 		 strcpy(info->subdomain, row[7]);
 		 info->isactive = atoi(row[4]);
 	 }
-	 else
+	 else {
+		 mysql_close(dbh);
 		 return false;
+	 }
 
 	 free(query);
-	 mysql_close(sql);
 	 return true;
 }
-bool updateDB(config_t * cf, sqldata_t *info, char *login, char *ip, char * timestamp) {
-	MYSQL * sql;
-
+bool updateDB(MYSQL * dbh, sqldata_t *info, char *login, char *ip, char * timestamp) {
 	char * query;
 	char * update_query = "UPDATE users set ip = '";
 	query = (char *) malloc((strlen(update_query) + strlen(ip) + strlen(timestamp) + strlen(login) + 36) * sizeof(char));
@@ -342,27 +335,74 @@ bool updateDB(config_t * cf, sqldata_t *info, char *login, char *ip, char * time
 	strcat(query, login);
 	strcat(query, "'");
 
-	sql = mysql_init(NULL);
-	if(sql == NULL) {
-		fprintf(stderr, "Initialization failed\n");
-		exit(1);
-	}
-	if(mysql_real_connect(sql, cf->server.db_host,
-			cf->server.db_login, cf->server.db_pass, cf->server.db_name, 3306, NULL, 0) == NULL)
-		return false;
-	 if(mysql_query(sql, query) != 0) {
+	 if(mysql_query(dbh, query) != 0) {
 	 	return false;
 	 }
 	 free(query);
-	 mysql_close(sql);
 	 return true;
 }
-bool dbLogin(config_t * cf, MYSQL * db) {
+MYSQL * dbLogin(config_t * cf) {
+	MYSQL * db;
 	db = mysql_init(NULL);
 	if(db == NULL)
-		return false;
+		return NULL;
 	if(mysql_real_connect(db, cf->server.db_host,
 			cf->server.db_login, cf->server.db_pass, cf->server.db_name, 3306, NULL, 0) == NULL)
-		return false;
-	return true;
+		return NULL;
+	return db;
+}
+int getUserID(MYSQL * dbh, char * login) {
+	MYSQL_RES * res;
+	MYSQL_ROW row;
+	int userid;
+	char * query;
+	char * userid_query = "SELECT id FROM users WHERE login = '";
+	query = (char *) malloc((strlen(userid_query) + strlen(login) + 2) * sizeof(char));
+
+	strcpy(query, userid_query);
+	strcat(query, login);
+	strcat(query, "'");
+
+	if(mysql_query(dbh, query) != 0) {
+		mysql_close(dbh);
+		userid = -1;
+	}
+	res = mysql_store_result(dbh);
+	if(res == NULL) {
+		mysql_close(dbh);
+		userid = -1;
+	}
+	if(mysql_field_count(dbh) == 0) {
+		free(query);
+		mysql_close(dbh);
+		return -1;
+	}
+	if((row = mysql_fetch_row(res)) == 0)
+		userid = -1;
+	else
+		userid = atoi(row[0]);
+
+	free(query);
+	return userid;
+}
+bool userlog(MYSQL * dbh, int userid, char *ip, char * timestamp) {
+	char str_userid[2];
+	char * query;
+	sprintf(str_userid, "%d", userid);
+	char * log_query = "INSERT INTO user_log(user_id,ip,date) VALUES(";
+	query = (char *) malloc((strlen(log_query) + strlen(ip) + strlen(timestamp) + 12) * sizeof(char));
+
+	strcpy(query, log_query);
+	strcat(query, str_userid);
+	strcat(query, ", '");
+	strcat(query, ip);
+	strcat(query,"', '");
+	strcat(query, timestamp);
+	strcat(query, "')");
+
+	 if(mysql_query(dbh, query) != 0) {
+	 	return false;
+	 }
+	 free(query);
+	 return true;
 }

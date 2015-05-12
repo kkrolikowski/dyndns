@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <fcntl.h>
+#include <mysql.h>
 #include "dynsrv.h"
 #include "auth.h"
 #include "common.h"
@@ -18,6 +19,7 @@ static void splitDomain(char *userdomain, cfgdata_t * cfg);
 int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 	int cli_fd, n;
 	int authstatus;
+	int dynuser_id;
 	char * source_addr;
 	char login[12];
 	char pass[24];
@@ -27,6 +29,7 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 	sqldata_t db_userdata;
 	extern char t_stamp[TIMESTAMP_LEN];
 	struct iovec client_data[3];
+	MYSQL * dbh;
 
 	source_addr = (char *) malloc(16 * sizeof(char));
 	bzero(source_addr, 16 * sizeof(char));
@@ -51,11 +54,16 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 		log_event(logfd, " ERROR: Read data failed from: ", source_addr, "\n", NULL);
 		exit(-1);
 	}
-	if(getUserData(cfg_file, &db_userdata, login) == false) {
+	if((dbh = dbLogin(cfg_file)) == NULL) {
+			log_event(logfd, " ERROR: DB connection failed.\n", NULL);
+			exit(-1);
+	}
+	if(getUserData(dbh, &db_userdata, login) == false) {
 		log_event(logfd, " ERROR: Fetch SQL Data\n", NULL);
 		exit(-1);
 	}
 	authstatus = userauth(&db_userdata, login, pass);
+	dynuser_id = getUserID(dbh, login);
 	if(authstatus == 0) {
 		splitDomain(client_domain, &cf);
 		strcat(zonepath, cf.domain);
@@ -63,7 +71,8 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 			if(if_Exist(cf.ip_addr, zonepath) == false) {
 				if(isAuthorized(&db_userdata, login, client_domain) > 0) {
 					updateZone(&cf, zonepath);
-					updateDB(cfg_file, &db_userdata, login, source_addr, timestamp_new(t_stamp));
+					updateDB(dbh, &db_userdata, login, source_addr, timestamp_new(t_stamp));
+					userlog(dbh, dynuser_id, source_addr, timestamp_new(t_stamp));
 					log_event(logfd, " INFO: ", cf.subdomain, " IP Address updated\n", NULL);
 				}
 				else
@@ -73,7 +82,8 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 		else {
 			if(isAuthorized(&db_userdata, login, client_domain) > 0) {
 				NewEntry(&cf, zonepath);
-				updateDB(cfg_file, &db_userdata, login, source_addr, timestamp_new(t_stamp));
+				updateDB(dbh, &db_userdata, login, source_addr, timestamp_new(t_stamp));
+				userlog(dbh, dynuser_id, source_addr, timestamp_new(t_stamp));
 				log_event(logfd, " INFO: New host added: ", cf.subdomain, ".", cf.domain, "\n", NULL);
 			}
 			else
@@ -86,6 +96,7 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 		log_event(logfd, " ERROR: Incorrect password for user: ", login, "\n", NULL);
 	close(cli_fd);
 	free(source_addr);
+	mysql_close(dbh);
 	exit(1);
 }
 static void splitDomain(char *userdomain, cfgdata_t * cfg) {

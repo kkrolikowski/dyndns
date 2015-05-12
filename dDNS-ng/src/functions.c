@@ -357,3 +357,12 @@ bool updateDB(config_t * cf, sqldata_t *info, char *login, char *ip, char * time
 	 mysql_close(sql);
 	 return true;
 }
+bool dbLogin(config_t * cf, MYSQL * db) {
+	db = mysql_init(NULL);
+	if(db == NULL)
+		return false;
+	if(mysql_real_connect(db, cf->server.db_host,
+			cf->server.db_login, cf->server.db_pass, cf->server.db_name, 3306, NULL, 0) == NULL)
+		return false;
+	return true;
+}

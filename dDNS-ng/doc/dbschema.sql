@@ -30,6 +30,22 @@ CREATE TABLE `domains` (
 SET character_set_client = @saved_cs_client;
 
 --
+-- Table structure for table `user_log`
+--
+
+DROP TABLE IF EXISTS `user_log`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `user_log` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `ip` varchar(16) NOT NULL,
+  `date` varchar(30) NOT NULL,
+  UNIQUE KEY `id` (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `users`
 --
 
@@ -60,4 +76,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-05-11 21:07:18
+-- Dump completed on 2015-05-12 22:59:09

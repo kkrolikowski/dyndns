@@ -310,7 +310,7 @@ bool getUserData(MYSQL * dbh, sqldata_t *info, char *login) {
 	 if((row = mysql_fetch_row(res)) != 0) {
 		 strcpy(info->login, row[1]);
 		 strcpy(info->pass, row[2]);
-		 strcpy(info->subdomain, row[7]);
+		 strcpy(info->subdomain, row[8]);
 		 info->isactive = atoi(row[4]);
 	 }
 	 else {

@@ -24,6 +24,9 @@ typedef struct serverconfig {
 	char db_name[16];
 	char db_login[16];
 	char db_pass[24];
+	char smtp_ip[16];
+	int smtp_port;
+	char mail_from[64];
 } serverconfig_t;
 /*
  * config_t common client/server configuration

@@ -44,6 +44,12 @@ bool ReadCFG(config_t * cfg, char * filename) {
 			strcpy(cfg->server.db_login, getVal(buf));
 		if(strstr(buf, "db_secret ="))
 			strcpy(cfg->server.db_pass, getVal(buf));
+		if(strstr(buf, "smtp_ip ="))
+			strcpy(cfg->server.smtp_ip, getVal(buf));
+		if(strstr(buf, "smtp_port ="))
+			cfg->server.smtp_port = atoi(getVal(buf));
+		if(strstr(buf, "mail_from ="))
+			strcpy(cfg->server.mail_from, getVal(buf));
 	}
 	fclose(cfgfile);
 	return true;

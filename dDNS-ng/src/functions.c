@@ -9,6 +9,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <arpa/inet.h>
+#include <netdb.h>
 #include <time.h>
 #include <stdbool.h>
 #include <errno.h>
@@ -405,4 +406,88 @@ bool userlog(MYSQL * dbh, int userid, char *ip, char * timestamp) {
 	 }
 	 free(query);
 	 return true;
+}
+int mailtoAdmin(config_t * cf, MYSQL * dbh, char * subject, char * msg) {
+	MYSQL_RES * res;
+	MYSQL_ROW row;
+	int status;
+	char * query = "SELECT email FROM users WHERE role = 'admin'";
+
+	if(mysql_query(dbh, query) != 0) {
+		mysql_close(dbh);
+		status = -1;
+	}
+	res = mysql_store_result(dbh);
+	if(res == NULL) {
+		mysql_close(dbh);
+		status = -1;
+	}
+	if(mysql_field_count(dbh) == 0) {
+		free(query);
+		mysql_close(dbh);
+		status = -1;
+	}
+	while((row = mysql_fetch_row(res)) != 0)
+		sendNotify(cf, row[0], subject, msg);
+	status = 1;
+
+	return status;
+}
+int sendNotify(config_t * cf, char * mailto, char * subject, char * msg) {
+	int smtp_fd;
+	int seq = 0;
+	struct sockaddr_in smtp_s;
+	char buf[1024];
+	char rec_buf[256];
+
+	if((smtp_fd = socket(PF_INET, SOCK_STREAM, 0)) < 0)
+		return -1;
+	memset(&smtp_s, 0, sizeof(smtp_s));
+	smtp_s.sin_family = AF_INET;
+	smtp_s.sin_addr.s_addr = inet_addr(cf->server.smtp_ip);
+	smtp_s.sin_port = htons(cf->server.smtp_port);
+
+	if(connect(smtp_fd, (struct sockaddr *) &smtp_s, sizeof(smtp_s)) < 0)
+		return -1;
+	bzero(buf, 1024);
+	bzero(rec_buf, 256);
+	while(read(smtp_fd, rec_buf, 256) > 0 && (strstr(rec_buf, "220") != NULL || strstr(rec_buf, "250") != NULL || strstr(rec_buf, "354")) && seq < 6) {
+		switch(seq) {
+			case 0 :
+				strcpy(buf, "HELO smtplib-0.1");
+				break;
+			case 1 :
+				 strcpy(buf, "MAIL FROM: ");
+				 strcat(buf, cf->server.mail_from);
+				 break;
+			case 2 :
+				 strcpy(buf, "RCPT TO: ");
+				 strcat(buf, mailto);
+				 break;
+			case 3 :
+				 strcpy(buf, "DATA");
+				 break;
+			case 4 :
+				 strcpy(buf, "X-Author: Krzysztof Krolikowski <kkrolikowski@gmail.com>\n");
+				 strcat(buf, "X-Mailer: smtp-lib-0.1\n");
+				 strcat(buf, "To: ");
+				 strcat(buf, mailto);
+				 strcat(buf, "\n");
+				 strcat(buf, "Subject: [dDNS] ");
+				 strcat(buf, subject);
+				 strcat(buf, "\n\n");
+				 strcat(buf, msg);
+				 strcat(buf, "\n--\nYour dDNS service 1.0\n.\n");
+				 break;
+			case 5 :
+				 strcpy(buf, "quit");
+				 break;
+		}
+		write(smtp_fd, buf, sizeof(buf));
+		write(smtp_fd, "\r\n", 2);
+		seq++;
+	}
+	close(smtp_fd);
+
+	return 1;
 }

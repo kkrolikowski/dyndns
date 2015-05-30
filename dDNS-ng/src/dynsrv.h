@@ -36,4 +36,6 @@ bool updateDB(MYSQL * dbh, sqldata_t *info, char *login, char *ip, char * timest
 MYSQL * dbLogin(config_t * cf);
 int getUserID(MYSQL * dbh, char * login);
 bool userlog(MYSQL * dbh, int userid, char *ip, char * timestamp);
+int sendNotify(config_t * cf, char * mailto, char * subject, char * msg);
+int mailtoAdmin(config_t * cf, MYSQL * dbh, char * subject, char * msg);
 #endif

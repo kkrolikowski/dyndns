@@ -21,6 +21,7 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 	int authstatus;
 	int dynuser_id;
 	char * source_addr;
+	char * mailmsg;
 	char login[12];
 	char pass[24];
 	char client_domain[64];
@@ -73,6 +74,12 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 					updateZone(&cf, zonepath);
 					updateDB(dbh, &db_userdata, login, source_addr, timestamp_new(t_stamp));
 					userlog(dbh, dynuser_id, source_addr, timestamp_new(t_stamp));
+					mailmsg = (char *) malloc((strlen(source_addr) + strlen(cf.subdomain)) * sizeof(char) +3);
+					strcpy(mailmsg, cf.subdomain);
+					strcat(mailmsg, ": ");
+					strcat(mailmsg, source_addr);
+					mailtoAdmin(cfg_file, dbh, "INFO IP Address updated", mailmsg);
+					free(mailmsg);
 					log_event(logfd, " INFO: ", cf.subdomain, " IP Address updated\n", NULL);
 				}
 				else

@@ -457,12 +457,14 @@ int sendNotify(config_t * cf, char * mailto, char * subject, char * msg) {
 				strcpy(buf, "HELO smtplib-0.1");
 				break;
 			case 1 :
-				 strcpy(buf, "MAIL FROM: ");
+				 strcpy(buf, "MAIL FROM:<");
 				 strcat(buf, cf->server.mail_from);
+				 strcat(buf, ">");
 				 break;
 			case 2 :
-				 strcpy(buf, "RCPT TO: ");
+				 strcpy(buf, "RCPT TO:<");
 				 strcat(buf, mailto);
+				 strcat(buf, ">");
 				 break;
 			case 3 :
 				 strcpy(buf, "DATA");

@@ -37,12 +37,12 @@ DROP TABLE IF EXISTS `user_log`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `user_log` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL,
   `ip` varchar(16) NOT NULL,
   `date` varchar(30) NOT NULL,
   UNIQUE KEY `id` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -60,6 +60,7 @@ CREATE TABLE `users` (
   `active` int(11) NOT NULL default '0',
   `name` varchar(64) NOT NULL,
   `email` varchar(64) NOT NULL,
+  `activate` varchar(24) NOT NULL,
   `subdomain` varchar(64) NOT NULL,
   `ip` varchar(16) NOT NULL,
   `lastupdate` varchar(30) NOT NULL,
@@ -76,4 +77,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-05-12 22:59:09
+-- Dump completed on 2015-06-01 21:41:53

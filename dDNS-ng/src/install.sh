@@ -70,4 +70,19 @@ if [ $1 == "server" ] ; then
 		fi
 
 	fi
+elif [ $1 == "client" ] ; then
+	if [ ! -f "ddns-client" ] ; then
+		echo "Run: $MAKE client"
+	else
+		echo "Installing files"
+		if [[ -f "$BINDIR/ddns-client" && -f "$CONFDIR/dyndns-client.conf" ]] ; then
+			echo "Files allready installed, nothing to do..."
+		else
+			cp ddns-client $BINDIR/
+			cp ../doc/dyndns-client.conf $CONFDIR/
+			echo "Please edit $CONFDIR/dyndns-client.conf"
+		fi
+	fi
+else
+	echo "Unknown option"
 fi

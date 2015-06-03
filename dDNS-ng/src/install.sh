@@ -36,18 +36,15 @@ if [ $1 == "server" ] ; then
 			read
 		fi
 		echo "Preparing database"
-		echo -n "DB host: "
-		read DBHOST
-		echo -n "DB user: "
-		read DBUSER
-		echo -n "DB password: "
-		read -s DBPASS
+		read -p "DB host: " DBHOST
+		read -p "DB user: " DBUSER
+		read -s -p "DB password: " DBPASS
 		echo
-		echo -n "DB name: "
-		read DBNAME
+		read -p "DB name: " DBNAME
 		which mysql 2>&1 > /dev/null
 		if [ $? -eq 1 ]; then
 			echo "Please install mysql client"
+			exit 1
 		else
 			echo "Installing Database"
 			mysql -h$DBHOST -u$DBUSER -p$DBPASS $DBNAME < ../doc/dbschema.sql 1> /dev/null 2> $ERR
@@ -57,17 +54,13 @@ if [ $1 == "server" ] ; then
 				exit 1
 			fi
 			echo "Allmost ready. Lets create initial admin account"
-			echo -n "Login: "
-			read login
-			echo -n "Password: "
-			read -s pass
+			read -p "Login: " login
+			read -s -p "Password: " pass
 			md5pass=`echo $pass |openssl passwd -1 -stdin`
 			echo
-			echo -n "Name: "
-			read name
-			echo -n "E-mail: "
-			read email
-			mysql -h$DBHOST -u$DBUSER -p$DBPASS $DBNAME -e "INSERT INTO users(login,pass,role,active,name,email) VALUES('"$login"','"$md5pass"','admin',1,'"$name"','"$email"');" 1> /dev/null 2> $ERR
+			IFS= read -r -p "Name: " name
+			read -p "E-mail: " email
+			mysql -h$DBHOST -u$DBUSER -p$DBPASS $DBNAME -e "INSERT INTO users(login,pass,role,active,name,email) VALUES('$login','$md5pass','admin',1,'$name','$email');" 1> /dev/null 2> $ERR
 			if [ $? == 1 ] ; then
 				cat $ERR
 				unlink $ERR

@@ -479,7 +479,7 @@ int sendNotify(config_t * cf, char * mailto, char * subject, char * msg) {
 				 strcat(buf, subject);
 				 strcat(buf, "\n\n");
 				 strcat(buf, msg);
-				 strcat(buf, "\n--\nYour dDNS service 1.0\n.\n");
+				 strcat(buf, "\n\n--\nYour dDNS service 1.0\n.\n");
 				 break;
 			case 5 :
 				 strcpy(buf, "quit");

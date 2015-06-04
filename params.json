@@ -1,1 +1,1 @@
-{"name":"dDNS-ng","tagline":"dynamic DNS client/server with MySQL support","body":"### About\r\ndDNS-ng is written etirelly in C.\r\n","google":"","note":"Don't delete this file! It's used internally to help with page regeneration."}
+{"name":"dDNS-ng","tagline":"dynamic DNS client/server with MySQL support","body":"### About\r\ndDNS-ng is written etirelly in C. Supports user accounts, that are stored in MySQL database.\r\n","google":"","note":"Don't delete this file! It's used internally to help with page regeneration."}

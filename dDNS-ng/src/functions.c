@@ -411,7 +411,6 @@ char ** getAdminEmail(MYSQL * dbh) {
 	MYSQL_RES * res;
 	MYSQL_ROW row;
 	int i = 0;
-	unsigned long *data_len;
 	int resCnt;
 	char ** admins;
 
@@ -431,7 +430,6 @@ char ** getAdminEmail(MYSQL * dbh) {
 		mysql_close(dbh);
 		return NULL;
 	}
-	data_len = mysql_fetch_lengths(res);
 	admins = (char **) malloc(resCnt * sizeof(char *));
 	while((row = mysql_fetch_row(res)) != 0) {
 		admins[i] = malloc((strlen(row[0]) * sizeof(char)) + 1);

@@ -424,7 +424,7 @@ char ** getAdminEmail(MYSQL * dbh) {
 	res = mysql_store_result(dbh);
 	if(res == NULL) {
 		mysql_close(dbh);
-		return false;
+		return NULL;
 	}
 	if((resCnt = mysql_field_count(dbh)) == 0) {
 		free(query);

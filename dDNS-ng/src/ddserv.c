@@ -21,6 +21,7 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 	int authstatus;
 	int dynuser_id;
 	char * source_addr;
+	char ** mailto;
 	char * mailmsg;
 	char login[12];
 	char pass[24];
@@ -65,6 +66,7 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 	}
 	authstatus = userauth(&db_userdata, login, pass);
 	dynuser_id = getUserID(dbh, login);
+	mailto = getAdminEmail(dbh);
 	if(authstatus == 0) {
 		splitDomain(client_domain, &cf);
 		strcat(zonepath, cf.domain);
@@ -78,7 +80,10 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 					strcpy(mailmsg, cf.subdomain);
 					strcat(mailmsg, ": ");
 					strcat(mailmsg, source_addr);
-					mailtoAdmin(cfg_file, dbh, "INFO IP Address updated", mailmsg);
+					while(*mailto) {
+						sendmail(cfg_file, *mailto, "INFO IP Address updated", mailmsg);
+						mailto++;
+					}
 					free(mailmsg);
 					log_event(logfd, " INFO: ", cf.subdomain, " IP Address updated\n", NULL);
 				}
@@ -103,6 +108,7 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 		log_event(logfd, " ERROR: Incorrect password for user: ", login, "\n", NULL);
 	close(cli_fd);
 	free(source_addr);
+	free(mailto);
 	mysql_close(dbh);
 	exit(1);
 }

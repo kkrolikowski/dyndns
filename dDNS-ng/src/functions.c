@@ -407,33 +407,41 @@ bool userlog(MYSQL * dbh, int userid, char *ip, char * timestamp) {
 	 free(query);
 	 return true;
 }
-int mailtoAdmin(config_t * cf, MYSQL * dbh, char * subject, char * msg) {
+char ** getAdminEmail(MYSQL * dbh) {
 	MYSQL_RES * res;
 	MYSQL_ROW row;
-	int status;
+	int i = 0;
+	unsigned long *data_len;
+	int resCnt;
+	char ** admins;
+
 	char * query = "SELECT email FROM users WHERE role = 'admin'";
 
 	if(mysql_query(dbh, query) != 0) {
 		mysql_close(dbh);
-		status = -1;
+		return NULL;
 	}
 	res = mysql_store_result(dbh);
 	if(res == NULL) {
 		mysql_close(dbh);
-		status = -1;
+		return false;
 	}
-	if(mysql_field_count(dbh) == 0) {
+	if((resCnt = mysql_field_count(dbh)) == 0) {
 		free(query);
 		mysql_close(dbh);
-		status = -1;
+		return NULL;
 	}
-	while((row = mysql_fetch_row(res)) != 0)
-		sendNotify(cf, row[0], subject, msg);
-	status = 1;
+	data_len = mysql_fetch_lengths(res);
+	admins = (char **) malloc(resCnt * sizeof(char *));
+	while((row = mysql_fetch_row(res)) != 0) {
+		admins[i] = malloc((strlen(row[0]) * sizeof(char)) + 1);
+		strcpy(admins[i], row[0]);
+		i++;
+	}
 
-	return status;
+	return admins;
 }
-int sendNotify(config_t * cf, char * mailto, char * subject, char * msg) {
+int sendmail(config_t * cf, char * mailto, char * subject, char * msg) {
 	int smtp_fd;
 	int seq = 0;
 	struct sockaddr_in smtp_s;

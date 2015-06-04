@@ -34,8 +34,8 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd);
 bool getUserData(MYSQL * dbh, sqldata_t *info, char *login);
 bool updateDB(MYSQL * dbh, sqldata_t *info, char *login, char *ip, char * timestamp);
 MYSQL * dbLogin(config_t * cf);
+char ** getAdminEmail(MYSQL * dbh);
 int getUserID(MYSQL * dbh, char * login);
 bool userlog(MYSQL * dbh, int userid, char *ip, char * timestamp);
-int sendNotify(config_t * cf, char * mailto, char * subject, char * msg);
-int mailtoAdmin(config_t * cf, MYSQL * dbh, char * subject, char * msg);
+int sendmail(config_t * cf, char * mailto, char * subject, char * msg);
 #endif

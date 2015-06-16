@@ -2,7 +2,7 @@
 	session_start();
 	include_once './inc/config.php';
         require('./functions.php');
-	require('/usr/local/lib/php/Smarty/Smarty.class.php');
+	include('Smarty.class.php');
 	
 	$dsn = 'mysql:host='.DB_HOST.';dbname='.DBNAME;
 	$dbh = new PDO($dsn, LOGIN, PASS);
@@ -138,22 +138,21 @@
 			}
 			$www->assign('allusers', $user);
 		}
-                if($_GET['opt'] == 'chpass') {
-                   $q = $dbh->prepare("SELECT pass FROM users WHERE login = '".$_SESSION['userlogin']."'");
-                   $q->execute();
-                   if($q->rowCount() > 0) {
-                      $res = $q->fetch();
-                      if($func->checkPass($res['pass'], $_POST['oldpass'])) {
-                        $salt = substr($res['pass'], 0, 12);
-                        $passwordHash = crypt($_POST['newpass'], $salt);
-                        $q->prepare(
-                        "UPDATE users SET pass = '".$passwordHash."' WHERE login = '".$_SESSION['userlogin']."'");
-                        $q->execute();
-                      }
-                      else
-                           header('X-Message: Old password icorrect', true, 406);
-                   }
-                }
+		if(isset($_POST['changepass'])) {
+		   $q = $dbh->prepare("SELECT pass FROM users WHERE login = '".$_SESSION['userlogin']."'");
+		   $q->execute();
+		   if($q->rowCount() > 0) {
+			  $res = $q->fetch();
+			  if($func->checkPass($res['pass'], $_POST['oldpass'])) {
+				$salt = substr($res['pass'], 0, 12);
+				$passwordHash = crypt($_POST['newpass'], $salt);
+				$q = $dbh->prepare("UPDATE users SET pass = '".$passwordHash."' WHERE login = '".$_SESSION['userlogin']."'");
+				$q->execute();
+			  }
+			  else
+				   header('X-Message: Old password incorrect', true, 406);
+		   }
+		}
 	}
 	$www->assign('title', 'dDNS Service');
 	$www->assign('desc', 'Dynamic DNS system');

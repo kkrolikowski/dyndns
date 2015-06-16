@@ -165,7 +165,7 @@
             <div role="tabpanel" class="tab-pane fade col-xs-4" id="chpass">
                <h3>Change password</h3>
                   <form method="post" id="newPassForm">
-	                  <input type="hidden" name="chpass" value="newpass">
+	                  <input type="hidden" name="changepass" value="newpass">
                       <div class="form-group">
                         <label for="pass" class="control-label">Old Password:</label>
                         <input type="password" class="form-control" id="oldpass" name="oldpass">

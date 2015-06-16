@@ -147,7 +147,10 @@ $(document).ready(function() {
          }
       }
    });
-   $('#newPassForm').formValidation({
+   $('#chpassBtn').on('click', function() {
+	   $('#newPassForm')
+	   .formValidation('destroy')
+	   .formValidation({
       framework: 'bootstrap',
       icon: {
          valid: 'glyphicon glyphicon-ok',
@@ -217,16 +220,12 @@ $(document).ready(function() {
          .formValidation('validateField', 'conf_pass');
       }
    })
-   .on('#chpassBtn', function(e){
-      e.preventDefault();
-      $.ajax({
-         url: "/?opt=chpass",
-         type: "POST",
-         data: $("#newPassForm").serialize()
-      }).success(function(response) {
-         bootbox.alert("Password changed");
-      }).error(function(xhr) {
-         bootbox.alert(xhr.getResponseHeader('X-Message'));
-      });
+   .on('success.form.fv', function(e) {
+	   e.preventDefault();
+	   bootbox.alert("Password changed");
+   })
+   .on('error.form.fv', function(xhr) {
+	   bootbox.alert(xhr.getResponseHeader('X-Message'));
+   });
    });
 });

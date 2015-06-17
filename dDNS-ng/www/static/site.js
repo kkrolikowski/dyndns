@@ -147,10 +147,7 @@ $(document).ready(function() {
          }
       }
    });
-   $('#chpassBtn').on('click', function() {
-	   $('#newPassForm')
-	   .formValidation('destroy')
-	   .formValidation({
+	$('#newPassForm').formValidation({
       framework: 'bootstrap',
       icon: {
          valid: 'glyphicon glyphicon-ok',
@@ -221,11 +218,19 @@ $(document).ready(function() {
       }
    })
    .on('success.form.fv', function(e) {
-	   e.preventDefault();
-	   bootbox.alert("Password changed");
+		e.preventDefault();
+		var $form = $(e.target),
+			fv = $form.data('formValidation');
+		$.ajax({
+			url: $form.attr('action'),
+			type: 'POST',
+			data: $form.serialize(),
+			success: function() {
+				bootbox.alert("Password changed")
+			},
+			error: function(xhr) {
+				bootbox.alert(xhr.getResponseHeader('X-Message'));
+			}
+		});
    })
-   .on('error.form.fv', function(xhr) {
-	   bootbox.alert(xhr.getResponseHeader('X-Message'));
-   });
-   });
 });

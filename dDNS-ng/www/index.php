@@ -74,23 +74,22 @@
 			$www->assign('error', 'Passwords doesn\'t match');
 		if($can_go > 5) {
 			$activate_code = base64_encode(mcrypt_create_iv(18));
-                        $clientDomain = $_POST['subdomain'] . '.' . $_POST['domain'];
-                        $q = $dbh->prepare("SELECT id FROM users WHERE subdomain = '".$clientDomain."'");
-                        $q->execute();
-                        if($q->rowCount() > 0) {
-                           header('X-Message: Subdomain not available', true, 406);
-                        }
-                        else {
-                           $q = $dbh->prepare("INSERT INTO users(login,pass,role,active,name,email,activate,subdomain) VALUES('"
-                           .$newuser['login']."','".$newuser['pass_hash']."','user',0,"."'".$newuser['name']."','".$newuser['email'].
-                           "','".$activate_code."','".$newuser['subdomain'].".".$newuser['domain']."')");
-                           $q->execute();
-                        }
+			$clientDomain = $_POST['subdomain'] . '.' . $_POST['domain'];
+			$q = $dbh->prepare("SELECT id FROM users WHERE subdomain = '".$clientDomain."'");
+			$q->execute();
+			if($q->rowCount() > 0) {
+			   header('X-Message: Subdomain not available', true, 406);
+			}
+			else {
+			   $q = $dbh->prepare("INSERT INTO users(login,pass,role,active,name,email,activate,subdomain) VALUES('"
+			   .$newuser['login']."','".$newuser['pass_hash']."','user',0,"."'".$newuser['name']."','".$newuser['email'].
+			   "','".$activate_code."','".$newuser['subdomain'].".".$newuser['domain']."')");
+			   $q->execute();
+			}
 			$www->assign('status', 'confirm_user');
 		}
-		else {
-                           header('HTTP', true, 500);
-                }
+		else 
+             header('X-Message: Incomplete data', true, 406);
 	}
 	if($_GET['opt'] == 'logout') {
 		unset($_SESSION['userlogin']);

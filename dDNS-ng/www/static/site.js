@@ -39,7 +39,11 @@ $(document).ready(function() {
                remote: {
                   message: 'The username is not available',
                   url: '/validate.php',
-                  type: 'POST'
+				  data: {
+					type: 'login'
+				  },
+                  type: 'POST',
+				  delay: 2000
                }
             } 
          },
@@ -86,6 +90,15 @@ $(document).ready(function() {
                },
                emailAddress: {
                   message: "Invalid e-mail address"
+               },
+			   remote: {
+				message: 'E-mail is not available',
+				url: '/validate.php',
+				data: {
+					type: 'email'
+				},
+                type: 'POST',
+				delay: 2000
                }
             }
          }
@@ -103,23 +116,27 @@ $(document).ready(function() {
          .formValidation('validateField', 'conf_pass');
       }
    })
-   .on('#registerButton', function(e) {
-      e.preventDefault();
-      $.ajax({
-         url: "/?opt=register",
-         type: "POST",
-         data: $("#registerForm").serialize(),
-      }).success(function(response) {
-         bootbox.alert("Account created");
-         // close modal
-         $( '#newUser' ).modal( 'hide' ).e( 'bs.modal', null );
-         // event after hidden
-         $('#newUser').on('hidden', function(){
-            $(this).e('modal', null);  // destroys modal
-         });
-      }).error(function(xhr) {
-         bootbox.alert(xhr.getResponseHeader('X-Message'));
-      });
+   .on('success.form.fv', function(e) {
+		e.preventDefault();
+		var $form = $(e.target),
+			fv = $form.data('formValidation');
+		$.ajax({
+			url: $form.attr('action'),
+			type: 'POST',
+			data: $form.serialize(),
+			success: function(e) {
+				bootbox.alert("Account created");
+				// close modal
+				$( '#newUser' ).modal( 'hide' ).e( 'bs.modal', null );
+				// event after hidden
+				$('#newUser').on('hidden', function(){
+					$(this).e('modal', null);  // destroys modal
+				})
+			},
+			error: function(xhr) {
+				bootbox.alert(xhr.getResponseHeader('X-Message'));
+			}
+		});
    });
    $('#loginForm').formValidation({
       framework: 'bootstrap',

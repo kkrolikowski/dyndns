@@ -18,8 +18,7 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script type="text/javascript" src="static/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="lib/formvalidation/dist/js/formValidation.min.js"></script>
-<script type="text/javascript" src="lib/formvalidation/dist/js/formValidation.js"></script>
-<script type="text/javascript" src="lib/formvalidation/dist/js/framework/the-framework.js"></script>
+<! --<script type="text/javascript" src="lib/formvalidation/dist/js/framework/the-framework.js"></script> -->
 <script type="text/javascript" src="lib/formvalidation/dist/js/language/pl_PL.js"></script>
 <script type="text/javascript" src="lib/formvalidation/dist/js/addons/mandatoryIcon.min.js"></script>
 <script type="text/javascript" src="lib/formvalidation/dist/js/framework/bootstrap.min.js"></script>
@@ -33,7 +32,7 @@
         <h4 class="modal-title" id="NewUserLabel">New account</h4>
       </div>
       <div class="modal-body">
-        <form method="post" id="registerForm">
+        <form method="post" action="" id="registerForm">
 	  <input type="hidden" name="register" value="newuser">
           <div class="form-group">
             <label for="name" class="control-label">Name:</label>

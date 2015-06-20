@@ -18,7 +18,6 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script type="text/javascript" src="static/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="lib/formvalidation/dist/js/formValidation.min.js"></script>
-<! --<script type="text/javascript" src="lib/formvalidation/dist/js/framework/the-framework.js"></script> -->
 <script type="text/javascript" src="lib/formvalidation/dist/js/language/pl_PL.js"></script>
 <script type="text/javascript" src="lib/formvalidation/dist/js/addons/mandatoryIcon.min.js"></script>
 <script type="text/javascript" src="lib/formvalidation/dist/js/framework/bootstrap.min.js"></script>
@@ -82,6 +81,23 @@
     </div>
   </div>
 </div>
+	<div class="modal fade" id="UserDel" tabindex="-1" role="dialog" aria-labelledby="UserDelLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="delUserLabel">Remove account</h4>
+				</div>
+				<div class="modal-body">
+					<p class="bg-danger">{$userdata.name}</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-danger" id="registerButton" >Remove</button>
+				</div>
+			</div>
+		</div>
+	</div>
    <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
          <div class="navbar-header">
@@ -91,7 +107,7 @@
                <span class="icon-bar"></span>
                <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/"><strong>DDNS 1.0</strong></a>
+            <a class="navbar-brand" href="/"><strong>DDNS interface</strong></a>
          </div>
          <div id="navbar" class="navbar-collapse collapse">
             {if ! isset($smarty.session.userlogin)}
@@ -154,7 +170,7 @@
                   <dt>Last update</dt><dd>{$userdata.lastupdate}</dd>
                </dl>
             </div>
-            <div role="tabpanel" class="tab-pane fade" id="history">
+            <div role="tabpanel" class="tab-pane fade col-xs-4" id="history">
                <table class="table">
                <thead>
                   <th>Last change</th><th>IP Address</th>
@@ -166,16 +182,26 @@
             </div>
 			{if $userdata.role eq 'admin'}
 			<div role="tabpanel" class="tab-pane fade" id="users">
-               <table class="table">
+               <table class="table table-hover">
                <thead>
-                  <th>ID</th><th>Name</th><th>Login</th><th>E-mail</th><th>Role</th><th>Acrive</th><th>Subdomain</th><th>Edit</th>
+                  <th>ID</th><th>Name</th><th>Login</th><th>E-mail</th><th>Role</th><th>Acrive</th><th>Subdomain</th><th>Manage</th>
                </thead>
 				{section name=record loop=$allusers}
 				<tr>
 					{foreach from=$allusers[record] key=col item=val}
 					<td>{$val}</td>
 					{/foreach}
-					<td><button type="button" data-id="1" class="btn btn-default editButton">Edit</button></td>
+					<td>
+					<ul role="tablist" class="nav">
+						<li role="presentation" class="dropdown">
+							<button class="btn btn-primary btn-sm" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Action<span class="caret"></span></button>
+						   <ul class="dropdown-menu" role="menu">
+							  <li role="presentation"><a href="#editUser" aria-controls="profile" role="tab" data-toggle="tab">Edit</a></li>
+							  <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="modal" data-target="#UserDel" data-whatever="@mdo">Remove</a></li>
+						   </ul>
+						</li>
+					</ul>
+					</td>
 				</tr>
 				{/section}
                </table>

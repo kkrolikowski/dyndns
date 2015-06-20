@@ -1,7 +1,7 @@
 <?php
 	session_start();
 	include_once './inc/config.php';
-        require('./functions.php');
+  require('./functions.php');
 	include('Smarty.class.php');
 	
 	$dsn = 'mysql:host='.DB_HOST.';dbname='.DBNAME;

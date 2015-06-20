@@ -130,7 +130,7 @@
 		$i = 0;
 		while($res = $q->fetch())
 			$user[$i++] = array(
-				$res['id'], $res['login'], $res['name'], $res['email'],
+				$res['id'], $res['name'], $res['login'], $res['email'],
 				$res['role'], $res['active'], $res['subdomain']
 			);
 		}

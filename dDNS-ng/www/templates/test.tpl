@@ -168,13 +168,14 @@
 			<div role="tabpanel" class="tab-pane fade" id="users">
                <table class="table">
                <thead>
-                  <th>ID</th><th>Name</th><th>Login</th><th>E-mail</th><th>Role</th><th>Acrive</th><th>Subdomain</th>
+                  <th>ID</th><th>Name</th><th>Login</th><th>E-mail</th><th>Role</th><th>Acrive</th><th>Subdomain</th><th>Edit</th>
                </thead>
 				{section name=record loop=$allusers}
 				<tr>
 					{foreach from=$allusers[record] key=col item=val}
 					<td>{$val}</td>
 					{/foreach}
+					<td><button type="button" data-id="1" class="btn btn-default editButton">Edit</button></td>
 				</tr>
 				{/section}
                </table>

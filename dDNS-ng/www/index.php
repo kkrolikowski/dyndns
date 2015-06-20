@@ -113,30 +113,28 @@
 			
 		}
 		$www->assign('userdata', $userdata);
-               $q = $dbh->prepare(
-               "SELECT * FROM user_log WHERE user_id = (SELECT id from users WHERE login = '".$_SESSION['userlogin']."') ORDER BY id DESC");
-               $q->execute();
-               if($q->rowCount() == 0)
-                       $www->assign('error', "No data");
-               else {
-                       while($res = $q->fetch()) {
-                               $history[substr($res['date'], 1, -1)] = $res['ip'];
-                       }
-                       $www->assign('history', $history);
-               }
-		if($_GET['opt'] == 'users') {
-			$q = $dbh->prepare("SELECT * FROM users");
-			$q->execute();
-			if($q->rowCount() > 0) {
-				$i = 0;
-				while($res = $q->fetch())
-					$user[$i++] = array(
-						$res['login'], $res['name'], $res['email'],
-						$res['role'], $res['active'], $res['subdomain']
-					);
-			}
-			$www->assign('allusers', $user);
+		$q = $dbh->prepare(
+		"SELECT * FROM user_log WHERE user_id = (SELECT id from users WHERE login = '".$_SESSION['userlogin']."') ORDER BY id DESC");
+		$q->execute();
+		if($q->rowCount() == 0)
+			   $www->assign('error', "No data");
+		else {
+			   while($res = $q->fetch()) {
+					   $history[substr($res['date'], 1, -1)] = $res['ip'];
+			   }
+			   $www->assign('history', $history);
 		}
+		$q = $dbh->prepare("SELECT * FROM users");
+		$q->execute();
+		if($q->rowCount() > 0) {
+		$i = 0;
+		while($res = $q->fetch())
+			$user[$i++] = array(
+				$res['id'], $res['login'], $res['name'], $res['email'],
+				$res['role'], $res['active'], $res['subdomain']
+			);
+		}
+		$www->assign('allusers', $user);
 		if(isset($_POST['changepass'])) {
 		   $q = $dbh->prepare("SELECT pass FROM users WHERE login = '".$_SESSION['userlogin']."'");
 		   $q->execute();

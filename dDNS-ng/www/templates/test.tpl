@@ -130,7 +130,10 @@
          <!-- Nav tabs -->
          <ul class="nav nav-tabs" role="tablist" id="menuTab">
             <li role="presentation"><a href="#summary" aria-controls="profile" role="tab" data-toggle="tab">Summary</a></li>
-            <li role="presentation"><a href="#history" aria-controls="history" role="tab" data-toggle="tab">History</a></li>
+			<li role="presentation"><a href="#history" aria-controls="history" role="tab" data-toggle="tab">History</a></li>
+			{if $userdata.role eq 'admin'}
+            <li role="presentation"><a href="#users"   aria-controls="users"   role="tab" data-toggle="tab">Users</a></li>
+			{/if}
             <li role="presentation" class="dropdown">
                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Profile<span class="caret"></span></a>
                <ul class="dropdown-menu" role="menu">
@@ -161,6 +164,22 @@
                {/foreach}
                </table>
             </div>
+			{if $userdata.role eq 'admin'}
+			<div role="tabpanel" class="tab-pane fade" id="users">
+               <table class="table">
+               <thead>
+                  <th>ID</th><th>Name</th><th>Login</th><th>E-mail</th><th>Role</th><th>Acrive</th><th>Subdomain</th>
+               </thead>
+				{section name=record loop=$allusers}
+				<tr>
+					{foreach from=$allusers[record] key=col item=val}
+					<td>{$val}</td>
+					{/foreach}
+				</tr>
+				{/section}
+               </table>
+            </div>
+			{/if}
             <div role="tabpanel" class="tab-pane fade col-xs-4" id="chpass">
                <h3>Change password</h3>
                   <form method="post" action="" id="newPassForm">

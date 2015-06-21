@@ -249,5 +249,39 @@ $(document).ready(function() {
 				bootbox.alert(xhr.getResponseHeader('X-Message'));
 			}
 		});
-   })
+   });
+   $('.rmuser').on('click', function() {
+		var id = $(this).attr('data-id');
+		$.ajax({
+			url: "/userdetails.php?id=" + id,
+			method: 'GET'
+		}).success(function(response) {
+            // Populate the form fields with the data returned from server
+            $('#UserDel')
+                .find('[title="login"]').text(response.login).end()
+                .find('[title="name"]').text(response.name).end()
+                .find('[title="email"]').text(response.email).end()
+				.find('[title="subdomain"]').text(response.subdomain).end();
+
+            // Show the dialog
+            bootbox
+                .dialog({
+                    title: 'Are you sure?',
+                    message: $('#UserDel'),
+                    show: false // We will show it manually later
+                })
+                .on('shown.bs.modal', function() {
+                    $('#UserDel')
+                        .show()                             // Show the login form
+                        .formValidation('resetForm'); // Reset form
+                })
+                .on('hide.bs.modal', function(e) {
+                    // Bootbox will remove the modal (including the body which contains the login form)
+                    // after hiding the modal
+                    // Therefor, we need to backup the form
+                    $('#UserDel').hide().appendTo('body');
+                })
+                .modal('show');
+        });
+   });
 });

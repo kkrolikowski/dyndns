@@ -258,6 +258,7 @@ $(document).ready(function() {
 		}).success(function(response) {
             // Populate the form fields with the data returned from server
             $('#UserDel')
+				.find('[title="id"]').text(response.id).end()
                 .find('[title="login"]').text(response.login).end()
                 .find('[title="name"]').text(response.name).end()
                 .find('[title="email"]').text(response.email).end()
@@ -284,4 +285,5 @@ $(document).ready(function() {
                 .modal('show');
         });
    });
+   
 });

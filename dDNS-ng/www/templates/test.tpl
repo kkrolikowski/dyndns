@@ -193,14 +193,19 @@
 				{/section}
                </table>
             </div>
-			<form id="UserDel" method="POST" class="form-horizontal" style="display: none;">
-
-				<dl class="dl-horizontal">
-					<dt>Full name</dt><dd title="name"></dd>
-					<dt>Login</dt><dd title="login"></dd>
-					<dt>E-mail</dt><dd title="email"></dd>
-					<dt>Subdomain</dt><dd title="subdomain"></dd>
-				</dl>
+				<form id="UserDel" method="POST" class="form-horizontal" style="display: none;">
+					<input type="hidden" name="rmu" val="user">
+					<dl class="dl-horizontal bg-danger">
+						<dt>ID</dt><dd title="id"></dd>
+						<dt>Full name</dt><dd title="name"></dd>
+						<dt>Login</dt><dd title="login"></dd>
+						<dt>E-mail</dt><dd title="email"></dd>
+						<dt>Subdomain</dt><dd title="subdomain"></dd>
+					</dl>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					<button type="submit" class="btn btn-danger" id="rmUserButton">Remove</button>
+				</div>
 			</form>
 			{/if}
             <div role="tabpanel" class="tab-pane fade col-xs-4" id="chpass">

@@ -250,6 +250,19 @@ $(document).ready(function() {
 			}
 		});
    });
+   $('#rmUserButton').on('click', function(e) {
+		e.preventDefault();
+		var $form = $('#UserDel'),
+			id = $form.find('[title="id"]').text();
+			$.ajax({
+				url: "/userdetails.php?id=" + id,
+				method: 'POST'
+			}).success(function() {
+				var $link = $('a[data-id=' + id + ']'),
+				$tr = $link.closest('tr');
+				$tr.remove();
+			});
+   });
    $('.rmuser').on('click', function() {
 		var id = $(this).attr('data-id');
 		$.ajax({

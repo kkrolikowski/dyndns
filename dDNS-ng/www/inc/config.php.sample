@@ -3,4 +3,5 @@
 	define('LOGIN', 'dyndns');
 	define('PASS', 'password');
 	define('DB_HOST', 'localhost');
+	define('SMARTY_LIB', 'Smarty.class.php');
 ?>

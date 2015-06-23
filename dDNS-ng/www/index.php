@@ -2,7 +2,7 @@
 	session_start();
 	include_once './inc/config.php';
   require('./functions.php');
-	include('Smarty.class.php');
+	include(SMARTY_LIB);
 	
 	$dsn = 'mysql:host='.DB_HOST.';dbname='.DBNAME;
 	$dbh = new PDO($dsn, LOGIN, PASS);

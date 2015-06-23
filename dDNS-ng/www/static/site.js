@@ -255,8 +255,8 @@ $(document).ready(function() {
 		var $form = $('#UserDel'),
 			id = $form.find('[title="id"]').text();
 			$.ajax({
-				url: "/userdetails.php?id=" + id,
-				method: 'POST'
+				url: "/userdetails.php?rm=" + id,
+				method: 'GET'
 			}).success(function() {
 				var $link = $('a[data-id=' + id + ']'),
 				$tr = $link.closest('tr');

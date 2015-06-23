@@ -17,8 +17,8 @@
 		header('Content-Type: application/json');
 		echo json_encode($json_resp);
 	}
-	if(isset($_POST['id'])) {
-		$q = $dbh->prepare("DELETE FROM users WHERE id = ".$_POST['id']);
+	if(isset($_GET['rm'])) {
+		$q = $dbh->prepare("DELETE FROM users WHERE id = ".$_GET['rm']);
 		$q->execute();
 	}
 ?>

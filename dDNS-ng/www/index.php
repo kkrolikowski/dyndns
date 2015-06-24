@@ -86,7 +86,17 @@
 			   "','".$activate_code."','".$newuser['subdomain'].".".$newuser['domain']."')");
 			   $q->execute();
 			}
-			$www->assign('status', 'confirm_user');
+			$to = $newuser['email'];
+			$subject = "[dDNS] Account confirmation";
+			$message = "Hello " . $newuser['name'] . "!\r\n\r\n" .
+						"To activate your dDNS account please click link below:\r\n".
+						"http://".$_SERVER['HTTP_HOST']."/confirm.php?act=".$activate_code."\r\n\r\n".
+						"--\r\n".
+						"dDNS service";
+			$headers = "From: ". ADM_EMAIL . "\r\n" .
+						"Reply-To: " . ADM_EMAIL . "\r\n" .
+						"X-Mailer: dDNS messanger";
+			mail($to, $subject, $message, $headers);
 		}
 		else 
              header('X-Message: Incomplete data', true, 406);

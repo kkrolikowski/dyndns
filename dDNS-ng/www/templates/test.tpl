@@ -63,7 +63,7 @@
 		    <label for="subdomain" class="control-label">Subdomain:</label>
 		    <input type="text" class="form-control" id="subdomain" name="subdomain" value="example">
 		</div>
-	    	<div class="col-xs-4 selectContainer">
+	    <div class="col-xs-4 selectContainer">
 		    <label for="subdomain" class="control-label">Domain:</label>
 			<select name="domain" class="form-control">
 				{foreach from=$domains item=domain}
@@ -226,6 +226,46 @@
                       </div>
                        <button type="submit" class="btn btn-primary" id="chpassBtn">Apply</button>
                  </form>
+            </div>
+			<div role="tabpanel" class="tab-pane fade col-md-8" id="profile">
+				<h3>Personal information</h3>
+				<form method="post" action="" id="profileUpdate" class="form-horizontal">
+					<input type="hidden" name="update" value="user">
+					<div class="form-group">
+						<label for="name" class="control-label col-sm-2">Full name:</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="name" name="name" value="{$userdata.name}">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="login" class="control-label col-sm-2">Login:</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="login" name="login" disabled="disabled" value="{$userdata.login}">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="email" class="control-label col-sm-2">E-mail:</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="email" name="email" value="{$userdata.email}">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="domain" class="control-label col-sm-2">Domain:</label>
+						<div class="col-sm-10">
+							<div class="radio">
+								<label>
+									<input type="radio" name="subdomain" id="subdomain" value="{$userdata.subdomain}" checked>
+									{$userdata.subdomain}
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-2">
+					</div>
+					<div class="col-sm-10">
+						<button type="submit" class="btn btn-primary" id="chpassBtn">Update profile</button>
+					</div>
+				</form>
             </div>
          </div>
       </div>

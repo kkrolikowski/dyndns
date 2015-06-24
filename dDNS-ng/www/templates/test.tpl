@@ -255,7 +255,11 @@
 							<div class="radio">
 								<label>
 									<input type="radio" name="subdomain" id="subdomain" value="{$userdata.subdomain}" checked>
-									{$userdata.subdomain}
+									{if $userdata.subdomain eq ''}
+										N/A
+									{else}
+										{$userdata.subdomain}
+									{/if}
 								</label>
 							</div>
 						</div>
@@ -290,6 +294,7 @@
          <ul style="list-style-type: none; padding: 0px;">
             <li><a href="https://github.com/kkrolikowski/dyndns/wiki" target="_blank" style="text-decoration: none;"><img src="static/documentation.png" class="img-rounded" alt="Documentation" style="max-width: 20%; height: auto;"> <strong>dDNS project wiki</strong></a>
             <li><a href="http://ddns-ng.net/" target="_blank" style="text-decoration: none;"><img src="static/website.png" class="img-rounded" alt="Homepage" style="max-width: 20%; height: auto;"> <strong>dDNS project site</strong></a>
+			<li><a href="#" target="_blank" style="text-decoration: none;"><img src="static/information.ico" class="img-rounded" alt="Information" style="max-width: 20%; height: auto;"> <strong>Online help</strong></a>
          </ul>
 	   </div>
       {/if}

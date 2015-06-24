@@ -125,7 +125,7 @@ $(document).ready(function() {
 			type: 'POST',
 			data: $form.serialize(),
 			success: function(e) {
-				bootbox.alert("Account created");
+				bootbox.alert("Account created. Check your e-mail for further instructions.");
 				// close modal
 				$( '#newUser' ).modal( 'hide' ).e( 'bs.modal', null );
 				// event after hidden

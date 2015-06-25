@@ -3,11 +3,11 @@
 	include_once './inc/config.php';
   require('./functions.php');
 	include(SMARTY_LIB);
-	
+
 	$dsn = 'mysql:host='.DB_HOST.';dbname='.DBNAME;
 	$dbh = new PDO($dsn, LOGIN, PASS);
 	$www = new Smarty;
-        $func = new Toolkit;
+  $func = new Toolkit;
 	$domains = array();
 	$userdata = array();
 	$newuser = array();
@@ -50,13 +50,13 @@
 			$newuser['password'] = $_POST['pass'];
 			$can_go++;
 		}
-		else 
+		else
 			$www->assign('error', "Empty password");
 		if(!empty($_POST['conf_pass'])) {
 			$newuser['confirm'] = $_POST['conf_pass'];
 			$can_go++;
 		}
-		else 
+		else
 			$www->assign('error', "Empty confirm");
 		if(!empty($_POST['email'])) {
 			$newuser['email'] = $_POST['email'];
@@ -67,7 +67,7 @@
 		$newuser['subdomain'] = $_POST['subdomain'];
 		$newuser['domain']    = $_POST['domain'];
 		if($newuser['password'] == $newuser['confirm']) {
-			$newuser['pass_hash'] = crypt($newuser['password'], "$1$" . base64_encode(mcrypt_create_iv(6))); 
+			$newuser['pass_hash'] = crypt($newuser['password'], "$1$" . base64_encode(mcrypt_create_iv(6)));
 			$can_go++;
 		}
 		else
@@ -96,16 +96,16 @@
 			$headers = "From: ". ADM_EMAIL . "\r\n" .
 						"Reply-To: " . ADM_EMAIL . "\r\n" .
 						"X-Mailer: dDNS messanger";
-			mail($to, $subject, $message, $headers);
+			mail($to, $subject, $message, $headers, 'O DeliveryMode=b');
 		}
-		else 
+		else
              header('X-Message: Incomplete data', true, 406);
 	}
 	if($_GET['opt'] == 'logout') {
 		unset($_SESSION['userlogin']);
 		header("Location: /");
 	}
-	
+
 	if(isset($_SESSION['userlogin'])) {
 		$q = $dbh->prepare("SELECT * FROM users WHERE login = '".$_SESSION['userlogin']."'");
 		$q->execute();
@@ -120,7 +120,7 @@
 			$userdata['subdomain'] = $res['subdomain'];
 			$userdata['ip'] = $res['ip'];
 			$userdata['lastupdate'] = substr($res['lastupdate'], 1, -1);
-			
+
 		}
 		$www->assign('userdata', $userdata);
 		$q = $dbh->prepare(

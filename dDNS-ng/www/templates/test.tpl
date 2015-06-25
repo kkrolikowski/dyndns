@@ -76,7 +76,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" id="registerButton" >Register</button>
+        <button type="submit" class="btn btn-primary" id="registerButton" data-loading-text="Sending email...">Register</button>
       </div>
      </form>
     </div>

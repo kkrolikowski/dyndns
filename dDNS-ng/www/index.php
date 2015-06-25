@@ -26,9 +26,9 @@
 				$www->assign('loginError', "Unknown user / Account inactive");
 			else {
 				$res = $q->fetch();
-                                if($func->checkPass($res['pass'], $_POST['pass']))
+                if($func->checkPass($res['pass'], $_POST['pass']))
 					$_SESSION['userlogin'] = $_POST['login'];
-                                else
+                else
 					$www->assign('loginError', "Password incorrect");
 			}
 		}
@@ -159,6 +159,10 @@
 			  else
 				   header('X-Message: Old password incorrect', true, 406);
 		   }
+		}
+		if($_POST['update'] == 'user') {
+			$q = $dbh->query("UPDATE users SET name = '".$_POST['name']."', email = '".$_POST['email']."', subdomain = '".$_POST['subdomain']."' WHERE login = '".$_SESSION['userlogin']."'");
+			$status = $q->execute();
 		}
 	}
 	$www->assign('title', 'dDNS Service');

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-<meta charset="iso8859-2">
+<meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>{$title}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -267,7 +267,7 @@
 					<div class="col-sm-2">
 					</div>
 					<div class="col-sm-10">
-						<button type="submit" class="btn btn-primary" id="chpassBtn">Update profile</button>
+						<button type="button" class="btn btn-primary" id="updateProfileBtn">Update profile</button>
 					</div>
 				</form>
             </div>
@@ -294,9 +294,17 @@
          <ul style="list-style-type: none; padding: 0px;">
             <li><a href="https://github.com/kkrolikowski/dyndns/wiki" target="_blank" style="text-decoration: none;"><img src="static/documentation.png" class="img-rounded" alt="Documentation" style="max-width: 20%; height: auto;"> <strong>dDNS project wiki</strong></a>
             <li><a href="http://ddns-ng.net/" target="_blank" style="text-decoration: none;"><img src="static/website.png" class="img-rounded" alt="Homepage" style="max-width: 20%; height: auto;"> <strong>dDNS project site</strong></a>
-			<li><a href="#" target="_blank" style="text-decoration: none;"><img src="static/information.ico" class="img-rounded" alt="Information" style="max-width: 20%; height: auto;"> <strong>Online help</strong></a>
+			<li><a href="#help" style="text-decoration: none;"><img src="static/information.ico" class="img-rounded" alt="Information" style="max-width: 20%; height: auto;"> <strong>Online help</strong></a>
          </ul>
 	   </div>
+
+    </div>
+	<hr>
+	<div class="row" id="help">
+        <div class="col-md-4">
+          <h2>How to use</h2>
+          <p>TODO</p>
+        </div>
       {/if}
     </div>
 </body>

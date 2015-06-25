@@ -298,5 +298,53 @@ $(document).ready(function() {
                 .modal('show');
         });
    });
-   
+   $('#profileUpdate').formValidation({
+      framework: 'bootstrap',
+      icon: {
+         valid: 'glyphicon glyphicon-ok',
+         invalid: 'glyphicon glyphicon-remove',
+         validating: 'glyphicon glyphicon-refresh'
+      },
+      addOns: {
+         mandatoryIcon: {
+            icon: 'glyphicon glyphicon-asterisk'
+         }
+      },
+      fields: {
+         name: {
+            err: 'tooltip',
+            required: true,
+            validators: {
+               notEmpty: {
+                  message: 'The name is required'
+               },
+            }
+         },
+         email: {
+            err: 'tooltip',
+            required: true,
+            validators: {
+               notEmpty: {
+                  message: 'The email is required'
+               },
+               emailAddress: {
+                  message: "Invalid e-mail address"
+               }
+            }
+         }
+      }
+   });
+   $('#updateProfileBtn').on('click', function(e) {
+		e.preventDefault();
+		var $form = $('#profileUpdate'),
+			fv = $form.data('formValidation');
+		$.ajax({
+			url: $form.attr('action'),
+			type: 'POST',
+			data: $form.serialize(),
+			success: function(e) {
+				bootbox.alert("Profile updated");
+			}
+		});
+   });
 });

@@ -3,13 +3,11 @@
 	include_once './inc/config.php';
   require('./functions.php');
 	include(SMARTY_LIB);
-	include('Mail.php');
 	
 	$dsn = 'mysql:host='.DB_HOST.';dbname='.DBNAME;
 	$dbh = new PDO($dsn, LOGIN, PASS);
 	$www = new Smarty;
-    $func = new Toolkit;
-	$mail = Mail::factory("mail");
+        $func = new Toolkit;
 	$domains = array();
 	$userdata = array();
 	$newuser = array();
@@ -89,18 +87,16 @@
 			   $q->execute();
 			}
 			$to = $newuser['email'];
-			$headers = array(
-				"From" => ADM_EMAIL,
-				"Subject" => "[dDNS] Account confirmation",
-				"Reply-To" => ADM_EMAIL,
-				"X-Mailer" => "dDNS messanger"
-			);
+			$subject = "[dDNS] Account confirmation";
 			$message = "Hello " . $newuser['name'] . "!\r\n\r\n" .
 						"To activate your dDNS account please click link below:\r\n".
 						"http://".$_SERVER['HTTP_HOST']."/confirm.php?act=".$activate_code."\r\n\r\n".
 						"--\r\n".
 						"dDNS service";
-			$mail->send($to, $headers, $message);
+			$headers = "From: ". ADM_EMAIL . "\r\n" .
+						"Reply-To: " . ADM_EMAIL . "\r\n" .
+						"X-Mailer: dDNS messanger";
+			mail($to, $subject, $message, $headers);
 		}
 		else 
              header('X-Message: Incomplete data', true, 406);

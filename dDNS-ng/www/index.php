@@ -90,11 +90,11 @@
 			}
 			$to = $newuser['email'];
 			$headers = array(
-												"From" => ADM_EMAIL,
-												"Subject" => "[dDNS] Account confirmation",
-												"Reply-To" => ADM_EMAIL,
-												"X-Mailer" => "dDNS messanger"
-												);
+				"From" => ADM_EMAIL,
+				"Subject" => "[dDNS] Account confirmation",
+				"Reply-To" => ADM_EMAIL,
+				"X-Mailer" => "dDNS messanger"
+			);
 			$message = "Hello " . $newuser['name'] . "!\r\n\r\n" .
 						"To activate your dDNS account please click link below:\r\n".
 						"http://".$_SERVER['HTTP_HOST']."/confirm.php?act=".$activate_code."\r\n\r\n".

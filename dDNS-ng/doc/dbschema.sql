@@ -27,7 +27,7 @@ CREATE TABLE `domains` (
   `domain` varchar(64) NOT NULL,
   `status` varchar(7) NOT NULL default '',
   UNIQUE KEY `id` (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -46,7 +46,7 @@ CREATE TABLE `mailqueue` (
   `x_mailer` varchar(64) character set utf8 collate utf8_unicode_ci NOT NULL,
   `message` text character set utf8 collate utf8_unicode_ci NOT NULL,
   UNIQUE KEY `id` (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -62,7 +62,7 @@ CREATE TABLE `user_log` (
   `ip` varchar(16) NOT NULL,
   `date` varchar(30) NOT NULL,
   UNIQUE KEY `id` (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -85,7 +85,7 @@ CREATE TABLE `users` (
   `ip` varchar(16) collate utf8_unicode_ci NOT NULL,
   `lastupdate` varchar(30) collate utf8_unicode_ci NOT NULL,
   UNIQUE KEY `id` (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=73 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 SET character_set_client = @saved_cs_client;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

@@ -289,6 +289,13 @@
         <div class="col-md-4">
           <h2>Download</h2>
           <p>Client software</p>
+          <ul>
+            <li><a href="files/ddns-client-linux-32bit.zip">Linux (32bit)</a></li>
+            <li><a href="files/ddns-client-linux-64bit.zip">Linux (64bit)</a></li>
+            <li><a href="files/ddns-client-freebsd-32bit.zip">FreeBSD (32bit)</a></li>
+            <li><a href="files/ddns-client-freebsd-64bit.zip">FreeBSD (64bit)</a></li>
+            <li><a href="files/ddns-client-arm-32bit.zip">ARM (32bit)</a></li>
+          </ul>
        </div>
       <div class="col-md-4">
           <h2>Online Resources</h2>

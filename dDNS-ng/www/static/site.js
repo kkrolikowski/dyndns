@@ -45,7 +45,7 @@ $(document).ready(function() {
                   type: 'POST',
 				  delay: 2000
                }
-            } 
+            }
          },
          pass: {
             err: 'tooltip',
@@ -346,5 +346,17 @@ $(document).ready(function() {
 				bootbox.alert("Profile updated");
 			}
 		});
+   });
+   $('.activate').on('click', function(e) {
+		e.preventDefault();
+		var id = $(this).attr('data-id');
+			$.ajax({
+				url: "/userdetails.php?enable=" + id,
+				method: 'GET'
+			}).success(function() {
+				var $link = $('a[data-id=' + id + ']'),
+				$tr = $link.closest('tr');
+				$td = $tr.find('td:nth-child(6)').text('1');
+			});
    });
 });

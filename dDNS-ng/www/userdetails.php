@@ -8,13 +8,14 @@
 		$q->execute();
 		if($q->rowCount() > 0) {
 		   if(isset($_GET['id'])) {
-			   $q = $dbh->prepare("SELECT id,name,login,email,subdomain FROM users WHERE id = ".$_GET['id']);
+			   $q = $dbh->prepare("SELECT id,name,login,active,email,subdomain FROM users WHERE id = ".$_GET['id']);
 			   $q->execute();
 			   $res = $q->fetch();
 			   $json_resp = array(
 					"id" => $res['id'],
 					"login" => $res['login'],
 					"name" => $res['name'],
+					"active" => $res['active'],
 					"email" => $res['email'],
 					"subdomain" => $res['subdomain']
 				);
@@ -23,6 +24,10 @@
 			}
 			if(isset($_GET['rm'])) {
 				$q = $dbh->prepare("DELETE FROM users WHERE id = ".$_GET['rm']);
+				$q->execute();
+			}
+			if(isset($_GET['enable'])) {
+				$q = $dbh->prepare("UPDATE users SET active = 1 WHERE id = ".$_GET['enable']);
 				$q->execute();
 			}
 		}

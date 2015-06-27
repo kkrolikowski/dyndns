@@ -166,9 +166,9 @@
             </div>
 			{if $userdata.role eq 'admin'}
 			<div role="tabpanel" class="tab-pane fade" id="users">
-               <table class="table table-hover">
+               <table class="table table-hover" id="allusers">
                <thead>
-                  <th>ID</th><th>Name</th><th>Login</th><th>E-mail</th><th>Role</th><th>Acrive</th><th>Subdomain</th><th>Manage</th>
+                  <th>ID</th><th>Full Name</th><th>Login</th><th>E-mail</th><th>Role</th><th>Active</th><th>Subdomain</th><th>Manage</th>
                </thead>
 				{section name=record loop=$allusers}
 				<tr>
@@ -184,6 +184,7 @@
 							<button class="btn btn-primary btn-sm" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Action<span class="caret"></span></button>
 						   <ul class="dropdown-menu" role="menu">
 							  <li role="presentation"><a href="#editUser" aria-controls="profile" role="tab" data-toggle="tab">Edit</a></li>
+                <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$dataid}" class="activate">Activate</a></li>
 							  <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$dataid}" class="rmuser">Remove</a></li>
 						   </ul>
 						</li>

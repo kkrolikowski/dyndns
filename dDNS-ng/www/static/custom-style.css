@@ -1,0 +1,5 @@
+.mygrid-wrapper-div {
+    border: none;
+    overflow: scroll;
+    height: 400px;
+}

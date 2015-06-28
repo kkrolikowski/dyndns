@@ -271,7 +271,44 @@
 						<button type="button" class="btn btn-primary" id="updateProfileBtn">Update profile</button>
 					</div>
 				</form>
-            </div>
+        <div class="col-md-8">
+          <h3>Client configuration</h3>
+          <div class="mygrid-wrapper-div">
+              <pre># Dynamic DNS client config
+#
+# dynamic DNS server address
+# server =
+server = bsdaemon.pl
+#
+# dynamic DNS server TCP port number
+# port =
+port = 12345
+#
+# Authentication data
+# login =
+# pass =
+login = {$userdata.login}
+pass = changeme
+#
+# client domain name
+# domain =
+domain = {$userdata.subdomain}
+#
+# update interval in seconds
+# interval =
+interval = 30
+#
+# Path to logfile
+# log =
+log = /var/log/ddns-client.log
+#
+# PID file location
+#
+pid = /var/run/ddns-client.pid
+            </pre>
+          </div>
+        </div>
+          </div>
          </div>
       </div>
       {else}
@@ -302,16 +339,19 @@
          <ul style="list-style-type: none; padding: 0px;">
             <li><a href="https://github.com/kkrolikowski/dyndns/wiki" target="_blank" style="text-decoration: none;"><img src="static/documentation.png" class="img-rounded" alt="Documentation" style="max-width: 20%; height: auto;"> <strong>dDNS project wiki</strong></a>
             <li><a href="http://ddns-ng.net/" target="_blank" style="text-decoration: none;"><img src="static/website.png" class="img-rounded" alt="Homepage" style="max-width: 20%; height: auto;"> <strong>dDNS project site</strong></a>
-			<li><a href="#help" style="text-decoration: none;"><img src="static/information.ico" class="img-rounded" alt="Information" style="max-width: 20%; height: auto;"> <strong>Online help</strong></a>
+			<li><a href="#help" style="text-decoration: none;"><img src="static/information.ico" class="img-rounded" alt="Information" style="max-width: 20%; height: auto;"> <strong>How to use</strong></a>
          </ul>
 	   </div>
 
     </div>
 	<hr>
 	<div class="row" id="help">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <h2>How to use</h2>
-          <p>TODO</p>
+          <p>To start using dynamic DNS service download appropriate client version. Zip archive contains ddns-client binary and ddns-client.conf configuration file.
+          Put client binary somewhere in your $PATH and configuration file in /etc. Configuration file contains sample values that need to be changed. To get your username
+          and password you need to register account. After completing registration form and account activation go to Profile -> Edit profile option and copy contents of
+          Client Configuration section. Now you can paste it into your config file. The last thing you should do is changing password to one you've chosen while registration process.</p>
         </div>
       {/if}
     </div>

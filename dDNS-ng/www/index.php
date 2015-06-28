@@ -85,17 +85,31 @@
 			   .$newuser['login']."','".$newuser['pass_hash']."','user',0,"."'".$newuser['name']."','".$newuser['email'].
 			   "','".$activate_code."','".$newuser['subdomain'].".".$newuser['domain']."')");
 			   $q->execute();
+				$to = $newuser['email'];
+				$subject = "[dDNS] Account confirmation";
+				$message = "Hello " . $newuser['name'] . "!\r\n\r\n" .
+							"To activate your dDNS account please click link below:\r\n".
+							"http://".$_SERVER['HTTP_HOST']."/confirm.php?act=".$activate_code."\r\n\r\n".
+							"--\r\n".
+							"dDNS service";
+				$q = $dbh->prepare("INSERT INTO mailqueue(mailto,mailfrom,subject,reply_to,x_mailer,message) VALUES('"
+					.$to."','".ADM_EMAIL."','".$subject."','".ADM_EMAIL."','dDNS messanger','".$message."')");
+				$q->execute();
+				$q = $dbh->prepare("SELECT email,name FROM users WHERE role = 'admin'");
+				$q->execute();
+				while($res = $q->fetch()) {
+					$message = "Hello " . $res['name'] . "!\r\n\r\n" .
+								"New user registered an account!\r\n\r\n".
+								"Full name: ".$newuser['name']. "\r\n".
+								"Login: " .$newuser['login']. "\r\n".
+								"Subdomain: ". $newuser['subdomain']. ".".$newuser['domain']."\r\n\r\n".
+								"--\r\n".
+								"dDNS service";
+					$mailq = $dbh->prepare("INSERT INTO mailqueue(mailto,mailfrom,subject,reply_to,x_mailer,message) VALUES('"
+					.$res['email']."','".ADM_EMAIL."','[dDNS] New account','".ADM_EMAIL."','dDNS messanger','".$message."')");
+					$mailq->execute();
+				}
 			}
-			$to = $newuser['email'];
-			$subject = "[dDNS] Account confirmation";
-			$message = "Hello " . $newuser['name'] . "!\r\n\r\n" .
-						"To activate your dDNS account please click link below:\r\n".
-						"http://".$_SERVER['HTTP_HOST']."/confirm.php?act=".$activate_code."\r\n\r\n".
-						"--\r\n".
-						"dDNS service";
-			$q = $dbh->prepare("INSERT INTO mailqueue(mailto,mailfrom,subject,reply_to,x_mailer,message) VALUES('"
-				.$to."','".ADM_EMAIL."','".$subject."','".ADM_EMAIL."','dDNS messanger','".$message."')");
-			$q->execute();
 		}
 		else
              header('X-Message: Incomplete data', true, 406);

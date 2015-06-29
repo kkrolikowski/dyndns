@@ -183,7 +183,7 @@
 						<li role="presentation" class="dropdown">
 							<button class="btn btn-primary btn-sm" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Action<span class="caret"></span></button>
 						   <ul class="dropdown-menu" role="menu">
-							  <li role="presentation"><a href="#editUser" aria-controls="profile" role="tab" data-toggle="tab">Edit</a></li>
+							  <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$dataid}" class="editopt">Edit</a></li>
                 <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$dataid}" class="activate">Activate</a></li>
 							  <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$dataid}" class="rmuser">Remove</a></li>
 						   </ul>
@@ -208,6 +208,61 @@
 					<button type="submit" class="btn btn-danger" id="rmUserButton">Remove</button>
 				</div>
 			</form>
+      <form id="editUserForm" method="post" class="form-horizontal" style="display: none;">
+        <div class="form-group">
+          <label class="col-sm-2 control-label">ID</label>
+          <div class="col-sm-2">
+            <input type="text" class="form-control" name="id" disabled="disabled" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Full name</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" name="name" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Login</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" name="login" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">E-mail</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" name="email" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Active</label>
+          <div class="col-sm-2">
+            <select name="active" class="form-control">
+                <option value="0">0</option>
+                <option value="1">1</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Role</label>
+          <div class="col-sm-3">
+            <select name="role" class="form-control">
+                <option value="user">user</option>
+                <option value="admin">admin</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Subdomain</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" name="subdomain" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-xs-5 col-xs-offset-2">
+            <button type="submit" class="btn btn-primary saveBtn">Save</button>
+          </div>
+        </div>
+      </form>
 			{/if}
             <div role="tabpanel" class="tab-pane fade col-xs-4" id="chpass">
                <h3>Change password</h3>
@@ -351,7 +406,7 @@ pid = /var/run/ddns-client.pid
           <p>To start using dynamic DNS service download appropriate client version. Zip archive contains ddns-client binary and ddns-client.conf configuration file.
           Put client binary somewhere in your $PATH and configuration file in /etc. Configuration file contains sample values that need to be changed. To get your username
           and password you need to register account. After completing registration form and account activation go to Profile -> Edit profile option and copy contents of
-          Client Configuration section. Now you can paste it into your config file. The last thing you should do is changing password to one you've chosen while registration process.</p>
+          Client Configuration section. Now you can paste it into your config file. The last thing you should do is setting password to one you've chosen while registration process.</p>
         </div>
       {/if}
     </div>

@@ -39,11 +39,11 @@ $(document).ready(function() {
                remote: {
                   message: 'The username is not available',
                   url: '/validate.php',
-				  data: {
-					type: 'login'
-				  },
+        				  data: {
+        					       type: 'login'
+        				  },
                   type: 'POST',
-				  delay: 2000
+				          delay: 2000
                }
             }
          },
@@ -91,14 +91,14 @@ $(document).ready(function() {
                emailAddress: {
                   message: "Invalid e-mail address"
                },
-			   remote: {
-				message: 'E-mail is not available',
-				url: '/validate.php',
-				data: {
-					type: 'email'
-				},
-                type: 'POST',
-				delay: 2000
+			         remote: {
+				            message: 'E-mail is not available',
+				            url: '/validate.php',
+				            data: {
+					            type: 'email'
+				            },
+                    type: 'POST',
+				              delay: 2000
                }
             }
          }
@@ -359,4 +359,113 @@ $(document).ready(function() {
 				$td = $tr.find('td:nth-child(6)').text('1');
 			});
    });
+   $('#editUserForm').formValidation({
+     framework: 'bootstrap',
+     icon: {
+        valid: 'glyphicon glyphicon-ok',
+        invalid: 'glyphicon glyphicon-remove',
+        validating: 'glyphicon glyphicon-refresh'
+     },
+     addOns: {
+        mandatoryIcon: {
+           icon: 'glyphicon glyphicon-asterisk'
+        }
+     },
+     fields: {
+       name: {
+         err: 'tooltip',
+         required: 'true',
+         validators: {
+           notEmpty: {
+             message: 'Full name required'
+           }
+         }
+       },
+       login: {
+          err: 'tooltip',
+          required: true,
+          validators: {
+             notEmpty: {
+                message: 'The username is required'
+             },
+             stringLength: {
+                min: 4,
+                message: "Login must contain at least four characters"
+             }
+          }
+       },
+       email: {
+          err: 'tooltip',
+          required: true,
+          validators: {
+             notEmpty: {
+                message: 'The email is required'
+             },
+             emailAddress: {
+                message: "Invalid e-mail address"
+             }
+          }
+       }
+     }
+   })
+   .on('success.form.fv', function(e) {
+     e.preventDefault();
+     var $form = $('#editUserForm'),
+     id = $form.find('[name="id"]').val();
+     $.ajax({
+       url: "/userdetails.php?id=" + id,
+       method: 'PUT',
+       data: $form.serialize()
+     }).success(function(response) {
+       var $link = $('a[data-id="' + response.id + '"]'),
+       $tr = $link.closest('tr'),
+       $cells  = $tr.find('td');
+       // Update the cell data
+      $cells
+        .eq(1).html(response.name).end()
+        .eq(2).html(response.login).end()
+        .eq(3).html(response.email).end()
+        .eq(4).html(response.role).end()
+        .eq(5).html(response.active).end()
+        .eq(6).html(response.subdomain).end();
+
+        // Hide the dialog
+        $form.parents('.bootbox').modal('hide');
+
+        // You can inform the user that the data is updated successfully
+        // by highlighting the row or showing a message box
+        bootbox.alert('The user profile is updated');
+     });
+   });
+   $('.editopt').on('click', function() {
+    var id = $(this).attr('data-id');
+    $.ajax({
+      url: "/userdetails.php?id=" + id,
+      method: 'GET'
+   }).success(function(response) {
+     $('#editUserForm')
+      .find('[name="id"]').val(response.id).end()
+      .find('[name="name"]').val(response.name).end()
+      .find('[name="login"]').val(response.login).end()
+      .find('[name="email"]').val(response.email).end()
+      .find('[name="active"]').val(response.active).end()
+      .find('[name="role"]').val(response.role).end()
+      .find('[name="subdomain"]').val(response.subdomain).end();
+      bootbox
+        .dialog({
+          title: 'Edit user profile',
+          message: $('#editUserForm'),
+          show: false
+        })
+        .on('shown.bs.modal', function() {
+          $('#editUserForm')
+            .show()
+            .formValidation('resetForm');
+        })
+        .on('hide.bs.modal', function(e) {
+          $('#editUserForm').hide().appendTo('body');
+        })
+        .modal('show');
+   });
+ });
 });

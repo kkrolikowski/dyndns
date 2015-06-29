@@ -20,7 +20,7 @@ bool ReadCFG(config_t * cfg, char * filename) {
 			continue;
 		if(strstr(buf, "server ="))
 			strcpy(cfg->client.host, getVal(buf));
-		if(strstr(buf, "listen_on ="))
+		if(strstr(buf, "listen_on =") != NULL || strstr(buf, "port =") != NULL)
 			cfg->port = atoi(getVal(buf));
 		if(strstr(buf, "domain ="))
 			strcpy(cfg->client.domain, getVal(buf));

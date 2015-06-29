@@ -337,7 +337,7 @@ server = bsdaemon.pl
 #
 # dynamic DNS server TCP port number
 # port =
-port = 12345
+srv_port = 12345
 #
 # Authentication data
 # login =

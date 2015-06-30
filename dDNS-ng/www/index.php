@@ -73,7 +73,7 @@
 		else
 			$www->assign('error', 'Passwords doesn\'t match');
 		if($can_go > 5) {
-			$activate_code = base64_encode(mcrypt_create_iv(18));
+			$activate_code = $func->genToken();
 			$clientDomain = $_POST['subdomain'] . '.' . $_POST['domain'];
 			$q = $dbh->prepare("SELECT id FROM users WHERE subdomain = '".$clientDomain."'");
 			$q->execute();

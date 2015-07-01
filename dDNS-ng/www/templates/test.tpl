@@ -185,6 +185,7 @@
 						   <ul class="dropdown-menu" role="menu">
 							  <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$dataid}" class="editopt">Edit</a></li>
                 <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$dataid}" class="activate">Activate</a></li>
+                <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$dataid}" class="newpass">Reset password</a></li>
 							  <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$dataid}" class="rmuser">Remove</a></li>
 						   </ul>
 						</li>

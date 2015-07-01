@@ -468,4 +468,13 @@ $(document).ready(function() {
         .modal('show');
    });
  });
+ $('.newpass').on('click', function() {
+  var id = $(this).attr('data-id');
+  $.ajax({
+    url: "/userdetails.php?newpass=" + id,
+    method: 'GET'
+  }).success(function() {
+    bootbox.alert('New password emailed to user');
+  });
+    });
 });

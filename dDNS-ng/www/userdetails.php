@@ -1,8 +1,12 @@
 <?php
 	session_start();
-   include_once './inc/config.php';
-   $dsn = 'mysql:host='.DB_HOST.';dbname='.DBNAME;
-   $dbh = new PDO($dsn, LOGIN, PASS);
+	include_once './inc/config.php';
+	include 'functions.php';
+
+  $dsn = 'mysql:host='.DB_HOST.';dbname='.DBNAME;
+  $dbh = new PDO($dsn, LOGIN, PASS);
+	$tool = new Toolkit;
+
    if(isset($_SESSION['userlogin'])) {
 		$q = $dbh->prepare("SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."' AND role = 'admin'");
 		$q->execute();
@@ -50,6 +54,26 @@
 			);
 			header('Content-Type: application/json');
 			echo json_encode($json_resp);
+			}
+			if(isset($_GET['newpass'])) {
+					$newpass = $tool->genToken(12);
+					$md5pass = $tool->encryptpass($newpass);
+
+					$q = $dbh->prepare("UPDATE users set pass = '".$md5pass."' WHERE id = ".$_GET['newpass']);
+					$q->execute();
+					$q = $dbh->prepare("SELECT name,login,email FROM users WHERE id = ".$_GET['newpass']);
+					$q->execute();
+					$res = $q->fetch();
+
+					$message = 'Hello '. $res['name'] ."!\r\n\r\n".
+					"Password to your account was reset by admin.\r\n\r\n".
+					"New credentials:\r\n".
+					"Login: ".$res['login']."\r\n".
+					"Password: ".$newpass."\r\n\r\n".
+					"--\r\n".
+					"dDNS service";
+
+					$tool->notify($res['email'], "Password reset", $message);
 			}
 		}
 	}

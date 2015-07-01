@@ -26,8 +26,9 @@ CREATE TABLE `domains` (
   `id` int(11) NOT NULL auto_increment,
   `domain` varchar(64) NOT NULL,
   `status` varchar(7) NOT NULL default '',
+  `user_id` int(11) NOT NULL,
   UNIQUE KEY `id` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -46,7 +47,27 @@ CREATE TABLE `mailqueue` (
   `x_mailer` varchar(64) character set utf8 collate utf8_unicode_ci NOT NULL,
   `message` text character set utf8 collate utf8_unicode_ci NOT NULL,
   UNIQUE KEY `id` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `subdomains`
+--
+
+DROP TABLE IF EXISTS `subdomains`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `subdomains` (
+  `id` int(11) NOT NULL auto_increment,
+  `user_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
+  `subdomain` varchar(24) NOT NULL,
+  `ip` varchar(16) NOT NULL,
+  `lastupdate` varchar(30) NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `fk_user_id` (`user_id`),
+  CONSTRAINT `usrid_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -61,8 +82,10 @@ CREATE TABLE `user_log` (
   `user_id` int(11) NOT NULL,
   `ip` varchar(16) NOT NULL,
   `date` varchar(30) NOT NULL,
-  UNIQUE KEY `id` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  PRIMARY KEY  (`id`),
+  KEY `fk_user_id` (`user_id`),
+  CONSTRAINT `usrid_to_log` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -81,11 +104,8 @@ CREATE TABLE `users` (
   `name` varchar(64) collate utf8_unicode_ci NOT NULL,
   `email` varchar(64) collate utf8_unicode_ci NOT NULL,
   `activate` varchar(24) collate utf8_unicode_ci NOT NULL,
-  `subdomain` varchar(64) collate utf8_unicode_ci NOT NULL,
-  `ip` varchar(16) collate utf8_unicode_ci NOT NULL,
-  `lastupdate` varchar(30) collate utf8_unicode_ci NOT NULL,
-  UNIQUE KEY `id` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 SET character_set_client = @saved_cs_client;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -97,4 +117,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-06-26  7:39:01
+-- Dump completed on 2015-07-01 20:22:43

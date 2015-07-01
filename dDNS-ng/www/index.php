@@ -77,17 +77,12 @@
 			$clientDomain = $_POST['subdomain'] . '.' . $_POST['domain'];
 			$q = $dbh->prepare("SELECT count(*) as count FROM subdomains s, domains d ".
 				"WHERE subdomain ='".$_POST['subdomain']."' and d.domain = '".$_POST['domain']."' and s.domain_id = d.id");
-			//$q = $dbh->prepare("SELECT id FROM users WHERE subdomain = '".$clientDomain."'");
 			$q->execute();
 			$res = $q->fetch();
 			if($res['count'] > 0) {
 			   header('X-Message: Subdomain not available', true, 406);
 			}
 			else {
-	//		   $q = $dbh->prepare("INSERT INTO users(login,pass,role,active,name,email,activate,subdomain) VALUES('"
-	//		   .$newuser['login']."','".$newuser['pass_hash']."','user',0,"."'".$newuser['name']."','".$newuser['email'].
-	//		   "','".$activate_code."','".$newuser['subdomain'].".".$newuser['domain']."')");
-	//		   $q->execute();
 				$q = $dbh->prepare(
 					"INSERT INTO users(login,pass,role,active,name,email,activate) VALUES ('".
 					$newuser['login']."', '".$newuser['pass_hash']."', 'user', 0, '".$newuser['name']."', '".

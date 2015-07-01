@@ -420,6 +420,7 @@ $(document).ready(function() {
        var $link = $('a[data-id="' + response.id + '"]'),
        $tr = $link.closest('tr'),
        $cells  = $tr.find('td');
+       var $subdomain = response.subdomain + "." + response.domain;
        // Update the cell data
       $cells
         .eq(1).html(response.name).end()
@@ -427,7 +428,7 @@ $(document).ready(function() {
         .eq(3).html(response.email).end()
         .eq(4).html(response.role).end()
         .eq(5).html(response.active).end()
-        .eq(6).html(response.subdomain).end();
+        .eq(6).html($subdomain).end();
 
         // Hide the dialog
         $form.parents('.bootbox').modal('hide');
@@ -450,7 +451,8 @@ $(document).ready(function() {
       .find('[name="email"]').val(response.email).end()
       .find('[name="active"]').val(response.active).end()
       .find('[name="role"]').val(response.role).end()
-      .find('[name="subdomain"]').val(response.subdomain).end();
+      .find('[name="subdomain"]').val(response.subdomain).end()
+      .find('[name="domain"]').val(response.domain).end();
       bootbox
         .dialog({
           title: 'Edit user profile',

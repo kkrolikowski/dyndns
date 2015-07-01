@@ -75,16 +75,33 @@
 		if($can_go > 5) {
 			$activate_code = $func->genToken(24);
 			$clientDomain = $_POST['subdomain'] . '.' . $_POST['domain'];
-			$q = $dbh->prepare("SELECT id FROM users WHERE subdomain = '".$clientDomain."'");
+			$q = $dbh->prepare("SELECT count(*) as count FROM subdomains s, domains d ".
+				"WHERE subdomain ='".$_POST['subdomain']."' and d.domain = '".$_POST['domain']."' and s.domain_id = d.id");
+			//$q = $dbh->prepare("SELECT id FROM users WHERE subdomain = '".$clientDomain."'");
 			$q->execute();
-			if($q->rowCount() > 0) {
+			$res = $q->fetch();
+			if($res['count'] > 0) {
 			   header('X-Message: Subdomain not available', true, 406);
 			}
 			else {
-			   $q = $dbh->prepare("INSERT INTO users(login,pass,role,active,name,email,activate,subdomain) VALUES('"
-			   .$newuser['login']."','".$newuser['pass_hash']."','user',0,"."'".$newuser['name']."','".$newuser['email'].
-			   "','".$activate_code."','".$newuser['subdomain'].".".$newuser['domain']."')");
-			   $q->execute();
+	//		   $q = $dbh->prepare("INSERT INTO users(login,pass,role,active,name,email,activate,subdomain) VALUES('"
+	//		   .$newuser['login']."','".$newuser['pass_hash']."','user',0,"."'".$newuser['name']."','".$newuser['email'].
+	//		   "','".$activate_code."','".$newuser['subdomain'].".".$newuser['domain']."')");
+	//		   $q->execute();
+				$q = $dbh->prepare(
+					"INSERT INTO users(login,pass,role,active,name,email,activate) VALUES ('".
+					$newuser['login']."', '".$newuser['pass_hash']."', 'user', 0, '".$newuser['name']."', '".
+					$newuser['email']."', '".$activate_code."')"
+				);
+				$q->execute();
+				$q = $dbh->prepare(
+					"SELECT users.id as user_id, domains.id as domain_id FROM users, domains WHERE users.login = '".$newuser['login'].
+					"' AND domains.domain = '".$newuser['domain']."'"
+				);
+				$q->execute();
+				$res = $q->fetch();
+				$q = $dbh->prepare("INSERT INTO subdomains (user_id,domain_id,subdomain) VALUES(".$res['user_id'].", ".$res['domain_id'].", '".$newuser['subdomain']."')");
+				$q->execute();
 				$to = $newuser['email'];
 				$message = "Hello " . $newuser['name'] . "!\r\n\r\n" .
 							"To activate your dDNS account please click link below:\r\n".
@@ -115,7 +132,10 @@
 	}
 
 	if(isset($_SESSION['userlogin'])) {
-		$q = $dbh->prepare("SELECT * FROM users WHERE login = '".$_SESSION['userlogin']."'");
+		$q = $dbh->prepare("SELECT u.id, u.name,u.login, u.email, u.role, u.active, ip, lastupdate, ".
+		"CONCAT(s.subdomain, \".\",  d.domain) as subdomain ".
+		"FROM subdomains s, domains d , users u ".
+		"WHERE s.domain_id = d.id and u.id = s.user_id and u.login = '".$_SESSION['userlogin']."'");
 		$q->execute();
 		if($q->rowCount() == 0)
 			$www->assign('error', "No data");
@@ -142,7 +162,10 @@
 			   }
 			   $www->assign('history', $history);
 		}
-		$q = $dbh->prepare("SELECT * FROM users");
+		$q = $dbh->prepare("SELECT u.id, u.name,u.login, u.email, u.role, u.active, ip, lastupdate, ".
+		"CONCAT(s.subdomain, \".\",  d.domain) as subdomain ".
+		"FROM subdomains s, domains d , users u ".
+		"WHERE s.domain_id = d.id and u.id = s.user_id");
 		$q->execute();
 		if($q->rowCount() > 0) {
 		$i = 0;

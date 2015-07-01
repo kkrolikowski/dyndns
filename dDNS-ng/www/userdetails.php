@@ -12,7 +12,10 @@
 		$q->execute();
 		if($q->rowCount() > 0) {
 		   if(isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] != 'PUT') {
-			   $q = $dbh->prepare("SELECT id,name,login,active,role,email,subdomain FROM users WHERE id = ".$_GET['id']);
+				$q = $dbh->prepare(
+					"SELECT u.id, u.name,u.login, u.email, u.role, u.active, s.subdomain, d.domain ".
+					"FROM subdomains s, domains d , users u where s.domain_id = d.id and u.id = s.user_id and s.user_id = ".$_GET['id']
+				);
 			   $q->execute();
 			   $res = $q->fetch();
 			   $json_resp = array(
@@ -22,7 +25,8 @@
 					"active" => $res['active'],
 					"role" => $res['role'],
 					"email" => $res['email'],
-					"subdomain" => $res['subdomain']
+					"subdomain" => $res['subdomain'],
+					"domain" => $res['domain']
 				);
 				header('Content-Type: application/json');
 				echo json_encode($json_resp);
@@ -36,11 +40,22 @@
 				$q->execute();
 			}
 			if($_SERVER['REQUEST_METHOD'] == 'PUT') {
+				print_r($json);
 				parse_str(file_get_contents("php://input"), $json);
+
 				$q = $dbh->prepare("UPDATE users SET name = '".$json['name']."', login = '".$json['login']."', role = '".$json['role'].
-				"', active = ".$json['active'].", subdomain = '".$json['subdomain']."', email = '".$json['email']."' WHERE id = ".$_GET['id']);
+				"', active = ".$json['active'].", email = '".$json['email']."' WHERE id = ".$_GET['id']);
 				$q->execute();
-				$q = $dbh->prepare("SELECT id,name,login,active,role,email,subdomain FROM users WHERE id = ".$_GET['id']);
+
+				$q = $dbh->prepare(
+					"UPDATE subdomains SET subdomain = '".$json['subdomain']."' WHERE user_id = ".$_GET['id'].
+					" AND domain_id = (SELECT id from domains where domain = '".$json['domain']."')");
+				$q->execute();
+
+				$q = $dbh->prepare(
+					"SELECT u.id, u.name,u.login, u.email, u.role, u.active, s.subdomain, d.domain ".
+					"FROM subdomains s, domains d , users u where s.domain_id = d.id and u.id = s.user_id and s.user_id = ".$_GET['id']
+				);
 				$q->execute();
 				$res = $q->fetch();
 				$json_resp = array(
@@ -50,11 +65,12 @@
 				"active" => $res['active'],
 				"role" => $res['role'],
 				"email" => $res['email'],
-				"subdomain" => $res['subdomain']
+				"subdomain" => $res['subdomain'],
+				"domain" => $res['domain']
 			);
 			header('Content-Type: application/json');
 			echo json_encode($json_resp);
-			}
+		}
 			if(isset($_GET['newpass'])) {
 					$newpass = $tool->genToken(12);
 					$md5pass = $tool->encryptpass($newpass);

@@ -254,8 +254,12 @@
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label">Subdomain</label>
-          <div class="col-sm-10">
+          <div class="col-xs-4">
             <input type="text" class="form-control" name="subdomain" />
+          </div>
+          <div class="col-xs-6">
+            <input type="hidden" class="form-control" name="domain" />
+            <input type="text" class="form-control" name="domain" disabled="disabled"/>
           </div>
         </div>
         <div class="form-group">

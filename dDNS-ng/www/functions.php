@@ -13,9 +13,9 @@
 
         return $this->retval;
      }
-     public function genToken() {
+     public function genToken($len) {
        $chars = '0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
-       $this->token = substr(str_shuffle($chars), 0, 24);
+       $this->token = substr(str_shuffle($chars), 0, $len);
 
        return $this->token;
      }

@@ -286,12 +286,12 @@ bool getUserData(MYSQL * dbh, sqldata_t *info, char *login) {
 	MYSQL_RES * res;
 	MYSQL_ROW row;
 
-	char * check_user_query = "SELECT * FROM users WHERE login = ";
+	char * check_user_query = "SELECT u.login, u.pass, CONCAT(s.subdomain, \".\",  d.domain) as subdomain, u.active \
+	FROM subdomains s, domains d , users u WHERE s.domain_id = d.id and u.id = s.user_id and u.login = '";
 	char * query;
 
-	query = (char *) malloc((strlen(check_user_query) + strlen(login) + 3) * sizeof(char));
+	query = (char *) malloc((strlen(check_user_query) + strlen(login) + 2) * sizeof(char));
 	strcpy(query, check_user_query);
-	strcat(query,"'");
 	strcat(query, login);
 	strcat(query,"'");
 	 if(mysql_query(dbh, query) != 0) {
@@ -309,10 +309,10 @@ bool getUserData(MYSQL * dbh, sqldata_t *info, char *login) {
 	 	return false;
 	 }
 	 if((row = mysql_fetch_row(res)) != 0) {
-		 strcpy(info->login, row[1]);
-		 strcpy(info->pass, row[2]);
-		 strcpy(info->subdomain, row[8]);
-		 info->isactive = atoi(row[4]);
+		 strcpy(info->login, row[0]);
+		 strcpy(info->pass, row[1]);
+		 strcpy(info->subdomain, row[2]);
+		 info->isactive = atoi(row[3]);
 	 }
 	 else {
 		 mysql_close(dbh);
@@ -324,17 +324,18 @@ bool getUserData(MYSQL * dbh, sqldata_t *info, char *login) {
 }
 bool updateDB(MYSQL * dbh, sqldata_t *info, char *login, char *ip, char * timestamp) {
 	char * query;
-	char * update_query = "UPDATE users set ip = '";
-	query = (char *) malloc((strlen(update_query) + strlen(ip) + strlen(timestamp) + strlen(login) + 36) * sizeof(char));
+	char * update_query = "UPDATE subdomains set ip = '";
+	query = (char *) malloc((strlen(update_query) + strlen(ip) + strlen(timestamp) + strlen(login) + 95) * sizeof(char));
 
 	strcpy(query, update_query);
 	strcat(query, ip);
 	strcat(query, "', lastupdate = '");
 	strcat(query, timestamp);
 	strcat(query,"'");
-	strcat(query, " WHERE login = '");
+	strcat(query, " WHERE user_id = (SELECT id FROM users WHERE login = '");
 	strcat(query, login);
 	strcat(query, "'");
+	strcat(query, " AND active = 1)");
 
 	 if(mysql_query(dbh, query) != 0) {
 	 	return false;

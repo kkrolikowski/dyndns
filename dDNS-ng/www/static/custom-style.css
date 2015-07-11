@@ -3,3 +3,6 @@
     overflow: scroll;
     height: 400px;
 }
+.popover{
+    max-width: 100%;
+}

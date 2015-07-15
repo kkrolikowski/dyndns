@@ -366,7 +366,7 @@
                       </div>
                       <div clas="row" style="padding-top: 10px;">
                         <div>
-                          <button type="submit" class="btn btn-primary">Add domain</button>
+                          <button type="button" class="btn btn-primary" id="addDomainButton">Add domain</button>
                           <button type="button" class="btn btn-primary prevcfg" data-toggle="popover" title="aaa" data-content="test" id="prevButton">Preview</button>
                           <button type="submit" class="btn btn-primary">Slave config</button>
                         </div>

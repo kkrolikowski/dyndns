@@ -1,4 +1,9 @@
 $(document).ready(function() {
+  var ttl, origin, admin, masterdns, index, serial;
+  var rec_name = [];
+  var rec_type = [];
+  var rec_val = [];
+
    $('.nav-tabs a').on('click', function(e) {
       e.preventDefault();
       $(this).tab('show');
@@ -615,16 +620,13 @@ $(document).ready(function() {
       $row.remove();
     })
     .on('click', '.prevcfg', function() {
-      var $row = $('#addDomainForm .row'),
-      ttl = $row.find('[name="ttl"]').val(),
-      origin = $row.find('[name="domain"]').val(),
-      admin = $row.find('[name="admin"]').val(),
+      var $row = $('#addDomainForm .row');
+      ttl = $row.find('[name="ttl"]').val();
+      origin = $row.find('[name="domain"]').val();
+      admin = $row.find('[name="admin"]').val();
       masterdns = $row.find('[name="masterdns"]').val();
 
-      var rec_name = [];
-      var rec_type = [];
-      var rec_val = [];
-      var index = $('#addDomainForm .ns-records').length - 1;
+      index = $('#addDomainForm .ns-records').length - 1;
 
       for(i = 0; i < index; i++) {
         rec_name[i] = $row.find('[name="nsrecord[' + i + ']"]').val();
@@ -647,7 +649,7 @@ $(document).ready(function() {
       if(d < 10) {
         var dstr = "0" + d.toString();
       }
-      var serial = ystr + mstr + dstr + "00";
+      serial = ystr + mstr + dstr + "00";
       var content = "<pre>$TTL " + ttl + "<br>" +
                 "$ORIGIN " + origin + "<br><br>" +
                 "@    IN SOA  " + masterdns + " " + admin + " (<br>" +
@@ -663,6 +665,64 @@ $(document).ready(function() {
       content += "</pre>";
       $('.popover-title').text("zone: " + origin);
       $('.popover-content').html(content);
+    })
+    .on('click', '#addDomainButton', function(e) {
+      e.preventDefault();
+      var $row = $('#addDomainForm .row');
+      ttl = $row.find('[name="ttl"]').val();
+      origin = $row.find('[name="domain"]').val();
+      admin = $row.find('[name="admin"]').val();
+      masterdns = $row.find('[name="masterdns"]').val();
+
+      index = $('#addDomainForm .ns-records').length - 1;
+
+      for(i = 0; i < index; i++) {
+        rec_name[i] = $row.find('[name="nsrecord[' + i + ']"]').val();
+        rec_type[i] = $row.find('[name="type[' + i + ']"]').val();
+        rec_val[i] = $row.find('[name="ip_or_name[' + i + ']"]').val();
+      }
+
+      var date = new Date();
+      var y = date.getFullYear();
+      var m = date.getMonth() + 1;
+      var d = date.getDate();
+
+      var ystr = y.toString();
+      var mstr = m.toString();
+      var dstr = d.toString();
+
+      if(m < 10) {
+        var mstr = "0" + m.toString();
+      }
+      if(d < 10) {
+        var dstr = "0" + d.toString();
+      }
+      serial = ystr + mstr + dstr + "00";
+      var data = {
+        "ttl": ttl,
+        "origin": origin,
+        "admin": admin,
+        "masterdns": masterdns,
+        "serial": serial,
+        "subdomain": rec_name,
+        "type": rec_type,
+        "ip_or_name": rec_val
+      };
+      $.ajax({
+        url: "/domains.php",
+        method: 'PUT',
+        data: {"data": data},
+        success: function() {
+          bootbox.alert("Domain added");
+          for(i = 1; i <= index; i++) {
+            $('[field-index="'+ i +'"]').remove();
+          }
+          $('#addDomainForm')[0].reset();
+        },
+        error: function(xhr) {
+          bootbox.alert(xhr.getResponseHeader('X-Message'));
+        }
+      });
     });
     $('[data-toggle="popover"]').popover();
 });

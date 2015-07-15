@@ -160,7 +160,7 @@
 		$q = $dbh->prepare("SELECT u.id, u.name,u.login, u.email, u.role, u.active, ip, lastupdate, ".
 		"CONCAT(s.subdomain, \".\",  d.domain) as subdomain ".
 		"FROM subdomains s, domains d , users u ".
-		"WHERE s.domain_id = d.id and u.id = s.user_id");
+		"WHERE s.domain_id = d.id and u.id = s.user_id AND s.dynamic = 1");
 		$q->execute();
 		if($q->rowCount() > 0) {
 		$i = 0;

@@ -399,18 +399,20 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="domain" class="control-label col-sm-2">Domain:</label>
+						<label for="domain" class="control-label col-sm-2">Active:</label>
 						<div class="col-sm-10">
+              {foreach from=$subd item=subdomain}
 							<div class="radio">
 								<label>
-									<input type="radio" name="subdomain" id="subdomain" value="{$userdata.subdomain}" checked>
-									{if $userdata.subdomain eq ''}
-										N/A
-									{else}
-										{$userdata.subdomain}
-									{/if}
+                  <input type="radio" name="subdomain" id="subdomain" value="{$subdomain}">
+                  {if $subdomain eq ''}
+                    N/A
+                  {else}
+                    {$subdomain}
+                  {/if}
 								</label>
 							</div>
+              {/foreach}
 						</div>
 					</div>
 					<div class="col-sm-2">

@@ -13,6 +13,7 @@
 	$newuser = array();
 	$history = array();
 	$user = array();
+	$subd = array();
 	$i = 0;
 	$can_go = 0;
 
@@ -130,7 +131,7 @@
 		$q = $dbh->prepare("SELECT u.id, u.name,u.login, u.email, u.role, u.active, ip, lastupdate, ".
 		"CONCAT(s.subdomain, \".\",  d.domain) as subdomain ".
 		"FROM subdomains s, domains d , users u ".
-		"WHERE s.domain_id = d.id and u.id = s.user_id and u.login = '".$_SESSION['userlogin']."'");
+		"WHERE s.domain_id = d.id AND u.id = s.user_id AND s.dynamic = 1 AND u.login = '".$_SESSION['userlogin']."'");
 		$q->execute();
 		if($q->rowCount() == 0)
 			$www->assign('error', "No data");
@@ -146,6 +147,26 @@
 
 		}
 		$www->assign('userdata', $userdata);
+
+		$q = $dbh->prepare(
+			"SELECT CONCAT(s.subdomain, \".\",  d.domain) as subdomain FROM subdomains s, domains d , users u ".
+			"WHERE s.domain_id = d.id and s.type = 'A' and u.id = s.user_id and u.login = '".$_SESSION['userlogin']."'");
+		$q->execute();
+		$i = 0;
+		while($r = $q->fetch()) {
+			if(strstr($r['subdomain'], "@.") != NULL) {
+				$subd[$i] = substr($r['subdomain'], 2, -1);
+			}
+			elseif(substr($r['subdomain'], -1 ) == '.') {
+				$subd[$i] = substr($r['subdomain'], 0, -1 );
+			}
+			else {
+				$subd[$i] = $r['subdomain'];
+			}
+			$i++;
+		}
+		$www->assign('subd', $subd);
+
 		$q = $dbh->prepare(
 		"SELECT * FROM user_log WHERE user_id = (SELECT id from users WHERE login = '".$_SESSION['userlogin']."') ORDER BY id DESC");
 		$q->execute();

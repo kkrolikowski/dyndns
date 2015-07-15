@@ -27,6 +27,15 @@ CREATE TABLE `domains` (
   `domain` varchar(64) NOT NULL,
   `status` varchar(7) NOT NULL default '',
   `user_id` int(11) NOT NULL,
+  `owner` varchar(16) NOT NULL,
+  `ttl` int(11) NOT NULL,
+  `admin_contact` varchar(64) NOT NULL,
+  `master_dns` varchar(64) NOT NULL,
+  `serial` int(11) NOT NULL,
+  `refresh` int(11) NOT NULL default '1200',
+  `retry` int(11) NOT NULL default '1200',
+  `expiry` int(11) NOT NULL default '2419200',
+  `maximum` int(11) NOT NULL default '86400',
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
@@ -47,7 +56,7 @@ CREATE TABLE `mailqueue` (
   `x_mailer` varchar(64) character set utf8 collate utf8_unicode_ci NOT NULL,
   `message` text character set utf8 collate utf8_unicode_ci NOT NULL,
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -64,6 +73,8 @@ CREATE TABLE `subdomains` (
   `subdomain` varchar(24) NOT NULL,
   `ip` varchar(16) NOT NULL,
   `lastupdate` varchar(30) NOT NULL,
+  `type` varchar(6) NOT NULL,
+  `dynamic` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `fk_user_id` (`user_id`),
   CONSTRAINT `usrid_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
@@ -84,7 +95,7 @@ CREATE TABLE `user_log` (
   `date` varchar(30) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `fk_user_id` (`user_id`),
-  CONSTRAINT `usrid_to_log` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+  CONSTRAINT `usrid_kkk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
@@ -117,4 +128,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-07-01 20:22:43
+-- Dump completed on 2015-07-15 11:13:51

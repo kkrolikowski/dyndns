@@ -401,10 +401,14 @@
 					<div class="form-group">
 						<label for="domain" class="control-label col-sm-2">Active:</label>
 						<div class="col-sm-10">
-              {foreach from=$subd item=subdomain}
+              {foreach from=$subd key=subdomain item=is_active}
 							<div class="radio">
 								<label>
+                  {if $is_active eq 1}
+                  <input type="radio" name="subdomain" id="subdomain" value="{$subdomain}" checked>
+                  {else}
                   <input type="radio" name="subdomain" id="subdomain" value="{$subdomain}">
+                  {/if}
                   {if $subdomain eq ''}
                     N/A
                   {else}

@@ -141,7 +141,15 @@
 			$userdata['name'] = $res['name'];
 			$userdata['role'] = $res['role'];
 			$userdata['email'] = $res['email'];
-			$userdata['subdomain'] = $res['subdomain'];
+			if(strstr($res['subdomain'], "@.") != NULL) {
+				$userdata['subdomain'] = substr($res['subdomain'], 2, -1);
+			}
+			elseif(substr($res['subdomain'], -1 ) == '.') {
+				$userdata['subdomain'] = substr($res['subdomain'], 0, -1 );
+			}
+			else {
+				$userdata['subdomain'] = $res['subdomain'];
+			}
 			$userdata['ip'] = $res['ip'];
 			$userdata['lastupdate'] = substr($res['lastupdate'], 1, -1);
 
@@ -149,21 +157,20 @@
 		$www->assign('userdata', $userdata);
 
 		$q = $dbh->prepare(
-			"SELECT CONCAT(s.subdomain, \".\",  d.domain) as subdomain FROM subdomains s, domains d , users u ".
-			"WHERE s.domain_id = d.id and s.type = 'A' and u.id = s.user_id and u.login = '".$_SESSION['userlogin']."'");
+			"SELECT CONCAT(s.subdomain, \".\",  d.domain) as subdomain, dynamic FROM subdomains s, domains d , users u ".
+			"WHERE s.domain_id = d.id AND s.type = 'A' AND u.id = s.user_id and u.login = '".$_SESSION['userlogin']."'");
 		$q->execute();
-		$i = 0;
 		while($r = $q->fetch()) {
 			if(strstr($r['subdomain'], "@.") != NULL) {
-				$subd[$i] = substr($r['subdomain'], 2, -1);
+				$sbd = substr($r['subdomain'], 2, -1);
 			}
 			elseif(substr($r['subdomain'], -1 ) == '.') {
-				$subd[$i] = substr($r['subdomain'], 0, -1 );
+				$sbd = substr($r['subdomain'], 0, -1 );
 			}
 			else {
-				$subd[$i] = $r['subdomain'];
+				$sbd = $r['subdomain'];
 			}
-			$i++;
+			$subd[$sbd] = $r['dynamic'];
 		}
 		$www->assign('subd', $subd);
 
@@ -185,11 +192,21 @@
 		$q->execute();
 		if($q->rowCount() > 0) {
 		$i = 0;
-		while($res = $q->fetch())
+		while($res = $q->fetch()) {
+			if(strstr($res['subdomain'], "@.") != NULL) {
+				$subdomain = substr($res['subdomain'], 2, -1);
+			}
+			elseif(substr($res['subdomain'], -1 ) == '.') {
+				$subdomain = substr($res['subdomain'], 0, -1 );
+			}
+			else {
+				$subdomain = $res['subdomain'];
+			}
 			$user[$i++] = array(
 				$res['id'], $res['name'], $res['login'], $res['email'],
-				$res['role'], $res['active'], $res['subdomain']
-			);
+				$res['role'], $res['active'], $subdomain
+				);
+			}
 		}
 		$www->assign('allusers', $user);
 		if(isset($_POST['changepass'])) {
@@ -208,8 +225,34 @@
 		   }
 		}
 		if($_POST['update'] == 'user') {
-			$q = $dbh->query("UPDATE users SET name = '".$_POST['name']."', email = '".$_POST['email']."', subdomain = '".$_POST['subdomain']."' WHERE login = '".$_SESSION['userlogin']."'");
+			$q = $dbh->query("UPDATE users SET name = '".$_POST['name']."', email = '".$_POST['email']."' WHERE login = '".$_SESSION['userlogin']."'");
 			$status = $q->execute();
+
+			// get ID of current dynamic record
+			$q = $dbh->prepare("SELECT id FROM subdomains WHERE user_id = (SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."') AND dynamic = 1");
+			$q->execute();
+			$r = $q->fetch();
+			$active_record = $r['id'];
+
+			// check if this is domain or subdomain
+			$q = $dbh->prepare("SELECT id FROM domains WHERE domain = '".$_POST['subdomain'].".'");
+			$q->execute();
+			if($q->rowCount() > 0) {
+				$q = $dbh->prepare(
+				"UPDATE subdomains SET dynamic = 1 WHERE subdomain = '@' AND TYPE = 'A' " .								// if this is domain
+				"AND domain_id = (SELECT id FROM domains WHERE domain = '".$_POST[subdomain].".')");			// update @ record
+				$q->execute();
+			}
+			else {
+				$s_dom = explode('.', $_POST['subdomain'], 2);
+				$q = $dbh->prepare(
+					"UPDATE subdomains SET dynamic = 1 WHERE subdomain = '".$s_dom[0]."' AND TYPE = 'A'" .
+					" AND domain_id = (SELECT id FROM domains WHERE domain LIKE '".$s_dom[1]."%')"
+				);
+				$q->execute();
+			}
+			$q = $dbh->prepare("UPDATE subdomains SET dynamic = 0 WHERE ID = ".$active_record);
+			$q->execute();
 		}
 	}
 	$www->assign('title', 'dDNS Service');

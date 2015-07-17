@@ -286,14 +286,14 @@ bool getUserData(MYSQL * dbh, sqldata_t *info, char *login) {
 	MYSQL_RES * res;
 	MYSQL_ROW row;
 
-	char * check_user_query = "SELECT u.login, u.pass, CONCAT(s.subdomain, \".\",  d.domain) as subdomain, u.active \
-	FROM subdomains s, domains d , users u WHERE s.domain_id = d.id and u.id = s.user_id and u.login = '";
+	char * check_user_query = "SELECT u.login, u.pass, CONCAT(s.subdomain, \".\",  d.domain) as subdomain, u.active, \
+	s.dynamic FROM subdomains s, domains d , users u WHERE s.domain_id = d.id and u.id = s.user_id and u.login = '";
 	char * query;
 
-	query = (char *) malloc((strlen(check_user_query) + strlen(login) + 2) * sizeof(char));
+	query = (char *) malloc((strlen(check_user_query) + strlen(login) + 19) * sizeof(char));
 	strcpy(query, check_user_query);
 	strcat(query, login);
-	strcat(query,"'");
+	strcat(query,"' AND dynamic = 1");
 	 if(mysql_query(dbh, query) != 0) {
 		mysql_close(dbh);
 	 	return false;
@@ -325,7 +325,7 @@ bool getUserData(MYSQL * dbh, sqldata_t *info, char *login) {
 bool updateDB(MYSQL * dbh, sqldata_t *info, char *login, char *ip, char * timestamp) {
 	char * query;
 	char * update_query = "UPDATE subdomains set ip = '";
-	query = (char *) malloc((strlen(update_query) + strlen(ip) + strlen(timestamp) + strlen(login) + 95) * sizeof(char));
+	query = (char *) malloc((strlen(update_query) + strlen(ip) + strlen(timestamp) + strlen(login) + 128) * sizeof(char));
 
 	strcpy(query, update_query);
 	strcat(query, ip);
@@ -335,7 +335,7 @@ bool updateDB(MYSQL * dbh, sqldata_t *info, char *login, char *ip, char * timest
 	strcat(query, " WHERE user_id = (SELECT id FROM users WHERE login = '");
 	strcat(query, login);
 	strcat(query, "'");
-	strcat(query, " AND active = 1)");
+	strcat(query, " AND active = 1) AND type = 'A' AND dynamic = 1");
 
 	 if(mysql_query(dbh, query) != 0) {
 	 	return false;

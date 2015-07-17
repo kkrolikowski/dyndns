@@ -96,7 +96,7 @@
 				);
 				$q->execute();
 				$res = $q->fetch();
-				$q = $dbh->prepare("INSERT INTO subdomains (user_id,domain_id,subdomain) VALUES(".$res['user_id'].", ".$res['domain_id'].", '".$newuser['subdomain']."')");
+				$q = $dbh->prepare("INSERT INTO subdomains (user_id,domain_id,subdomain,dynamic) VALUES(".$res['user_id'].", ".$res['domain_id'].", '".$newuser['subdomain']."', 1)");
 				$q->execute();
 				$to = $newuser['email'];
 				$message = "Hello " . $newuser['name'] . "!\r\n\r\n" .

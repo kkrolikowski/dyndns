@@ -141,6 +141,7 @@
                   <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Edit Profile</a></li>
                   <li role="presentation"><a href="#chpass" aria-controls="profile" role="tab" data-toggle="tab">Change Password</a></li>
                   <li role="presentation"><a href="#addDomain" aria-controls="profile" role="tab" data-toggle="tab">Add domain</a></li>
+                  <li role="presentation"><a href="#myDomains" aria-controls="profile" role="tab" data-toggle="tab">My domains</a></li>
                </ul>
             </li>
          </ul>
@@ -496,7 +497,6 @@ pid = /var/run/ddns-client.pid
 			<li><a href="#help" style="text-decoration: none;"><img src="static/information.ico" class="img-rounded" alt="Information" style="max-width: 20%; height: auto;"> <strong>How to use</strong></a>
          </ul>
 	   </div>
-
     </div>
 	<hr>
 	<div class="row" id="help">

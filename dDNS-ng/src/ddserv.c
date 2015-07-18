@@ -110,7 +110,6 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 	free(source_addr);
 	free(mailto);
 	mysql_close(dbh);
-	exit(1);
 }
 static void splitDomain(char *userdomain, cfgdata_t * cfg) {
     char * dom;

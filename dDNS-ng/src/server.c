@@ -57,16 +57,7 @@ int main(int argc, char *argv[]) {
 	else
 		log_event(log_fd, " INFO: Listening on port: ", port_str, "\n", NULL);
 	while(1) {
-		dsrv = fork();
-		if(dsrv > 0)
-			wait(&status);
-		else if(dsrv == 0)
-			ddserv(&config, log_fd, sockfd);
-		else {
-			perror("fork");
-			unlink(config.pid);
-			exit(-1);
-		}
+		ddserv(&config, log_fd, sockfd);
 	}
 	close(log_fd);
 	unlink(config.pid);

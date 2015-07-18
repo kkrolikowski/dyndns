@@ -38,4 +38,5 @@ char ** getAdminEmail(MYSQL * dbh);
 int getUserID(MYSQL * dbh, char * login);
 bool userlog(MYSQL * dbh, int userid, char *ip, char * timestamp);
 int sendmail(config_t * cf, char * mailto, char * subject, char * msg);
+int dbsync(config_t * cfg, int server_log);
 #endif

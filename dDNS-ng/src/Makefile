@@ -9,11 +9,11 @@ endif
 	LIBRA = -lcrypt -lmysqlclient
 
 all:
-	gcc -o ddns-server ddserv.c functions.c server.c common.c auth.c $(LIBRA) $(LIBB) $(HEADER)
+	gcc -o ddns-server ddserv.c functions.c server.c common.c auth.c dbsync.c $(LIBRA) $(LIBB) $(HEADER)
 	gcc -o ddns-client client.c common.c
 client:
 	gcc -o ddns-client client.c common.c
 server:
-	gcc -o ddns-server ddserv.c functions.c server.c common.c auth.c $(LIBRA) $(LIBB) $(HEADER)
+	gcc -o ddns-server ddserv.c functions.c server.c common.c auth.c dbsync.c $(LIBRA) $(LIBB) $(HEADER)
 clean:
 	rm -f ddns-client ddns-server

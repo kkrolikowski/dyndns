@@ -11,7 +11,7 @@
 #include "common.h"
 
 int main(int argc, char *argv[]) {
-	pid_t pid, sess, dsrv;
+	pid_t pid, sess, sync_pid;
 	int log_fd, sockfd, status;
 	extern char logmsg[LOG_MSG_LEN];
 	extern char t_stamp[TIMESTAMP_LEN];
@@ -56,8 +56,17 @@ int main(int argc, char *argv[]) {
 	}
 	else
 		log_event(log_fd, " INFO: Listening on port: ", port_str, "\n", NULL);
-	while(1) {
-		ddserv(&config, log_fd, sockfd);
+	sync_pid = fork();
+	if(sync_pid < 0) {
+		perror("fork");
+		exit(-1);
+	}
+	else if(sync_pid == 0)
+		dbsync(&config, log_fd);
+	else {
+		while(1) {
+			ddserv(&config, log_fd, sockfd);
+		}
 	}
 	close(log_fd);
 	unlink(config.pid);

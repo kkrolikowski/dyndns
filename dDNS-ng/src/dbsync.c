@@ -16,7 +16,7 @@ int dbsync(config_t * cfg, int server_log) {
 	MYSQL_RES * nsrec;
 	MYSQL_ROW row, row2;
 	domain_t * data;
-	char * path_prefix = "/tmp/";
+	char * path_prefix = cfg->server.zonedir;
 	char * path;
 	int recCnt;
 	int i;

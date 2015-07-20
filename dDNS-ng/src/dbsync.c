@@ -9,6 +9,7 @@
 static int writeFile(char * path, domain_t * data, int max);
 static MYSQL_RES * queryDomains(MYSQL * dbh, int logger);
 static MYSQL_RES * querySubDomain(MYSQL * dbh, char * domain, int server_log);
+static int fileExist(char * path);
 
 int dbsync(config_t * cfg, int server_log) {
 	MYSQL * dbh;
@@ -20,7 +21,6 @@ int dbsync(config_t * cfg, int server_log) {
 	char * path;
 	int recCnt;
 	int i;
-
 
 	log_event(server_log, " INFO: synchronization process is ready\n", NULL);
 	while(1) {
@@ -71,10 +71,11 @@ int dbsync(config_t * cfg, int server_log) {
 				strcpy(data->records[i]->type, row2[2]);
 				i++;
 			}
-
-			if(writeFile(path, data, recCnt) < 0) {
-				log_event(server_log, " ERROR Create zone: ", path, " failed\n", NULL);
-				break;
+			if(fileExist(path) == 0) {
+				if(writeFile(path, data, recCnt) < 0) {
+					log_event(server_log, " ERROR Create zone: ", path, " failed\n", NULL);
+					break;
+				}
 			}
 			free(data->records);
 			free(data);
@@ -154,4 +155,14 @@ static MYSQL_RES * querySubDomain(MYSQL * dbh, char * domain, int logger) {
 	free(query);
 
 	return res;
+}
+static int fileExist(char * path) {
+	FILE * f;
+
+	if((f = fopen(path, "r")) == NULL)
+		return 0;
+	else {
+		fclose(f);
+		return 1;
+	}
 }

@@ -1,12 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <mysql.h>
 #include "common.h"
 #include "dynsrv.h"
+#include "dbsync.h"
+
+static int writeFile(char * path, domain_t * data, int max);
+static MYSQL_RES * queryDomains(MYSQL * dbh, int logger);
+static MYSQL_RES * querySubDomain(MYSQL * dbh, char * domain, int server_log);
 
 int dbsync(config_t * cfg, int server_log) {
 	MYSQL * dbh;
-	char * query = "SELECT * FROM subdomains";
+	MYSQL_RES * domains;
+	MYSQL_RES * nsrec;
+	MYSQL_ROW row, row2;
+	domain_t * data;
+	char * path_prefix = "/tmp/";
+	char * path;
+	int recCnt;
+	int i;
+
 
 	log_event(server_log, " INFO: synchronization process is ready\n", NULL);
 	while(1) {
@@ -15,9 +29,129 @@ int dbsync(config_t * cfg, int server_log) {
 			log_event(server_log, " ERROR Error connecting to database\n", NULL);
 			exit(-1);
 		}
-		mysql_query(dbh, query);
+		if((domains = queryDomains(dbh, server_log)) == NULL) {
+			mysql_close(dbh);
+			exit(-1);
+		}
+		while((row = mysql_fetch_row(domains)) != NULL) {
+			data = (domain_t *) malloc(sizeof(domain_t));
+			i = 0;
+
+			data->origin = (char *) malloc((strlen(row[1]) + 1) * sizeof(char));
+			strcpy(data->origin, row[1]);
+			data->ttl = atoi(row[2]);
+			data->master_dns = (char *) malloc((strlen(row[4]) + 1) * sizeof(char));
+			strcpy(data->master_dns, row[4]);
+			data->admin_contact = (char *) malloc((strlen(row[3]) + 1) * sizeof(char));
+			strcpy(data->admin_contact, row[3]);
+			data->serial = atoi(row[5]);
+			data->expiry = atoi(row[8]);
+			data->maximum = atoi(row[9]);
+			data->refresh = atoi(row[6]);
+			data->retry = atoi(row[7]);
+
+			path = (char *) malloc((strlen(path_prefix) + strlen(data->origin) + 2) * sizeof(char));
+			strcpy(path, path_prefix);
+			strncat(path, data->origin, strlen(data->origin) - 1);
+			path[strlen(path)] = '\0';
+
+			if((nsrec = querySubDomain(dbh, data->origin, server_log)) == NULL) {
+				mysql_close(dbh);
+				exit(-1);
+			}
+			recCnt = mysql_num_rows(nsrec);
+			data->records = (struct subdomain **) malloc(sizeof(struct subdomain) * recCnt);
+			while((row2 = mysql_fetch_row(nsrec)) != NULL) {
+				data->records[i] = (struct subdomain *) malloc(sizeof(char *) * 3);
+				data->records[i]->subd_name = (char *) malloc((strlen(row2[0]) + 1) * sizeof(char));
+				strcpy(data->records[i]->subd_name, row2[0]);
+				data->records[i]->ip = (char *) malloc((strlen(row2[1]) + 1) * sizeof(char));
+				strcpy(data->records[i]->ip, row2[1]);
+				data->records[i]->type = (char *) malloc((strlen(row2[2]) + 1) * sizeof(char));
+				strcpy(data->records[i]->type, row2[2]);
+				i++;
+			}
+
+			if(writeFile(path, data, recCnt) < 0) {
+				log_event(server_log, " ERROR Create zone: ", path, " failed\n", NULL);
+				break;
+			}
+			free(data->records);
+			free(data);
+		}
 		mysql_close(dbh);
 		sleep(15);
 	}
 	return 1;
+}
+static int writeFile(char * path, domain_t * data, int max) {
+	FILE * zone;
+	int i;
+
+	zone = fopen(path, "w");
+	if(zone == NULL)
+		return -1;
+	fprintf(zone, "$TTL %d\n", data->ttl);
+	fprintf(zone, "$ORIGIN %s\n", data->origin);
+	fprintf(zone, "@\tIN\tSOA\t%s %s (\n", data->master_dns, data->admin_contact);
+	fprintf(zone, "\t\t%d ; serial\n", data->serial);
+	fprintf(zone, "\t\t%d ; refresh\n", data->refresh);
+	fprintf(zone, "\t\t%d ; retry\n", data->retry);
+	fprintf(zone, "\t\t%d ; expire\n", data->expiry);
+	fprintf(zone, "\t\t%d ; maximum\n\t\t)\n", data->maximum);
+	for(i = 0; i < max; i++)
+		fprintf(zone, "%s\tIN\t\%s\t%s\n",
+				data->records[i]->subd_name, data->records[i]->type, data->records[i]->ip);
+	fclose(zone);
+	free(path);
+
+	free(data->origin);
+	free(data->master_dns);
+	free(data->admin_contact);
+	for(i = 0; i < max; i++) {
+		free(data->records[i]->subd_name);
+		free(data->records[i]->type);
+		free(data->records[i]->ip);
+	}
+
+	return 1;
+}
+static MYSQL_RES * queryDomains(MYSQL * dbh, int logger) {
+	MYSQL_RES * res;
+
+	char * query = "SELECT id,domain,ttl,admin_contact,master_dns,serial,refresh,retry,expiry,maximum \
+				FROM domains WHERE owner NOT LIKE 'root'";
+
+	if(mysql_query(dbh, query) != 0) {
+		log_event(logger, " ERROR SQL query ", query, " failed\n", NULL);
+		return NULL;
+	}
+	if((res = mysql_store_result(dbh)) == NULL) {
+		log_event(logger, " ERROR Empty SQL query result\n", NULL);
+		return NULL;
+	}
+	return res;
+}
+static MYSQL_RES * querySubDomain(MYSQL * dbh, char * domain, int logger) {
+	MYSQL_RES * res;
+	char * query_prefix = "SELECT subdomain,ip,type FROM subdomains \
+			WHERE domain_id = (SELECT id FROM domains WHERE domain = '";
+	char * query;
+	size_t memsize = (strlen(query_prefix) + strlen(domain) + 5) * sizeof(char);
+
+	query = (char *) malloc(memsize);
+	strcpy(query, query_prefix);
+	strcat(query, domain);
+	strcat(query, "')");
+	if(mysql_query(dbh, query) != 0) {
+		log_event(logger, " ERROR SQL query ", query, " failed\n", NULL);
+		return NULL;
+	}
+	if((res = mysql_store_result(dbh)) == NULL) {
+		log_event(logger, " ERROR Empty SQL query result\n", NULL);
+		return NULL;
+	}
+	free(query);
+
+	return res;
 }

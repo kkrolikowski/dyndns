@@ -27,6 +27,7 @@ typedef struct serverconfig {
 	char smtp_ip[16];
 	int smtp_port;
 	char mail_from[64];
+	char * namedconf;
 } serverconfig_t;
 /*
  * config_t common client/server configuration
@@ -69,4 +70,5 @@ char * getVal(char * str);
  * takes two arguments: process PID and path to pidfile.
  */
 int pidfile(pid_t pid, char *name);
+char * getVal2(char * str);
 #endif

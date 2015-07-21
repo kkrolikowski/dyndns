@@ -11,6 +11,7 @@
 bool ReadCFG(config_t * cfg, char * filename) {
 	FILE * cfgfile;
 	char buf[256];
+	char * val;
 
 	cfgfile = fopen(filename, "r");
 	if(cfgfile == NULL)
@@ -26,6 +27,12 @@ bool ReadCFG(config_t * cfg, char * filename) {
 			strcpy(cfg->client.domain, getVal(buf));
 		if(strstr(buf, "zones ="))
 			strcpy(cfg->server.zonedir, getVal(buf));
+		if(strstr(buf, "named_conf =")) {
+			val = getVal2(buf);
+			cfg->server.namedconf = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			strcpy(cfg->server.namedconf, val);
+			free(val);
+		}
 		if(strstr(buf, "log ="))
 			strcpy(cfg->logfile, getVal(buf));
 		if(strstr(buf, "interval ="))
@@ -61,6 +68,26 @@ char * getVal(char * str) {
 	}
 	*(str+(strlen(str)-1)) = '\0';
 	return ++str;
+}
+char * getVal2(char * str) {
+	char * val;
+	char * start;
+
+	int i;
+	int max = 0;
+	while(*str++) {
+		if(isspace(*str) && (isalnum(*(str+1)) || *(str+1) == '/'))
+			break;
+	}
+	start = ++str;
+	while(*str++ != '\n')
+		max++;
+	val = (char *) malloc((max+1) * sizeof(char));
+	for(i = 0; i < max; i++)
+		*(val+i) = *(start+i);
+	val[i] = '\0';
+
+	return val;
 }
 void log_event(int logfd, char *first, ...) {
 	va_list msgs;

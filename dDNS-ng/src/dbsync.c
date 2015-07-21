@@ -10,6 +10,7 @@ static int writeFile(char * path, domain_t * data, int max);
 static MYSQL_RES * queryDomains(MYSQL * dbh, int logger);
 static MYSQL_RES * querySubDomain(MYSQL * dbh, char * domain, int server_log);
 static int fileExist(char * path);
+static int updateNamedConf(char * path, char * named_conf_path, char * domain, int logger);
 
 int dbsync(config_t * cfg, int server_log) {
 	MYSQL * dbh;
@@ -19,6 +20,7 @@ int dbsync(config_t * cfg, int server_log) {
 	domain_t * data;
 	char * path_prefix = cfg->server.zonedir;
 	char * path;
+	char * zoneName;
 	int recCnt;
 	int i;
 
@@ -55,6 +57,11 @@ int dbsync(config_t * cfg, int server_log) {
 			strncat(path, data->origin, strlen(data->origin) - 1);
 			path[strlen(path)] = '\0';
 
+			zoneName = (char *) malloc((strlen(data->origin) + 1) * sizeof(char));
+			bzero(zoneName, (strlen(data->origin) + 1) * sizeof(char));
+			strcpy(zoneName, data->origin);
+			zoneName[strlen(zoneName)-1] = '\0';
+
 			if((nsrec = querySubDomain(dbh, data->origin, server_log)) == NULL) {
 				mysql_close(dbh);
 				exit(-1);
@@ -76,13 +83,17 @@ int dbsync(config_t * cfg, int server_log) {
 					log_event(server_log, " ERROR Create zone: ", path, " failed\n", NULL);
 					break;
 				}
+				if(updateNamedConf(path, cfg->server.namedconf, zoneName, server_log) == 0)
+					log_event(server_log, " ERROR FileUpdate: ",cfg->server.namedconf, " failed\n", NULL);
 			}
+			free(zoneName);
 			free(data->records);
 			free(data);
 		}
 		mysql_close(dbh);
 		sleep(15);
 	}
+	free(cfg->server.namedconf);
 	return 1;
 }
 static int writeFile(char * path, domain_t * data, int max) {
@@ -165,4 +176,21 @@ static int fileExist(char * path) {
 		fclose(f);
 		return 1;
 	}
+}
+static int updateNamedConf(char * path, char * named_conf_path, char * domain, int logger) {
+	FILE * named_conf;
+
+	if((named_conf = fopen(named_conf_path, "a")) == NULL) {
+		log_event(logger, " ERROR opening ", path, "\n");
+		return 0;
+	}
+
+	fprintf(named_conf, "zone \"%s\" {\n", domain);
+	fprintf(named_conf, "\ttype master;\n");
+	fprintf(named_conf, "\tallow-update { none; };\n");
+	fprintf(named_conf, "\tfile \"%s\";\n", path);
+	fprintf(named_conf, "};\n");
+
+	fclose(named_conf);
+	return 1;
 }

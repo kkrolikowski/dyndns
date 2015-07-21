@@ -8,9 +8,6 @@
   $size = 0;
 
   if(isset($_SESSION['userlogin'])) {
-    $q = $dbh->prepare("SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."' AND role = 'admin'");
-    $q->execute();
-    if($q->rowCount() > 0) {
       if($_SERVER['REQUEST_METHOD'] == 'PUT') {
         parse_str(file_get_contents("php://input"), $json);
 
@@ -41,6 +38,5 @@
         else
           header('X-Message: Domain exists',  true, 406);
       }
-    }
   }
 ?>

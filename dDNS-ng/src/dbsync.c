@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <mysql.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include "common.h"
 #include "dynsrv.h"
 #include "dbsync.h"
@@ -11,6 +14,7 @@ static MYSQL_RES * queryDomains(MYSQL * dbh, int logger);
 static MYSQL_RES * querySubDomain(MYSQL * dbh, char * domain, int server_log);
 static int fileExist(char * path);
 static int updateNamedConf(char * path, char * named_conf_path, char * domain, int logger);
+static int namedReload();
 
 int dbsync(config_t * cfg, int server_log) {
 	MYSQL * dbh;
@@ -23,6 +27,7 @@ int dbsync(config_t * cfg, int server_log) {
 	char * zoneName;
 	int recCnt;
 	int i;
+	pid_t reload_pid;
 
 	log_event(server_log, " INFO: synchronization process is ready\n", NULL);
 	while(1) {
@@ -85,6 +90,15 @@ int dbsync(config_t * cfg, int server_log) {
 				}
 				if(updateNamedConf(path, cfg->server.namedconf, zoneName, server_log) == 0)
 					log_event(server_log, " ERROR FileUpdate: ",cfg->server.namedconf, " failed\n", NULL);
+				else {
+					reload_pid = fork();
+					if(reload_pid == 0)
+						namedReload();
+				    else if(reload_pid > 0)
+				    	waitpid(reload_pid, NULL, WNOHANG);
+				    else
+				    	log_event(server_log, " ERROR Reload named failed\n", NULL);
+				}
 			}
 			free(zoneName);
 			free(data->records);
@@ -192,5 +206,18 @@ static int updateNamedConf(char * path, char * named_conf_path, char * domain, i
 	fprintf(named_conf, "};\n");
 
 	fclose(named_conf);
+	return 1;
+}
+static int namedReload() {
+	int ret;
+
+	ret = execl("/usr/sbin/rndc", "rndc", "reload", NULL);
+	if(ret == -1) {
+		ret = execl("/usr/local/sbin/rndc", "rndc", "reload", NULL);
+		if(ret == -1) {
+			perror("execl");
+			return 0;
+		}
+	}
 	return 1;
 }

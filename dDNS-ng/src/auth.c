@@ -45,5 +45,5 @@ int isAuthorized(sqldata_t *dbdata, char *user, char *domain) {
 	if(strcmp(domain, dbdata->subdomain) == 0)
 		return 1;
 	else
-		return -1;
+		return 0;
 }

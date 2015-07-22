@@ -76,6 +76,7 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 					updateZone(&cf, zonepath);
 					updateDB(dbh, &db_userdata, login, source_addr, timestamp_new(t_stamp));
 					userlog(dbh, dynuser_id, source_addr, timestamp_new(t_stamp));
+					log_event(logfd, " INFO: ", cf.subdomain, " IP Address updated\n", NULL);
 					mailmsg = (char *) malloc((strlen(source_addr) + strlen(cf.subdomain)) * sizeof(char) +3);
 					strcpy(mailmsg, cf.subdomain);
 					strcat(mailmsg, ": ");
@@ -85,8 +86,9 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 						mailto++;
 					}
 					free(mailmsg);
-					log_event(logfd, " INFO: ", cf.subdomain, " IP Address updated\n", NULL);
 				}
+				else if(isAuthorized(&db_userdata, login, client_domain) < 0)
+					log_event(logfd, " ERROR: user: ", login, " unknown\n", NULL);
 				else
 					log_event(logfd, " ERROR: ", cf.subdomain, " update failed\n", NULL);
 			}

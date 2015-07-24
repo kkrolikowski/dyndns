@@ -19,57 +19,110 @@ bool ReadCFG(config_t * cfg, char * filename) {
 	while(fgets(buf, sizeof(buf), cfgfile) != NULL) {
 		if(buf[0] == '#')
 			continue;
-		if(strstr(buf, "server ="))
-			strcpy(cfg->client.host, getVal(buf));
-		if(strstr(buf, "listen_on =") != NULL || strstr(buf, "srv_port =") != NULL)
-			cfg->port = atoi(getVal(buf));
-		if(strstr(buf, "domain ="))
-			strcpy(cfg->client.domain, getVal(buf));
-		if(strstr(buf, "zones ="))
-			strcpy(cfg->server.zonedir, getVal(buf));
+		if(strstr(buf, "server =")) {
+			val = getVal(buf);
+			cfg->client.host = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			strcpy(cfg->client.host, val);
+			free(val);
+		}
+		if(strstr(buf, "listen_on =") != NULL || strstr(buf, "srv_port =") != NULL) {
+			val = getVal(buf);
+			cfg->port = atoi(val);
+			free(val);
+		}
+		if(strstr(buf, "domain =")) {
+			val = getVal(buf);
+			cfg->client.domain = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			strcpy(cfg->client.domain, val);
+			free(val);
+		}
+		if(strstr(buf, "zones =")) {
+			val = getVal(buf);
+			cfg->server.zonedir = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			strcpy(cfg->server.zonedir, val);
+			free(val);
+		}
 		if(strstr(buf, "named_conf =")) {
-			val = getVal2(buf);
+			val = getVal(buf);
 			cfg->server.namedconf = (char *) malloc((strlen(val) + 1) * sizeof(char));
 			strcpy(cfg->server.namedconf, val);
 			free(val);
 		}
-		if(strstr(buf, "log ="))
-			strcpy(cfg->logfile, getVal(buf));
-		if(strstr(buf, "interval ="))
-			cfg->client.interval = atoi(getVal(buf));
-		if(strstr(buf, "login ="))
-			strcpy(cfg->client.username, getVal(buf));
-		if(strstr(buf, "pass ="))
-			strcpy(cfg->client.password, getVal(buf));
-		if(strstr(buf, "pid ="))
-			strcpy(cfg->pid, getVal(buf));
-		if(strstr(buf, "db_host ="))
-			strcpy(cfg->server.db_host, getVal(buf));
-		if(strstr(buf, "db_name ="))
-			strcpy(cfg->server.db_name, getVal(buf));
-		if(strstr(buf, "db_user ="))
-			strcpy(cfg->server.db_login, getVal(buf));
-		if(strstr(buf, "db_secret ="))
-			strcpy(cfg->server.db_pass, getVal(buf));
-		if(strstr(buf, "smtp_ip ="))
-			strcpy(cfg->server.smtp_ip, getVal(buf));
-		if(strstr(buf, "smtp_port ="))
-			cfg->server.smtp_port = atoi(getVal(buf));
-		if(strstr(buf, "mail_from ="))
-			strcpy(cfg->server.mail_from, getVal(buf));
+		if(strstr(buf, "log =")) {
+			val = getVal(buf);
+			cfg->logfile = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			strcpy(cfg->logfile, val);
+			free(val);
+		}
+		if(strstr(buf, "interval =")) {
+			val = getVal(buf);
+			cfg->client.interval = atoi(val);
+			free(val);
+		}
+		if(strstr(buf, "login =")) {
+			val = getVal(buf);
+			cfg->client.username = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			strcpy(cfg->client.username, val);
+			free(val);
+		}
+		if(strstr(buf, "pass =")) {
+			val = getVal(buf);
+			cfg->client.password = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			strcpy(cfg->client.password, val);
+			free(val);
+		}
+		if(strstr(buf, "pid =")) {
+			val = getVal(buf);
+			cfg->pidf = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			strcpy(cfg->pidf, val);
+			free(val);
+		}
+		if(strstr(buf, "db_host =")) {
+			val = getVal(buf);
+			cfg->server.db_host = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			strcpy(cfg->server.db_host, val);
+			free(val);
+		}
+		if(strstr(buf, "db_name =")) {
+			val = getVal(buf);
+			cfg->server.db_name = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			strcpy(cfg->server.db_name, val);
+			free(val);
+		}
+		if(strstr(buf, "db_user =")) {
+			val = getVal(buf);
+			cfg->server.db_login = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			strcpy(cfg->server.db_login, val);
+			free(val);
+		}
+		if(strstr(buf, "db_secret =")) {
+			val = getVal(buf);
+			cfg->server.db_pass = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			strcpy(cfg->server.db_pass, val);
+			free(val);
+		}
+		if(strstr(buf, "smtp_ip =")) {
+			val = getVal(buf);
+			cfg->server.smtp_ip = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			strcpy(cfg->server.smtp_ip, val);
+			free(val);
+		}
+		if(strstr(buf, "smtp_port =")) {
+			val = getVal(buf);
+			cfg->server.smtp_port = atoi(val);
+			free(val);
+		}
+		if(strstr(buf, "mail_from =")) {
+			val = getVal(buf);
+			cfg->server.mail_from = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			strcpy(cfg->server.mail_from, val);
+			free(val);
+		}
 	}
 	fclose(cfgfile);
 	return true;
 }
 char * getVal(char * str) {
-	while(*str++) {
-		if(isspace(*str) && (isalnum(*(str+1)) || *(str+1) == '/'))
-			break;
-	}
-	*(str+(strlen(str)-1)) = '\0';
-	return ++str;
-}
-char * getVal2(char * str) {
 	char * val;
 	char * start;
 

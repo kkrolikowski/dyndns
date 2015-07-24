@@ -41,20 +41,6 @@ int bindToInterface(int portno) {
 
 	return sockfd;
 }
-int clientConn(int fd, char * cliaddr) {
-	int clilen, clifd;
-	struct sockaddr_in cli_addr;
-
-	clilen = sizeof(cli_addr);
-	clifd = accept(fd, (struct sockaddr *) &cli_addr, &clilen);
-
-	if(clifd < 0)
-		return -1;
-	else {
-		strcpy(cliaddr, (char *) inet_ntoa(cli_addr.sin_addr));
-		return clifd;
-	}
-}
 int updateZone(cfgdata_t * cf, char * file) {
     FILE *zf;
     FILE *tmp;
@@ -281,48 +267,6 @@ int apply(char * tmp_f, char * dst_f, const char * domain) {
     	perror("fork");
 
     return 1;
-}
-bool getUserData(MYSQL * dbh, sqldata_t *info, char *login) {
-	MYSQL_RES * res;
-	MYSQL_ROW row;
-
-	char * check_user_query = "SELECT u.login, u.pass, CONCAT(s.subdomain, \".\",  d.domain) as subdomain, u.active, \
-	s.dynamic FROM subdomains s, domains d , users u WHERE s.domain_id = d.id and u.id = s.user_id and u.login = '";
-	char * query;
-
-	query = (char *) malloc((strlen(check_user_query) + strlen(login) + 19) * sizeof(char));
-	strcpy(query, check_user_query);
-	strcat(query, login);
-	strcat(query,"' AND dynamic = 1");
-	 if(mysql_query(dbh, query) != 0) {
-		mysql_close(dbh);
-	 	return false;
-	 }
-	 res = mysql_store_result(dbh);
-	 if(res == NULL) {
-		 mysql_close(dbh);
-	 	return false;
-	 }
-	 if(mysql_field_count(dbh) == 0) {
-	 	free(query);
-	 	mysql_close(dbh);
-	 	return false;
-	 }
-	 if((row = mysql_fetch_row(res)) != 0) {
-		 strcpy(info->login, row[0]);
-		 strcpy(info->pass, row[1]);
-		 if(row[2][strlen(row[2]) - 1] == '.')
-			 row[2][strlen(row[2]) - 1] = '\0';
-		 strcpy(info->subdomain, row[2]);
-		 info->isactive = atoi(row[3]);
-	 }
-	 else {
-		 mysql_close(dbh);
-		 return false;
-	 }
-
-	 free(query);
-	 return true;
 }
 bool updateDB(MYSQL * dbh, sqldata_t *info, char *login, char *ip, char * timestamp) {
 	char * query;

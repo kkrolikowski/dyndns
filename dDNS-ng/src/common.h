@@ -9,34 +9,34 @@
  * userconfig_t stores client configuration data
  */
 typedef struct userconfig {
-	char host[50];
-	char domain[64];
-	char username[12];
-	char password[24];
+	char * host;
+	char * domain;
+	char * username;
+	char * password;
 	int interval;
 } userconfig_t;
 /*
  * serverconfig_t stores server configuration data
  */
 typedef struct serverconfig {
-	char zonedir[FPATH_MAX];
-	char db_host[16];
-	char db_name[16];
-	char db_login[16];
-	char db_pass[24];
-	char smtp_ip[16];
+	char * zonedir;
+	char * db_host;
+	char * db_name;
+	char * db_login;
+	char * db_pass;
+	char * smtp_ip;
 	int smtp_port;
-	char mail_from[64];
+	char * mail_from;
 	char * namedconf;
-} serverconfig_t;
+} SRVCFG_t;
 /*
  * config_t common client/server configuration
  */
 typedef struct config {
-	serverconfig_t server;
+	SRVCFG_t server;
 	userconfig_t client;
-	char logfile[FPATH_MAX];
-	char pid[FPATH_MAX];
+	char * logfile;
+	char * pidf;
 	int port;
 } config_t;
 char logmsg[LOG_MSG_LEN];				// log entry
@@ -70,5 +70,4 @@ char * getVal(char * str);
  * takes two arguments: process PID and path to pidfile.
  */
 int pidfile(pid_t pid, char *name);
-char * getVal2(char * str);
 #endif

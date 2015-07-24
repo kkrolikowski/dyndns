@@ -9,6 +9,7 @@
 #include <string.h>
 #include "dynsrv.h"
 #include "common.h"
+#include "clientmanager.h"
 
 int main(int argc, char *argv[]) {
 	pid_t pid, sess, sync_pid;
@@ -37,7 +38,7 @@ int main(int argc, char *argv[]) {
 	}
 	if(pid > 0) {
 		printf("Starting DynDNS service, PID: %d\n", pid);
-		pidfile(pid, config.pid);
+		pidfile(pid, config.pidf);
 		exit(0);
 	}
 	umask(0);
@@ -51,7 +52,8 @@ int main(int argc, char *argv[]) {
 	sprintf(port_str, "%d", config.port);
 	if (sockfd < 0) {
 		log_event(log_fd, " ERROR: Cannot bind to interface\n", NULL);
-		unlink(config.pid);
+		unlink(config.pidf);
+		free(config.pidf);
 		exit(1);
 	}
 	else
@@ -64,11 +66,12 @@ int main(int argc, char *argv[]) {
 	else if(sync_pid == 0)
 		dbsync(&config, log_fd);
 	else {
-		while(1) {
-			ddserv(&config, log_fd, sockfd);
-		}
+		//ddserv(&config, log_fd, sockfd);
+		clientManager(&config, log_fd, sockfd);
 	}
 	close(log_fd);
-	unlink(config.pid);
+	free(config.logfile);
+	unlink(config.pidf);
+	free(config.pidf);
 	return 0;
 }

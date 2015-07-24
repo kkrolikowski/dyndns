@@ -11,22 +11,20 @@
 #endif
 #include "common.h"
 #include "auth.h"
+#include "clientmanager.h"
 
-int userauth(sqldata_t *dbdata, char *login, char *pass) {
+int userauth(DB_USERDATA_t *dbdata, char *pass) {
 	char * salt;
 
 	salt = (char *) malloc(16 * sizeof(char));
-	if(strcmp(dbdata->login, login) != 0) {
+
+	get_salt(dbdata->md5, salt);
+	if(strcmp((char *) dbdata->md5, (char *) crypt(pass, salt)) != 0) {
 		free(salt);
-		return 1;
-	}
-	get_salt(dbdata->pass, salt);
-	if(strcmp((char *) dbdata->pass, (char *) crypt(pass, salt)) != 0) {
-		free(salt);
-		return 2;
+		return 0;
 	}
 	free(salt);
-	return 0;
+	return 1;
 }
 void get_salt(char *p, char *salt) {
 	int delim = 0;

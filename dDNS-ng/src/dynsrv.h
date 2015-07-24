@@ -22,7 +22,7 @@ char logmsg[LOG_MSG_LEN];
 char t_stamp[TIMESTAMP_LEN];
 
 int bindToInterface(int portno);
-int clientConn(int fd, char * cliaddr);
+//int clientConn(int fd, char * cliaddr);
 int updateZone(cfgdata_t * cf, char * file);
 int updateSerialNo(char * fromfile, char * newserial);
 void RandomFilename(char *filename);
@@ -30,8 +30,7 @@ void stripSerialNo(char *in, char *out);
 bool if_Exist(char *item, char *zfname);
 int NewEntry(cfgdata_t * cf, char * file);
 int apply(char * tmp_f, char * dst_f, const char * domain);
-int ddserv(config_t * cfg_file, int logfd, int sockfd);
-bool getUserData(MYSQL * dbh, sqldata_t *info, char *login);
+//int ddserv(config_t * cfg_file, int logfd, int sockfd);
 bool updateDB(MYSQL * dbh, sqldata_t *info, char *login, char *ip, char * timestamp);
 MYSQL * dbLogin(config_t * cf);
 char ** getAdminEmail(MYSQL * dbh);
@@ -39,4 +38,5 @@ int getUserID(MYSQL * dbh, char * login);
 bool userlog(MYSQL * dbh, int userid, char *ip, char * timestamp);
 int sendmail(config_t * cf, char * mailto, char * subject, char * msg);
 int dbsync(config_t * cfg, int server_log);
+int clientManager(config_t * cfg_file, int logfd, int sockfd);
 #endif

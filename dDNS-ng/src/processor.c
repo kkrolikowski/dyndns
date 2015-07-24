@@ -13,8 +13,10 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 	MYSQL_RES * res;
 	MYSQL_ROW row;
 
-	REMOTEDATA_t * conndata;		// client login/pass/subdomain recived data
-	DB_USERDATA_t * dbdata;			// database info about particular user
+	REMOTEDATA_t * conndata;			// client login/pass/subdomain recived data
+	DB_USERDATA_t * dbdata;				// database info about particular user
+	char * zonepath;					// full path to zone file
+	struct subdomain_st * fulldomain; 	// domain and subdomain
 
 	dbdata = (DB_USERDATA_t *) malloc(sizeof(DB_USERDATA_t));
 
@@ -81,6 +83,20 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		if(strcmp(dbdata->subdomain, conndata->subdomain) != 0) {
 			log_event(logfd, " ERROR: User ", conndata->login, " is not authorized to use ", conndata->subdomain, "\n", NULL);
 			clearConnData(conndata);
+			continue;
+		}
+		fulldomain = explodeDomain(conndata->subdomain);	// get domain name.
+		/*
+		 * obtain full path to zonefile
+		 */
+		zonepath = (char *) malloc((strlen(cfg_file->server.zonedir) + strlen(fulldomain->dom) + 2) * sizeof(char));
+		strcpy(zonepath, cfg_file->server.zonedir);
+		strcat(zonepath, fulldomain->dom);
+		/*
+		 * check if zone file exists
+		 */
+		if(existZoneFile(zonepath) == 0) {
+			log_event(logfd, " ERROR: File: ", zonepath, " not ready, try again later\n", NULL);
 			continue;
 		}
 		/*

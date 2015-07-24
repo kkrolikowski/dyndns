@@ -36,12 +36,3 @@ void get_salt(char *p, char *salt) {
 	}
 	*salt = '\0';
 }
-int isAuthorized(sqldata_t *dbdata, char *user, char *domain) {
-
-	if(strcmp(user, dbdata->login) != 0)
-		return -1;
-	if(strcmp(domain, dbdata->subdomain) == 0)
-		return 1;
-	else
-		return 0;
-}

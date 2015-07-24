@@ -10,12 +10,33 @@
 
 static char * getdata(char *);
 
+int bindToInterface(int portno) {
+	int sockfd;
+	struct sockaddr_in serv_addr;
+
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	if(sockfd < 0) {
+		perror("ERROR opening socket");
+		return -1;
+	}
+	bzero((char *) &serv_addr, sizeof(serv_addr));
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_port = htons(portno);
+	serv_addr.sin_addr.s_addr = INADDR_ANY;
+	if(bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+		perror("ERROR on binding");
+		return -1;
+	}
+	listen(sockfd, 5);
+
+	return sockfd;
+}
 REMOTEDATA_t * readCLientData(int sockfd, int logger) {
 	int clifd;
 	REMOTEDATA_t * data;
 	struct conn_st * conn_data;
 
-	char * welcome = "100 dDNS-ng server ready. Go ahead\n";
+	char * welcome = "dDNS-ng server ready. Go ahead\n";
 	char * unknown = "Unknown command\n";
 	char * ack = "ACK\n";
 	char * val;
@@ -135,4 +156,60 @@ static char * getdata(char * buf) {
 	val[strlen(val)-1] = '\0';
 
 	return val;
+}
+char * stripDomain(char * subdomain) {
+	char * domain;
+	char * cur;
+
+	size_t len = 0;
+	int i;
+
+	cur = strchr(subdomain, '.');
+	cur++;
+	subdomain = cur;
+	while(*subdomain++)
+		len++;
+	domain = (char *) malloc((len + 1) * sizeof(char));
+	for(i = 0; i < len; i++)
+		domain[i] = cur[i];
+	domain[i] = '\0';
+
+	return domain;
+}
+struct subdomain_st * explodeDomain(char * fulldomain) {
+	struct subdomain_st * name;
+	int sub_len = 0;				// subdomain string lenght
+	int dom_len = 0;				// domain string lenght
+	char * cur;						// actual position inside the string
+	int i;
+
+	cur = fulldomain;
+	while(*cur++ != '.')
+		sub_len++;
+	name->sub = (char *) malloc((sub_len+1) * sizeof(char));
+	for(i = 0; i < sub_len; i++)
+		name->sub[i] = fulldomain[i];
+	name->sub[i] = '\0';
+
+	cur = strchr(fulldomain, '.');
+	cur++;
+	fulldomain = cur;
+	while(*cur++)
+		dom_len++;
+	name->dom = (char *) malloc((dom_len + 1) * sizeof(char));
+	for(i = 0; i < dom_len; i++)
+		name->dom[i] = fulldomain[i];
+	name->dom[i] = '\0';
+
+	return name;
+}
+int existZoneFile(char * filepath) {
+	FILE * zf;
+
+	if((zf = fopen(filepath, "r")) == NULL)
+		return 0;
+	else {
+		fclose(zf);
+		return 1;
+	}
 }

@@ -1,3 +1,7 @@
+#ifndef CLIENTMANAGER_H_
+#define CLIENTMANAGER_H_
+#include <mysql.h>
+
 typedef struct remotedata {
 	char * login;
 	char * pass;
@@ -16,6 +20,15 @@ struct conn_st {
 	int fd;
 	char * client_ip;
 };
+struct subdomain_st {
+	char * sub;
+	char * dom;
+};
 MYSQL_RES * queryUserData(MYSQL * dbh, char * login, int logger);
 REMOTEDATA_t * readCLientData(int sockfd, int logger);
 struct conn_st * clientConn(int sock);
+int bindToInterface(int portno);
+char * stripDomain(char * subdomain);
+int existZoneFile(char * filepath);
+struct subdomain_st * explodeDomain(char * fulldomain);
+#endif

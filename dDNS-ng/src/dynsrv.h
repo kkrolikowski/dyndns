@@ -20,8 +20,6 @@ typedef struct sqldata {
 
 char logmsg[LOG_MSG_LEN];
 char t_stamp[TIMESTAMP_LEN];
-
-int bindToInterface(int portno);
 //int clientConn(int fd, char * cliaddr);
 int updateZone(cfgdata_t * cf, char * file);
 int updateSerialNo(char * fromfile, char * newserial);

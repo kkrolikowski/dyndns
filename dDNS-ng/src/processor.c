@@ -40,7 +40,7 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		 * Log an error if none was found.
 		 */
 		if((res = queryUserData(dbh, conndata->login, logfd)) == NULL) {
-			log_event(logfd, " ERROR: User: ", conndata->login, " not found in database\n", NULL);
+			log_event(logfd, " ERROR: Unknown user ", conndata->login, "\n", NULL);
 			clearConnData(conndata);
 			continue;
 		}

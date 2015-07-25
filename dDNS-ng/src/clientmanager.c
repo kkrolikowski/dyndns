@@ -54,33 +54,27 @@ REMOTEDATA_t * readCLientData(int sockfd, int logger) {
 
 	write(conn_data->fd, welcome, strlen(welcome) +1);
 	while(read(conn_data->fd, readbuf, 256) > 0) {
+		val = getdata(readbuf);
 		if(strstr(readbuf, "QUIT") != NULL)
 			break;
 		else if(strstr(readbuf, "LOGIN") != NULL) {
-			val = getdata(readbuf);
 			data->login = (char *) malloc((strlen(val) + 1) * sizeof(char));
 			strcpy(data->login, val);
-			write(conn_data->fd, ack, strlen(ack)+1);
-			free(val);
 		}
 		else if(strstr(readbuf, "PASS") != NULL) {
-			val = getdata(readbuf);
 			data->pass = (char *) malloc((strlen(val) + 1) * sizeof(char));
 			strcpy(data->pass, val);
-			write(conn_data->fd, ack, strlen(ack)+1);
-			free(val);
 		}
 		else if(strstr(readbuf, "SUBDOMAIN") != NULL) {
-			val = getdata(readbuf);
 			data->subdomain = (char *) malloc((strlen(val) + 1) * sizeof(char));
 			strcpy(data->subdomain, val);
-			write(conn_data->fd, ack, strlen(ack)+1);
-			free(val);
 		}
 		else {
 			write(conn_data->fd, unknown, strlen(unknown)+1);
 			continue;
 		}
+		write(conn_data->fd, ack, strlen(ack)+1);
+		free(val);
 		bzero(readbuf, 256);
 	}
 	close(conn_data->fd);
@@ -130,8 +124,10 @@ MYSQL_RES * queryUserData(MYSQL * dbh, char * login, int logger) {
  * retrieve sql data from database
  */
 
-	if((res = mysql_store_result(dbh)) == NULL)
-		log_event(logger, " SQLERR: empty result\n", NULL);
+	if((res = mysql_store_result(dbh)) == NULL || mysql_num_rows(res) == 0) {
+//		log_event(logger, " SQLERR: empty result\n", NULL);
+		return NULL;
+	}
 
 	free(query);
 	return res;

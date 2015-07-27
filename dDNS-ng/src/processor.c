@@ -104,6 +104,9 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		 */
 		if(existEntry(conndata->client_ip_addr, zonepath))
 			continue;
+		if(existEntry(fulldomain->sub, zonepath)){
+			// update subdomain entry.
+		}
 		/*
 		 * we don't need these data anymore.
 		 */

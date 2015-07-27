@@ -23,7 +23,6 @@ char t_stamp[TIMESTAMP_LEN];
 int updateZone(cfgdata_t * cf, char * file);
 int updateSerialNo(char * fromfile, char * newserial);
 void RandomFilename(char *filename);
-void stripSerialNo(char *in, char *out);
 int NewEntry(cfgdata_t * cf, char * file);
 int apply(char * tmp_f, char * dst_f, const char * domain);
 //int ddserv(config_t * cfg_file, int logfd, int sockfd);

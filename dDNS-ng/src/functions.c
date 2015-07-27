@@ -100,21 +100,6 @@ void RandomFilename(char *filename) {
     *ptmp = '\0';                                   // end of string containing random filename
     strcpy(filename, tmp);
 }
-void stripSerialNo(char *in, char *out) {
-	char serial[12];
-	char * pserial;
-
-	pserial = serial;
-	while(*in) {
-		if(isdigit(*in)) {
-			*pserial = *in;
-			pserial++;
-		}
-		in++;
-	}
-	*in = '\0';
-	strcpy(out, serial);
-}
 int NewEntry(cfgdata_t * cf, char * file) {
     FILE *zf;
     FILE *tmp;

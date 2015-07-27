@@ -224,3 +224,18 @@ int existEntry(char * what, char * where) {
 	free(buf);
 	return 0;
 }
+char * stripSerialNo(char * input) {
+	char * serial;
+
+	serial = (char *) malloc(13 * sizeof(char));
+	while(*input) {
+		if(isdigit(*input)) {
+			*serial = *input;
+			serial++;
+		}
+		input++;
+	}
+	*serial = '\0';
+
+	return serial;
+}

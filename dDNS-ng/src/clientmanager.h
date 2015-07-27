@@ -32,4 +32,5 @@ char * stripDomain(char * subdomain);
 int existZoneFile(char * filepath);
 struct subdomain_st * explodeDomain(char * fulldomain);
 int existEntry(char * what, char * where);
+char * stripSerialNo(char * input);
 #endif

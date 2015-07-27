@@ -14,7 +14,6 @@
 #include "auth.h"
 #include "common.h"
 
-static void splitDomain(char *userdomain, cfgdata_t * cfg);
 
 int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 	int cli_fd, n;
@@ -123,22 +122,4 @@ int ddserv(config_t * cfg_file, int logfd, int sockfd) {
 		mysql_close(dbh);
 	}
 	return 0;
-}
-static void splitDomain(char *userdomain, cfgdata_t * cfg) {
-    char * dom;
-    char * subdom;
-
-    dom = cfg->domain;
-    subdom = cfg->subdomain;
-
-    while(*userdomain) {
-            *subdom++ = *userdomain++;
-            if(*userdomain == '.') {
-                    *subdom = '\0';
-                    break;
-            }
-    }
-    while(*++userdomain)
-            *dom++ = *userdomain;
-    *dom = '\0';
 }

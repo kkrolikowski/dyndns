@@ -100,6 +100,11 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			continue;
 		}
 		/*
+		 * if client IP address exist -- do nothing
+		 */
+		if(existEntry(conndata->client_ip_addr, zonepath))
+			continue;
+		/*
 		 * we don't need these data anymore.
 		 */
 		clearConnData(conndata);

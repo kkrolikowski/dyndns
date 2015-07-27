@@ -209,3 +209,18 @@ int existZoneFile(char * filepath) {
 		return 1;
 	}
 }
+int existEntry(char * what, char * where) {
+	char * buf;
+	FILE * zf;
+
+	buf = (char *) malloc(256 * sizeof(char));
+	if((zf = fopen(where, "r")) == NULL)
+		return -1;			// this shouldn't happen
+	while(fgets(buf, sizeof(buf), zf) != NULL)
+		if(strstr(buf, what) != NULL) {
+			free(buf);
+			return 1;		// return success if string found in buffer
+		}
+	free(buf);
+	return 0;
+}

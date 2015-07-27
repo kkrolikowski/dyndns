@@ -115,29 +115,6 @@ void stripSerialNo(char *in, char *out) {
 	*in = '\0';
 	strcpy(out, serial);
 }
-bool if_Exist(char *item, char *zfname) {
-	FILE *zf;
-	char buf[256];
-	int found = 0;
-
-	zf = fopen(zfname, "r");
-	if(zf == NULL) {
-		fprintf(stderr, "Error opening file: %s\n", zfname);
-		return false;
-	}
-	while(fgets(buf, sizeof(buf), zf) != NULL) {
-		if(strstr(buf,item) != NULL) {
-			found = 1;
-			break;
-		}
-	}
-	fclose(zf);
-
-	if(found)
-		return true;
-	else
-		return false;
-}
 int NewEntry(cfgdata_t * cf, char * file) {
     FILE *zf;
     FILE *tmp;

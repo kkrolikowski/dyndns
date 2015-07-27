@@ -104,8 +104,11 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		 */
 		if(existEntry(conndata->client_ip_addr, zonepath))
 			continue;
+		/*
+		 * Update DNS record if exist in zone file
+		 */
 		if(existEntry(fulldomain->sub, zonepath)){
-			// update subdomain entry.
+			updateZone(fulldomain->sub, conndata->client_ip_addr, zonepath, logfd);
 		}
 		/*
 		 * we don't need these data anymore.

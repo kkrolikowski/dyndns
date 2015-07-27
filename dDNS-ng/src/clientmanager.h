@@ -34,4 +34,5 @@ struct subdomain_st * explodeDomain(char * fulldomain);
 int existEntry(char * what, char * where);
 char * stripSerialNo(char * input);
 char * newSerialNo(char * serial);
+int updateZone(char * subdomain, char * ipaddr, char * file, int logger);
 #endif

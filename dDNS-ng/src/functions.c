@@ -20,63 +20,6 @@
 #include "auth.h"
 #include "common.h"
 
-int updateZone(cfgdata_t * cf, char * file) {
-    FILE *zf;
-    FILE *tmp;
-    char tmp_path[21];
-    char buf[256];
-    char serial[12];
-    char newserial[12];
-
-    zf = fopen(file, "r");
-    if(zf == NULL) {
-            fprintf(stderr, "Error reading file: %s", file);
-            return 0;
-    }
-    RandomFilename(tmp_path);
-    tmp = fopen(tmp_path, "w");
-    if(tmp == NULL) {
-    	fprintf(stderr, "Error creating file: %s", tmp_path);
-    	return 0;
-    }
-    while(fgets(buf, sizeof(buf), zf) != NULL) {
-	    if(strstr(buf, "; serial") != NULL) {
-			stripSerialNo(buf, serial);
-			if(!updateSerialNo(serial, newserial))
-				sprintf(buf, "\t%s\t; serial\n", newserial);
-	    }
-	    if(strstr(buf, cf->subdomain) != NULL) {
-		    if(strlen(cf->subdomain) < 8)
-		    	sprintf(buf, "%s\t300\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
-		    else
-		    	sprintf(buf, "%s\t300\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
-	    }
-	    fputs(buf, tmp);
-    }
-    fclose(zf);
-    fclose(tmp);
-    apply(tmp_path, file, cf->domain);
-
-    return 1;
-}
-void RandomFilename(char *filename) {
-    char * entropy = "1qaz2wsx3edc4rfv5tgb6yhn7ujm8i0poklaZAQ1XSW2CDE3VFR4BGT5NHY6MJU6MJU7";
-    int n, i;
-    const int len = 8;                              // random part lenght
-    struct timeval tv;
-    char tmp[20] = "/tmp/dyndns_";                  // prefix of temp file
-    char * ptmp;                                    // pointer to the begining of temp filename
-    ptmp = tmp + strlen(tmp);                       // moving to the end of a prefix
-
-    for(i=0; i<len; i++, ptmp++) {                  // while counter is smaller then lenght of random part
-            gettimeofday(&tv, NULL);                // get current time
-            srand(tv.tv_usec);                      // generate new seed with time in micro seconds
-            n = rand() % strlen(entropy);           // generate new random character
-            *ptmp = entropy[n];                     // and put it in the next field of an array.
-    }
-    *ptmp = '\0';                                   // end of string containing random filename
-    strcpy(filename, tmp);
-}
 int NewEntry(cfgdata_t * cf, char * file) {
     FILE *zf;
     FILE *tmp;
@@ -90,7 +33,7 @@ int NewEntry(cfgdata_t * cf, char * file) {
             fprintf(stderr, "Error reading file: %s", file);
             return 1;
     }
-    RandomFilename(tmp_path);
+ //   RandomFilename(tmp_path);
     tmp = fopen(tmp_path, "w");
     if(tmp == NULL) {
     	fprintf(stderr, "Error creating file: %s", tmp_path);
@@ -98,9 +41,9 @@ int NewEntry(cfgdata_t * cf, char * file) {
     }
     while(fgets(buf, sizeof(buf), zf) != NULL) {
 	    if(strstr(buf, "; serial") != NULL) {
-			stripSerialNo(buf, serial);
-			if(!updateSerialNo(serial, newserial))
-				sprintf(buf, "\t%s\t; serial\n", newserial);
+//			stripSerialNo(buf, serial);
+//			if(!updateSerialNo(serial, newserial))
+//				sprintf(buf, "\t%s\t; serial\n", newserial);
 	    }
 	    fputs(buf, tmp);
     }

@@ -48,12 +48,13 @@ REMOTEDATA_t * readCLientData(int sockfd, int logger) {
 	bzero(readbuf, 256);
 
 	if((conn_data = clientConn(sockfd)) == NULL) {
-		log_event(logger, " ERROR: can't establish connection");
+		log_event(logger, " ERROR: can't establish connection\n", NULL);
 		return NULL;
 	}
 	data->client_ip_addr = conn_data->client_ip;
 
 	write(conn_data->fd, welcome, strlen(welcome) +1);
+	bzero(readbuf, 256);
 	while(read(conn_data->fd, readbuf, 256) > 0) {
 		val = getdata(readbuf);
 		if(strstr(readbuf, "QUIT") != NULL)
@@ -65,6 +66,7 @@ REMOTEDATA_t * readCLientData(int sockfd, int logger) {
 		else if(strstr(readbuf, "PASS") != NULL) {
 			data->pass = (char *) malloc((strlen(val) + 1) * sizeof(char));
 			strcpy(data->pass, val);
+			log_event(logger, " DEBUG: pass: ", val, "\n", NULL);
 		}
 		else if(strstr(readbuf, "SUBDOMAIN") != NULL) {
 			data->subdomain = (char *) malloc((strlen(val) + 1) * sizeof(char));
@@ -262,4 +264,55 @@ char * newSerialNo(char * serial) {
     	strcpy(newserial, serial);
 
     return newserial;
+}
+int updateZone(char * subdomain, char * ipaddr, char * file, int logger) {
+    FILE *zf;
+    FILE *tmp;
+
+    char * buf;
+    char * serial;
+    char * newserial;
+
+    buf = (char *) malloc(256 * sizeof(char));
+
+    zf = fopen(file, "r+");
+    if(zf == NULL) {
+    	log_event(logger, "Error: Unable to open: ", file, "\n", NULL);
+        return 0;
+    }
+
+    tmp = tmpfile();
+    if(tmp == NULL) {
+    	log_event(logger, "Error: Unable to create tmpfile\n", NULL);
+    	return 0;
+    }
+
+    while(fgets(buf, sizeof(buf), zf) != NULL) {
+	    if(strstr(buf, "; serial") != NULL) {
+	    	serial = stripSerialNo(buf);
+	    	newserial = newSerialNo(serial);
+	    	sprintf(buf, "\t%s\t; serial\n", newserial);
+	    }
+	    if(strstr(buf, subdomain) != NULL) {
+		    if(strlen(subdomain) < 8)
+		    	sprintf(buf, "%s\t300\tIN\tA\t%s\n", subdomain, ipaddr);
+		    else
+		    	sprintf(buf, "%s\t300\tIN\tA\t%s\n", subdomain, ipaddr);
+	    }
+	    fputs(buf, tmp);
+    }
+    free(serial);
+    free(newserial);
+    bzero(buf, sizeof(buf));
+    rewind(zf);
+    rewind(tmp);
+    while(fgets(buf, sizeof(buf), tmp) != NULL)
+    	fputs(buf, tmp);
+
+    fclose(zf);
+    fclose(tmp);
+    free(buf);
+//    apply(tmp, file, cf->domain);
+
+    return 1;
 }

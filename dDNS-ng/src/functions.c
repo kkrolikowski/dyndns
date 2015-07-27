@@ -59,29 +59,6 @@ int updateZone(cfgdata_t * cf, char * file) {
 
     return 1;
 }
-int updateSerialNo(char * oldserial, char * newserial) {
-    time_t today;
-    struct tm tf;
-    char serial[12];
-    char * ver = "00";
-    long bigger_serial = 0;
-
-    time(&today);
-    localtime_r(&today, &tf);
-    strftime(serial, sizeof(serial), "%Y%m%d", &tf);
-    strcat(serial, ver);
-
-    if(atol(oldserial) >= atol(serial)) {
-            bigger_serial = atol(oldserial) + 1;
-            sprintf(serial, "%ld", bigger_serial);
-            strcpy(newserial, serial);
-            return 0;
-    }
-    else {
-    	strcpy(newserial, serial);
-    	return 0;
-    }
-}
 void RandomFilename(char *filename) {
     char * entropy = "1qaz2wsx3edc4rfv5tgb6yhn7ujm8i0poklaZAQ1XSW2CDE3VFR4BGT5NHY6MJU6MJU7";
     int n, i;

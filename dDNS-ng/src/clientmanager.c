@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <mysql.h>
+#include <time.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -238,4 +239,27 @@ char * stripSerialNo(char * input) {
 	*serial = '\0';
 
 	return serial;
+}
+char * newSerialNo(char * serial) {
+    time_t today;
+    struct tm tf;
+    char * newserial;
+    char * ver = "00";
+    long bigger_serial = 0;
+
+    newserial = (char *) malloc((strlen(serial)+1) * sizeof(char));
+    time(&today);
+    localtime_r(&today, &tf);
+    strftime(newserial, sizeof(newserial), "%Y%m%d", &tf);
+    strcat(newserial, ver);
+
+    if(atol(serial) >= atol(newserial)) {
+            bigger_serial = atol(serial) + 1;
+            sprintf(newserial, "%ld", bigger_serial);
+            strcpy(newserial, serial);
+    }
+    else
+    	strcpy(newserial, serial);
+
+    return newserial;
 }

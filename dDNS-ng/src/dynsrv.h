@@ -21,7 +21,6 @@ typedef struct sqldata {
 char logmsg[LOG_MSG_LEN];
 char t_stamp[TIMESTAMP_LEN];
 int updateZone(cfgdata_t * cf, char * file);
-int updateSerialNo(char * fromfile, char * newserial);
 void RandomFilename(char *filename);
 int NewEntry(cfgdata_t * cf, char * file);
 int apply(char * tmp_f, char * dst_f, const char * domain);

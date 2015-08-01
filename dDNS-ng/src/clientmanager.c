@@ -269,11 +269,10 @@ char * newSerialNo(char * serial) {
     strftime(newserial, sizeof(newserial), "%Y%m%d", &tf);
     strcat(newserial, ver);
 
-    if(atol(serial) >= atol(newserial)) {
-            bigger_serial = atol(serial) + 1;
-            sprintf(newserial, "%ld", bigger_serial);
-            strcpy(newserial, serial);
-    }
+	if(atol(serial) >= atol(newserial)) {
+		bigger_serial = atol(serial) + 1;
+		sprintf(newserial, "%ld", bigger_serial);
+	}
 
     return newserial;
 }

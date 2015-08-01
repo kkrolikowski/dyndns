@@ -243,16 +243,16 @@ int existEntry(char * what, char * where) {
 }
 char * stripSerialNo(char * input) {
 	char * serial;
+	int i = 0;
 
 	serial = (char *) malloc(13 * sizeof(char));
-	while(*input) {
+	while(*input++) {
 		if(isdigit(*input)) {
-			*serial = *input;
-			serial++;
+			serial[i] = *input;
+			i++;
 		}
-		input++;
 	}
-	*serial = '\0';
+	serial[i] = '\0';
 
 	return serial;
 }
@@ -274,8 +274,6 @@ char * newSerialNo(char * serial) {
             sprintf(newserial, "%ld", bigger_serial);
             strcpy(newserial, serial);
     }
-    else
-    	strcpy(newserial, serial);
 
     return newserial;
 }

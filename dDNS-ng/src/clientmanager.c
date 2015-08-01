@@ -119,7 +119,7 @@ struct conn_st * clientConn(int sock) {
 MYSQL_RES * queryUserData(MYSQL * dbh, char * login, int logger) {
 	MYSQL_RES * res;
 	char * query_prefix = "SELECT u.id, u.login, u.pass, CONCAT(s.subdomain, \".\",  d.domain) as subdomain, \
-			u.active, s.dynamic FROM subdomains s, domains d , users u \
+			u.email, u.active, s.dynamic FROM subdomains s, domains d , users u \
 			WHERE s.domain_id = d.id and u.id = s.user_id and u.login = '";
 	char * query_suffix = "' AND dynamic = 1";
 	char * query;

@@ -283,11 +283,10 @@ int updateZone(char * subdomain, char * ipaddr, char * file, int logger) {
     FILE *zf;
     FILE *tmp;
 
-    char * buf;
     char * serial;
     char * newserial;
+    char buf[256];
 
-    buf = (char *) malloc(256 * sizeof(char));
 
     zf = fopen(file, "r+");
     if(zf == NULL) {
@@ -317,7 +316,6 @@ int updateZone(char * subdomain, char * ipaddr, char * file, int logger) {
     }
     free(serial);
     free(newserial);
-    bzero(buf, sizeof(buf));
     rewind(zf);
     rewind(tmp);
     while(fgets(buf, sizeof(buf), tmp) != NULL)
@@ -325,7 +323,6 @@ int updateZone(char * subdomain, char * ipaddr, char * file, int logger) {
 
     fclose(zf);
     fclose(tmp);
-    free(buf);
 //    apply(tmp, file, cf->domain);
 
     return 1;

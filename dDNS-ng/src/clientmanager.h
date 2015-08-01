@@ -37,4 +37,5 @@ char * newSerialNo(char * serial);
 int updateZone(char * subdomain, char * ipaddr, char * file, int logger);
 void InitConnData(REMOTEDATA_t * conn);
 void InitDBData(DB_USERDATA_t * db);
+char * tempFile(int len);
 #endif

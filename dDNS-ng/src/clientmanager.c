@@ -284,17 +284,15 @@ int updateZone(char * subdomain, char * ipaddr, char * file, int logger) {
     char * serial;
     char * newserial;
     char buf[256];
+    char * tmpf;
 
-
-    zf = fopen(file, "r+");
-    if(zf == NULL) {
-    	log_event(logger, "Error: Unable to open: ", file, "\n", NULL);
+    tmpf = tempFile(8);
+    if((zf = fopen(file, "r+")) == NULL) {
+    	log_event(logger, " Error: Unable to open: ", file, "\n", NULL);
         return 0;
     }
-
-    tmp = tmpfile();
-    if(tmp == NULL) {
-    	log_event(logger, "Error: Unable to create tmpfile\n", NULL);
+    if((tmp = fopen(tmpf, "w+")) == NULL) {
+    	log_event(logger, " Error: Unable to open: ", tmpf, "\n", NULL);
     	return 0;
     }
 
@@ -317,11 +315,33 @@ int updateZone(char * subdomain, char * ipaddr, char * file, int logger) {
     rewind(zf);
     rewind(tmp);
     while(fgets(buf, sizeof(buf), tmp) != NULL)
-    	fputs(buf, tmp);
+    	fputs(buf, zf);
 
     fclose(zf);
     fclose(tmp);
+    free(tmpf);
 //    apply(tmp, file, cf->domain);
 
     return 1;
+}
+char * tempFile(int len) {
+    char * entropy = "1qaz2wsx3edc4rfv5tgb6yhn7ujm8i0poklaZAQ1XSW2CDE3VFR4BGT5NHY6MJU6MJU7";
+    int n, i;
+    struct timeval tv;
+    char * tmp_prefix = "/tmp/dyndns_";             // prefix of temp file
+    char * tmp_path;                                // full path to tempfile
+    char * cur;
+
+    tmp_path = (char *) malloc((strlen(tmp_prefix) + len + 2) * sizeof(char));
+    strcpy(tmp_path, tmp_prefix);
+    cur = tmp_path+strlen(tmp_prefix);
+
+    for(i=0; i<len; i++, cur++) {                  // while counter is smaller then lenght of random part
+            gettimeofday(&tv, NULL);                // get current time
+            srand(tv.tv_usec);                      // generate new seed with time in micro seconds
+            n = rand() % strlen(entropy);           // generate new random character
+            *cur = entropy[n];                     // and put it in the next field of an array.
+    }
+    *cur = '\0';                                   // end of string containing random filename
+    return tmp_path;
 }

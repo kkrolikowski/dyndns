@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <mysql.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include "dynsrv.h"
 #include "clientmanager.h"
 #include "auth.h"
@@ -18,6 +21,7 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 	DB_USERDATA_t * dbdata;				// database info about particular user
 	char * zonepath;					// full path to zone file
 	struct subdomain_st * fulldomain; 	// domain and subdomain
+	pid_t reload_p;						// pid of bind reload process
 
 	while(1) {
 		conndata = (REMOTEDATA_t *) malloc(sizeof(REMOTEDATA_t));
@@ -120,7 +124,17 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		 * Update DNS record if exist in zone file
 		 */
 		if(existEntry(fulldomain->sub, zonepath)){
-			updateZone(fulldomain->sub, conndata->client_ip_addr, zonepath, logfd);
+			if(updateZone(fulldomain->sub, conndata->client_ip_addr, zonepath, logfd)) {
+				reload_p = fork();
+				if(reload_p == 0)
+					namedReload();
+				else if(reload_p > 0)
+					waitpid(reload_p, NULL, WNOHANG);
+				else
+					log_event(logfd, " ERROR Reload named failed\n", NULL);
+			}
+			else
+				log_event(logfd, " Error on update zone: ", fulldomain->dom, "\n", NULL);
 		}
 		/*
 		 * we don't need these data anymore.

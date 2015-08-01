@@ -307,3 +307,16 @@ int sendmail(config_t * cf, char * mailto, char * subject, char * msg) {
 
 	return 1;
 }
+int namedReload() {
+	int ret;
+
+	ret = execl("/usr/sbin/rndc", "rndc", "reload", NULL);
+	if(ret == -1) {
+		ret = execl("/usr/local/sbin/rndc", "rndc", "reload", NULL);
+		if(ret == -1) {
+			perror("execl");
+			return 0;
+		}
+	}
+	return 1;
+}

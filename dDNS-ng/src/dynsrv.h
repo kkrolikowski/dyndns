@@ -31,4 +31,5 @@ bool userlog(MYSQL * dbh, int userid, char *ip, char * timestamp);
 int sendmail(config_t * cf, char * mailto, char * subject, char * msg);
 int dbsync(config_t * cfg, int server_log);
 int clientManager(config_t * cfg_file, int logfd, int sockfd);
+int namedReload(void);
 #endif

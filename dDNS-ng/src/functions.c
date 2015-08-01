@@ -33,7 +33,6 @@ int NewEntry(cfgdata_t * cf, char * file) {
             fprintf(stderr, "Error reading file: %s", file);
             return 1;
     }
- //   RandomFilename(tmp_path);
     tmp = fopen(tmp_path, "w");
     if(tmp == NULL) {
     	fprintf(stderr, "Error creating file: %s", tmp_path);
@@ -56,78 +55,8 @@ int NewEntry(cfgdata_t * cf, char * file) {
 	fclose(zf);
     fclose(tmp);
 
-    apply(tmp_path, file, cf->domain);
+    //apply(tmp_path, file, cf->domain);
     return 0;
-}
-int apply(char * tmp_f, char * dst_f, const char * domain) {
-    int tmp, dst;
-    struct stat st;
-    char * buf;
-    int buf_size;
-    ssize_t n;
-    pid_t reload_pid;
-    int status, ret;
-
-	tmp = open(tmp_f, O_RDWR);
-	if(tmp < 0) {
-			perror("error opening tmp");
-			return -1;
-	}
-	dst = open(dst_f, O_WRONLY|O_TRUNC, 0644);
-	if(dst < 0) {
-			perror("error writing zonefile");
-			return -1;
-	}
-	fstat(tmp, &st);
-	buf_size = (int) st.st_size;
-	buf = (char *) malloc(buf_size);
-	if(buf == NULL) {
-			fprintf(stderr, "Memory allocation failed.\n");
-			return -1;
-	}
-	while(buf_size != 0 && (n = read(tmp, buf, buf_size)) < buf_size) {
-			if(n == -1) {
-					if(errno == EINTR)
-							continue;
-					perror("read tmp");
-					break;
-			}
-			buf_size -= n;
-			buf += n;
-	}
-	while(buf_size != 0 && (n = write(dst, buf, buf_size)) < buf_size) {
-			if(n == -1) {
-					if(errno == EINTR)
-							continue;
-					perror("write zone");
-					break;
-			}
-			buf_size -= n;
-			buf += n;
-	}
-	close(tmp);
-	close(dst);
-	free(buf);
-	if(unlink(tmp_f) < 0) {
-			perror("Warning: error deleting tmpfile");
-	}
-	reload_pid = fork();
-    if(reload_pid == 0) {
-    	ret = execl("/usr/sbin/rndc", "rndc", "reload", domain, NULL);
-    	if(ret == -1) {
-    		ret = execl("/usr/local/sbin/rndc", "rndc", "reload", domain, NULL);
-    		if(ret == -1) {
-    			perror("execl");
-    			exit(-1);
-    		}
-    	}
-    }
-    else if(reload_pid > 0)
-    	waitpid(reload_pid, NULL, WNOHANG);
-    else
-    	perror("fork");
-
-    return 1;
 }
 bool updateDB(MYSQL * dbh, sqldata_t *info, char *login, char *ip, char * timestamp) {
 	char * query;

@@ -21,7 +21,6 @@ typedef struct sqldata {
 char logmsg[LOG_MSG_LEN];
 char t_stamp[TIMESTAMP_LEN];
 int NewEntry(cfgdata_t * cf, char * file);
-int apply(char * tmp_f, char * dst_f, const char * domain);
 //int ddserv(config_t * cfg_file, int logfd, int sockfd);
 bool updateDB(MYSQL * dbh, sqldata_t *info, char *login, char *ip, char * timestamp);
 MYSQL * dbLogin(config_t * cf);

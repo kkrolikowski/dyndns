@@ -11,6 +11,20 @@
 
 static char * getdata(char *);
 
+void InitConnData(REMOTEDATA_t * conn) {
+	conn->client_ip_addr = NULL;
+	conn->login = NULL;
+	conn->pass = NULL;
+	conn->subdomain = NULL;
+}
+void InitDBData(DB_USERDATA_t * db) {
+	db->active = 0;
+	db->email = NULL;
+	db->id = 0;
+	db->login = NULL;
+	db->md5 = NULL;
+	db->subdomain = NULL;
+}
 int bindToInterface(int portno) {
 	int sockfd;
 	struct sockaddr_in serv_addr;
@@ -152,7 +166,7 @@ static char * getdata(char * buf) {
 	val = (char *) malloc((len+1) * sizeof(char));
 	for(i = 0; i < len; i++)
 		val[i] = curr[i];
-	val[strlen(val)-1] = '\0';
+	val[strlen(val)] = '\0';
 
 	return val;
 }

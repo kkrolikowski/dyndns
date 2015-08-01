@@ -7,6 +7,7 @@
 #include "auth.h"
 
 static void clearConnData(REMOTEDATA_t * conn);
+static void clearDBData(DB_USERDATA_t * db);
 
 int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 	MYSQL * dbh;
@@ -18,9 +19,12 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 	char * zonepath;					// full path to zone file
 	struct subdomain_st * fulldomain; 	// domain and subdomain
 
-	dbdata = (DB_USERDATA_t *) malloc(sizeof(DB_USERDATA_t));
-
 	while(1) {
+		conndata = (REMOTEDATA_t *) malloc(sizeof(REMOTEDATA_t));
+		dbdata = (DB_USERDATA_t *) malloc(sizeof(DB_USERDATA_t));
+
+		InitConnData(conndata);
+		InitDBData(dbdata);
 		/*
 		 * Get data sent by ddns-client
 		 */
@@ -122,8 +126,10 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		 * we don't need these data anymore.
 		 */
 		clearConnData(conndata);
+		clearDBData(dbdata);
 		mysql_close(dbh);
 		free(conndata);
+		free(dbdata);
 	}
 	return 0;
 }
@@ -131,4 +137,12 @@ static void clearConnData(REMOTEDATA_t * conn) {
 	free(conn->login);
 	free(conn->pass);
 	free(conn->subdomain);
+}
+static void clearDBData(DB_USERDATA_t * db) {
+	db->active = 0;
+	db->id = 0;
+	free(db->email);
+	free(db->login);
+	free(db->md5);
+	free(db->subdomain);
 }

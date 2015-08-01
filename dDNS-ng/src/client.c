@@ -87,20 +87,17 @@ int main(int argc, char *argv[]) {
 				case 0 :
 					strcpy(buf, "LOGIN ");
 					strcat(buf, config.client.username);
-					strcat(buf, "\r\n");
 					break;
 				case 1 :
 					strcpy(buf, "PASS ");
 					strcat(buf, config.client.password);
-					strcat(buf, "\r\n");
 					break;
 				case 2 :
 					strcpy(buf, "SUBDOMAIN ");
 					strcat(buf, config.client.domain);
-					strcat(buf, "\r\n");
 					break;
 				case 3 :
-					strcpy(buf, "QUIT\r\n");
+					strcpy(buf, "QUIT");
 					break;
 			}
 			write(sockfd, buf, 256);

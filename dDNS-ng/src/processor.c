@@ -41,7 +41,9 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		 */
 		if((res = queryUserData(dbh, conndata->login, logfd)) == NULL) {
 			log_event(logfd, " ERROR: Unknown user ", conndata->login, "\n", NULL);
+			mysql_close(dbh);
 			clearConnData(conndata);
+			free(conndata);
 			continue;
 		}
 		row = mysql_fetch_row(res);
@@ -66,7 +68,9 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		 */
 		if(userauth(dbdata, conndata->pass) == 0) {
 			log_event(logfd, " ERROR: Incorrect password for ", conndata->login, " try again later\n", NULL);
+			mysql_close(dbh);
 			clearConnData(conndata);
+			free(conndata);
 			continue;
 		}
 		/*
@@ -74,7 +78,9 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		 */
 		if(dbdata->active == 0) {
 			log_event(logfd, " ERROR: Account inactive. Please activate your account!\n", NULL);
+			mysql_close(dbh);
 			clearConnData(conndata);
+			free(conndata);
 			continue;
 		}
 		/*
@@ -82,7 +88,9 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		 */
 		if(strcmp(dbdata->subdomain, conndata->subdomain) != 0) {
 			log_event(logfd, " ERROR: User ", conndata->login, " is not authorized to use ", conndata->subdomain, "\n", NULL);
+			mysql_close(dbh);
 			clearConnData(conndata);
+			free(conndata);
 			continue;
 		}
 		fulldomain = explodeDomain(conndata->subdomain);	// get domain name.
@@ -114,9 +122,8 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		 * we don't need these data anymore.
 		 */
 		clearConnData(conndata);
-
-		free(conndata);
 		mysql_close(dbh);
+		free(conndata);
 	}
 	return 0;
 }

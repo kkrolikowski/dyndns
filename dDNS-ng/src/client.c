@@ -6,7 +6,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/wait.h>
-#include <sys/uio.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
@@ -21,8 +20,9 @@ int main(int argc, char *argv[]) {
 	char * pidf;
 	struct sockaddr_in srv_addr;
 	struct hostent *server;
-	struct iovec config_data[3];
 	int delay = 1;
+	char buf[256];
+	int seq = 0;
 
 	if(argc < 3) {
 		fprintf(stderr, "%s -c <configfile>\n\t -h print this help\n", argv[0]);
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 	}
 	if(pid > 0) {
 		printf("Starting DynDNS client, PID: %d\n", pid);
-		pidfd = pidfile(pid, config.pid);
+		pidfd = pidfile(pid, config.pidf);
 		exit(0);
 	}
 	umask(0);
@@ -54,13 +54,6 @@ int main(int argc, char *argv[]) {
 	close(STDERR_FILENO);
 	portno = config.port;
 
-	config_data[0].iov_base = config.client.username;
-	config_data[0].iov_len = sizeof(config.client.username);
-	config_data[1].iov_base = config.client.password;
-	config_data[1].iov_len = sizeof(config.client.password);
-	config_data[2].iov_base = config.client.domain;
-	config_data[2].iov_len = sizeof(config.client.domain);
-
 	logfd = open(config.logfile, O_RDWR|O_CREAT|O_APPEND, 0644);
 	while(1) {
 		sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -70,7 +63,8 @@ int main(int argc, char *argv[]) {
 		if(server == NULL) {
 			log_event(logfd, " Unknown host\n", NULL);
 			close(sockfd);
-			unlink(config.pid);
+			unlink(config.pidf);
+			free(config.pidf);
 			exit(1);
 		}
 		bzero((char *) &srv_addr, sizeof(srv_addr));
@@ -87,16 +81,37 @@ int main(int argc, char *argv[]) {
 				log_event(logfd, " Connected to server, sending data\n", NULL);
 			delay = 1;
 		}
-		n = writev(sockfd, config_data, 3);
-		if(n < 0) {
-			log_event(logfd, " Error sending data.\n", NULL);
-			unlink(config.pid);
-			exit(1);
+		bzero(buf, 256);
+		while(read(sockfd, buf, 256) > 0 && (strstr(buf, "ACK") != NULL || strstr(buf, "dDNS-ng") != NULL) && seq < 4) {
+			switch(seq) {
+				case 0 :
+					strcpy(buf, "LOGIN ");
+					strcat(buf, config.client.username);
+					strcat(buf, "\r\n");
+					break;
+				case 1 :
+					strcpy(buf, "PASS ");
+					strcat(buf, config.client.password);
+					strcat(buf, "\r\n");
+					break;
+				case 2 :
+					strcpy(buf, "SUBDOMAIN ");
+					strcat(buf, config.client.domain);
+					strcat(buf, "\r\n");
+					break;
+				case 3 :
+					strcpy(buf, "QUIT\r\n");
+					break;
+			}
+			write(sockfd, buf, 256);
+			seq++;
 		}
+		seq = 0;
 		close(sockfd);
 		sleep(config.client.interval * delay);
 	}
 	close(logfd);
-	unlink(config.pid);
+	unlink(config.pidf);
+	free(config.pidf);
 	return 0;
 }

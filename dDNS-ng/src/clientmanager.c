@@ -61,15 +61,17 @@ REMOTEDATA_t * readCLientData(int sockfd, int logger) {
 			break;
 		else if(strstr(readbuf, "LOGIN") != NULL) {
 			data->login = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			bzero(data->login, sizeof(data->login));
 			strcpy(data->login, val);
 		}
 		else if(strstr(readbuf, "PASS") != NULL) {
 			data->pass = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			bzero(data->pass, sizeof(data->pass));
 			strcpy(data->pass, val);
-			log_event(logger, " DEBUG: pass: ", val, "\n", NULL);
 		}
 		else if(strstr(readbuf, "SUBDOMAIN") != NULL) {
 			data->subdomain = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			bzero(data->subdomain, sizeof(data->subdomain));
 			strcpy(data->subdomain, val);
 		}
 		else {
@@ -127,10 +129,8 @@ MYSQL_RES * queryUserData(MYSQL * dbh, char * login, int logger) {
  * retrieve sql data from database
  */
 
-	if((res = mysql_store_result(dbh)) == NULL || mysql_num_rows(res) == 0) {
-//		log_event(logger, " SQLERR: empty result\n", NULL);
+	if((res = mysql_store_result(dbh)) == NULL || mysql_num_rows(res) == 0)
 		return NULL;
-	}
 
 	free(query);
 	return res;

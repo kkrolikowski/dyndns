@@ -144,7 +144,7 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 				if(dbUpdate(dbh, dbdata, fulldomain, conndata->client_ip_addr, timestamp_s) == 0)
 					log_event(logfd, " Error: Database update failed\n", NULL);
 				else
-					log_event(logfd, "INFO: Domain: ", dbdata->subdomain, " updated\n", NULL);
+					log_event(logfd, " INFO: Domain: ", dbdata->subdomain, " updated\n", NULL);
 				free(timestamp_s);
 			}
 			else

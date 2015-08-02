@@ -58,27 +58,6 @@ int NewEntry(cfgdata_t * cf, char * file) {
     //apply(tmp_path, file, cf->domain);
     return 0;
 }
-bool updateDB(MYSQL * dbh, sqldata_t *info, char *login, char *ip, char * timestamp) {
-	char * query;
-	char * update_query = "UPDATE subdomains set ip = '";
-	query = (char *) malloc((strlen(update_query) + strlen(ip) + strlen(timestamp) + strlen(login) + 128) * sizeof(char));
-
-	strcpy(query, update_query);
-	strcat(query, ip);
-	strcat(query, "', lastupdate = '");
-	strcat(query, timestamp);
-	strcat(query,"'");
-	strcat(query, " WHERE user_id = (SELECT id FROM users WHERE login = '");
-	strcat(query, login);
-	strcat(query, "'");
-	strcat(query, " AND active = 1) AND type = 'A' AND dynamic = 1");
-
-	 if(mysql_query(dbh, query) != 0) {
-	 	return false;
-	 }
-	 free(query);
-	 return true;
-}
 MYSQL * dbLogin(config_t * cf) {
 	MYSQL * db;
 	db = mysql_init(NULL);
@@ -122,27 +101,6 @@ int getUserID(MYSQL * dbh, char * login) {
 
 	free(query);
 	return userid;
-}
-bool userlog(MYSQL * dbh, int userid, char *ip, char * timestamp) {
-	char str_userid[2];
-	char * query;
-	sprintf(str_userid, "%d", userid);
-	char * log_query = "INSERT INTO user_log(user_id,ip,date) VALUES(";
-	query = (char *) malloc((strlen(log_query) + strlen(ip) + strlen(timestamp) + 12) * sizeof(char));
-
-	strcpy(query, log_query);
-	strcat(query, str_userid);
-	strcat(query, ", '");
-	strcat(query, ip);
-	strcat(query,"', '");
-	strcat(query, timestamp);
-	strcat(query, "')");
-
-	 if(mysql_query(dbh, query) != 0) {
-	 	return false;
-	 }
-	 free(query);
-	 return true;
 }
 char ** getAdminEmail(MYSQL * dbh) {
 	MYSQL_RES * res;

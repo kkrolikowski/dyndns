@@ -227,18 +227,14 @@ int existZoneFile(char * filepath) {
 	}
 }
 int existEntry(char * what, char * where) {
-	char * buf;
+	char buf[256];
 	FILE * zf;
 
-	buf = (char *) malloc(256 * sizeof(char));
 	if((zf = fopen(where, "r")) == NULL)
 		return -1;			// this shouldn't happen
 	while(fgets(buf, sizeof(buf), zf) != NULL)
-		if(strstr(buf, what) != NULL) {
-			free(buf);
+		if(strstr(buf, what) != NULL)
 			return 1;		// return success if string found in buffer
-		}
-	free(buf);
 	return 0;
 }
 char * stripSerialNo(char * input) {

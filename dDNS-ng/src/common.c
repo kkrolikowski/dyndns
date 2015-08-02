@@ -146,21 +146,25 @@ void log_event(int logfd, char *first, ...) {
 	va_list msgs;
 	char *next = first;
 	extern char logmsg[LOG_MSG_LEN];
-	extern char t_stamp[TIMESTAMP_LEN];
+	char * eventtime;
 
+	eventtime = timestamp();
 	va_start(msgs, first);
-	strcpy(logmsg, timestamp_new(t_stamp));
+	strcpy(logmsg, eventtime);
 	while(next != NULL) {
 		strcat(logmsg, next);
 		next = va_arg(msgs, char *);
 	}
 	va_end(msgs);
 	write(logfd, logmsg, strlen(logmsg));
+	free(eventtime);
 }
-char * timestamp_new(char * t_stamp) {
+char * timestamp() {
     time_t sec;
     struct tm st_time;
+    char * t_stamp;
 
+    t_stamp = (char *) malloc(33 * sizeof(char));
     time(&sec);
     localtime_r(&sec, &st_time);
     strftime(t_stamp, TIMESTAMP_LEN * sizeof(t_stamp), "[%d/%B/%Y %T]", &st_time);

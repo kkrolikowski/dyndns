@@ -113,13 +113,20 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		 */
 		if(existZoneFile(zonepath) == 0) {
 			log_event(logfd, " ERROR: File: ", zonepath, " not ready, try again later\n", NULL);
+			mysql_close(dbh);
+			clearConnData(conndata);
+			free(conndata);
 			continue;
 		}
 		/*
 		 * if client IP address exist -- do nothing
 		 */
-		if(existEntry(conndata->client_ip_addr, zonepath))
+		if(existEntry(conndata->client_ip_addr, zonepath)) {
+			mysql_close(dbh);
+			clearConnData(conndata);
+			free(conndata);
 			continue;
+		}
 		/*
 		 * Update DNS record if exist in zone file
 		 */

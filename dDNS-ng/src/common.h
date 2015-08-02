@@ -40,14 +40,7 @@ typedef struct config {
 	int port;
 } config_t;
 char logmsg[LOG_MSG_LEN];				// log entry
-char t_stamp[TIMESTAMP_LEN];			// timestamp
 
-/*
- * timestamp_new -- returns current date and time
- * it take one argument - string which stores formatted
- * timestamp
- */
-char * timestamp_new(char * t_stamp);
 /*
  * log_event -- put an entry to logfile
  * It takes variable amount of string arguments
@@ -70,4 +63,5 @@ char * getVal(char * str);
  * takes two arguments: process PID and path to pidfile.
  */
 int pidfile(pid_t pid, char *name);
+char * timestamp(void);
 #endif

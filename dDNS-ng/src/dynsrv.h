@@ -24,7 +24,6 @@ int NewEntry(cfgdata_t * cf, char * file);
 //int ddserv(config_t * cfg_file, int logfd, int sockfd);
 MYSQL * dbLogin(config_t * cf);
 char ** getAdminEmail(MYSQL * dbh);
-int getUserID(MYSQL * dbh, char * login);
 int sendmail(config_t * cf, char * mailto, char * subject, char * msg);
 int dbsync(config_t * cfg, int server_log);
 int clientManager(config_t * cfg_file, int logfd, int sockfd);

@@ -68,40 +68,6 @@ MYSQL * dbLogin(config_t * cf) {
 		return NULL;
 	return db;
 }
-int getUserID(MYSQL * dbh, char * login) {
-	MYSQL_RES * res;
-	MYSQL_ROW row;
-	int userid;
-	char * query;
-	char * userid_query = "SELECT id FROM users WHERE login = '";
-	query = (char *) malloc((strlen(userid_query) + strlen(login) + 2) * sizeof(char));
-
-	strcpy(query, userid_query);
-	strcat(query, login);
-	strcat(query, "'");
-
-	if(mysql_query(dbh, query) != 0) {
-		mysql_close(dbh);
-		userid = -1;
-	}
-	res = mysql_store_result(dbh);
-	if(res == NULL) {
-		mysql_close(dbh);
-		userid = -1;
-	}
-	if(mysql_field_count(dbh) == 0) {
-		free(query);
-		mysql_close(dbh);
-		return -1;
-	}
-	if((row = mysql_fetch_row(res)) == 0)
-		userid = -1;
-	else
-		userid = atoi(row[0]);
-
-	free(query);
-	return userid;
-}
 char ** getAdminEmail(MYSQL * dbh) {
 	MYSQL_RES * res;
 	MYSQL_ROW row;

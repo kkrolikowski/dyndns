@@ -38,4 +38,5 @@ int updateZone(char * subdomain, char * ipaddr, char * file, int logger);
 void InitConnData(REMOTEDATA_t * conn);
 void InitDBData(DB_USERDATA_t * db);
 char * tempFile(int len);
+int dbUpdate(MYSQL * dbh, DB_USERDATA_t * data, struct subdomain_st * domain, char * ipaddr, char * timestamp_s);
 #endif

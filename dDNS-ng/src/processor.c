@@ -22,6 +22,7 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 	char * zonepath;					// full path to zone file
 	struct subdomain_st * fulldomain; 	// domain and subdomain
 	pid_t reload_p;						// pid of bind reload process
+	char * timestamp_s;
 
 	while(1) {
 		conndata = (REMOTEDATA_t *) malloc(sizeof(REMOTEDATA_t));
@@ -139,6 +140,12 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 					waitpid(reload_p, NULL, WNOHANG);
 				else
 					log_event(logfd, " ERROR Reload named failed\n", NULL);
+				timestamp_s = timestamp();
+				if(dbUpdate(dbh, dbdata, fulldomain, conndata->client_ip_addr, timestamp_s) == 0)
+					log_event(logfd, " Error: Database update failed\n", NULL);
+				else
+					log_event(logfd, "INFO: Domain: ", dbdata->subdomain, " updated\n", NULL);
+				free(timestamp_s);
 			}
 			else
 				log_event(logfd, " Error on update zone: ", fulldomain->dom, "\n", NULL);

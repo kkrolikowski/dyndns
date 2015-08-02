@@ -340,3 +340,59 @@ char * tempFile(int len) {
     *cur = '\0';                                   // end of string containing random filename
     return tmp_path;
 }
+int dbUpdate(MYSQL * dbh, DB_USERDATA_t * data, struct subdomain_st * domain, char * ipaddr, char * timestamp_s) {
+	int len = 0;
+	char userid[20];
+	char * q_subdomains_1 = "UPDATE subdomains SET ip = '";
+	char * q_subdomains_2 = "', lastupdate = '";
+	char * q_subdomains_3 = "' WHERE user_id = ";
+	char * q_subdomains_4 = " AND subdomain = '";
+	char * q_subdomains_5 = "' AND domain_id = (SELECT id FROM domains WHERE domain LIKE '";
+	char * q_subdomains_6 = "%')";
+
+	char * q_userlog = "INSERT INTO user_log(userid,ip,date) VALUES(";
+	char * query;
+
+	sprintf(userid, "%d", data->id);
+	len = strlen(q_subdomains_1) + strlen(q_subdomains_2) + strlen(q_subdomains_3) + strlen(q_subdomains_4) +
+			strlen(q_subdomains_5) + strlen(q_subdomains_6) + strlen(timestamp_s) + strlen(ipaddr) + strlen(userid) +
+			strlen(domain->sub) + strlen(domain->dom);
+	query = (char *) malloc((len+1) * sizeof(char));
+
+	strcpy(query, q_subdomains_1);
+	strcat(query, ipaddr);
+	strcat(query, q_subdomains_2);
+	strcat(query, timestamp_s);
+	strcat(query, q_subdomains_3);
+	strcat(query, userid);
+	strcat(query, q_subdomains_4);
+	strcat(query, domain->sub);
+	strcat(query, q_subdomains_5);
+	strcat(query, domain->dom);
+	strcat(query, q_subdomains_6);
+
+	if(mysql_query(dbh, query) != 0) {
+		free(query);
+		return 0;
+	}
+	free(query);
+
+	len = strlen(q_userlog) + strlen(ipaddr) + strlen(timestamp_s) + strlen(userid) + 9;
+	query = (char *) malloc((len+1) * sizeof(char));
+
+	strcpy(query, q_userlog);
+	strcat(query, userid);
+	strcat(query, ", '");
+	strcat(query, ipaddr);
+	strcat(query, "', '");
+	strcat(query, timestamp_s);
+	strcat(query, "')");
+
+	if(mysql_query(dbh, query) != 0) {
+		free(query);
+		return 0;
+	}
+
+	free(query);
+	return 1;
+}

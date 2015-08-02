@@ -350,7 +350,7 @@ int dbUpdate(MYSQL * dbh, DB_USERDATA_t * data, struct subdomain_st * domain, ch
 	char * q_subdomains_5 = "' AND domain_id = (SELECT id FROM domains WHERE domain LIKE '";
 	char * q_subdomains_6 = "%')";
 
-	char * q_userlog = "INSERT INTO user_log(userid,ip,date) VALUES(";
+	char * q_userlog = "INSERT INTO user_log(user_id,ip,date) VALUES(";
 	char * query;
 
 	sprintf(userid, "%d", data->id);

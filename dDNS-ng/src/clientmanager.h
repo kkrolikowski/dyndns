@@ -28,7 +28,6 @@ MYSQL_RES * queryUserData(MYSQL * dbh, char * login, int logger);
 REMOTEDATA_t * readCLientData(int sockfd, int logger);
 struct conn_st * clientConn(int sock);
 int bindToInterface(int portno);
-char * stripDomain(char * subdomain);
 int existZoneFile(char * filepath);
 struct subdomain_st * explodeDomain(char * fulldomain);
 int existEntry(char * what, char * where);

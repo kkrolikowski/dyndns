@@ -170,25 +170,6 @@ static char * getdata(char * buf) {
 
 	return val;
 }
-char * stripDomain(char * subdomain) {
-	char * domain;
-	char * cur;
-
-	size_t len = 0;
-	int i;
-
-	cur = strchr(subdomain, '.');
-	cur++;
-	subdomain = cur;
-	while(*subdomain++)
-		len++;
-	domain = (char *) malloc((len + 1) * sizeof(char));
-	for(i = 0; i < len; i++)
-		domain[i] = cur[i];
-	domain[i] = '\0';
-
-	return domain;
-}
 struct subdomain_st * explodeDomain(char * fulldomain) {
 	struct subdomain_st * name;
 	int sub_len = 0;				// subdomain string lenght

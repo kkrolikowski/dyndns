@@ -24,6 +24,7 @@ void InitDBData(DB_USERDATA_t * db) {
 	db->login = NULL;
 	db->md5 = NULL;
 	db->subdomain = NULL;
+	db->serial = NULL;
 }
 int bindToInterface(int portno) {
 	int sockfd;

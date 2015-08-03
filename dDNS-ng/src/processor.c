@@ -173,4 +173,5 @@ static void clearDBData(DB_USERDATA_t * db) {
 	free(db->login);
 	free(db->md5);
 	free(db->subdomain);
+	free(db->serial);
 }

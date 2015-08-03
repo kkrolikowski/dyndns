@@ -14,6 +14,7 @@ typedef struct db_userdata {
 	char * md5;
 	char * subdomain;
 	char * email;
+	char * serial;
 	int active;
 } DB_USERDATA_t;
 struct conn_st {

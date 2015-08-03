@@ -63,6 +63,7 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		dbdata->md5 = (char *) malloc((strlen(row[2]) + 1) * sizeof(char));
 		dbdata->subdomain = (char *) malloc((strlen(row[3]) + 1) * sizeof(char));
 		dbdata->email = (char *) malloc((strlen(row[4]) + 1) * sizeof(char));
+		dbdata->serial = (char *) malloc((strlen(row[7]) + 1) * sizeof(char));
 
 		dbdata->id = atoi(row[0]);
 		strcpy(dbdata->login, row[1]);
@@ -132,7 +133,7 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		 * Update DNS record if exist in zone file
 		 */
 		if(existEntry(fulldomain->sub, zonepath)){
-			if(updateZone(fulldomain->sub, conndata->client_ip_addr, zonepath, logfd)) {
+			if(updateZone(fulldomain->sub, conndata->client_ip_addr, dbdata->serial, zonepath, logfd)) {
 				reload_p = fork();
 				if(reload_p == 0)
 					namedReload();

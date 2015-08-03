@@ -120,7 +120,7 @@ struct conn_st * clientConn(int sock) {
 MYSQL_RES * queryUserData(MYSQL * dbh, char * login, int logger) {
 	MYSQL_RES * res;
 	char * query_prefix = "SELECT u.id, u.login, u.pass, CONCAT(s.subdomain, \".\",  d.domain) as subdomain, \
-			u.email, u.active, s.dynamic FROM subdomains s, domains d , users u \
+			u.email, u.active, s.dynamic, d.serial FROM subdomains s, domains d , users u \
 			WHERE s.domain_id = d.id and u.id = s.user_id and u.login = '";
 	char * query_suffix = "' AND dynamic = 1";
 	char * query;
@@ -254,7 +254,7 @@ char * newSerialNo(char * serial) {
 
     return newserial;
 }
-int updateZone(char * subdomain, char * ipaddr, char * file, int logger) {
+int updateZone(char * subdomain, char * ipaddr, char * serial_from_db, char * file, int logger) {
     FILE *zf;
     FILE *tmp;
 
@@ -277,6 +277,7 @@ int updateZone(char * subdomain, char * ipaddr, char * file, int logger) {
 	    if(strstr(buf, "; serial") != NULL) {
 	    	serial = stripSerialNo(buf);
 	    	newserial = newSerialNo(serial);
+	    	strcpy(serial_from_db, newserial);
 	    	sprintf(buf, "\t%s\t; serial\n", newserial);
 	    }
 	    if(strstr(buf, subdomain) != NULL) {
@@ -333,6 +334,11 @@ int dbUpdate(MYSQL * dbh, DB_USERDATA_t * data, struct subdomain_st * domain, ch
 	char * q_subdomains_6 = "%')";
 
 	char * q_userlog = "INSERT INTO user_log(user_id,ip,date) VALUES(";
+
+	char * q_serial_1 = "UPDATE domains SET serial = ";
+	char * q_serial_2 = " WHERE domain LIKE '";
+	char * q_serial_3 = "%'";
+
 	char * query;
 
 	sprintf(userid, "%d", data->id);
@@ -369,6 +375,22 @@ int dbUpdate(MYSQL * dbh, DB_USERDATA_t * data, struct subdomain_st * domain, ch
 	strcat(query, "', '");
 	strcat(query, timestamp_s);
 	strcat(query, "')");
+
+	if(mysql_query(dbh, query) != 0) {
+		free(query);
+		return 0;
+	}
+	free(query);
+
+	len = strlen(q_serial_1) + strlen(q_serial_2) + strlen(q_serial_3) + strlen(data->serial) +
+			strlen(domain->dom);
+	query = (char *) malloc((len+1) * sizeof(char));
+
+	strcpy(query, q_serial_1);
+	strcat(query, data->serial);
+	strcat(query, q_serial_2);
+	strcat(query, domain->dom);
+	strcat(query, q_serial_3);
 
 	if(mysql_query(dbh, query) != 0) {
 		free(query);

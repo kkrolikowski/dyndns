@@ -80,7 +80,9 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			log_event(logfd, " ERROR: Incorrect password for ", conndata->login, " try again later\n", NULL);
 			mysql_close(dbh);
 			clearConnData(conndata);
+			clearDBData(dbdata);
 			free(conndata);
+			free(dbdata);
 			continue;
 		}
 		/*
@@ -90,7 +92,9 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			log_event(logfd, " ERROR: Account inactive. Please activate your account!\n", NULL);
 			mysql_close(dbh);
 			clearConnData(conndata);
+			clearDBData(dbdata);
 			free(conndata);
+			free(dbdata);
 			continue;
 		}
 		/*
@@ -100,7 +104,9 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			log_event(logfd, " ERROR: User ", conndata->login, " is not authorized to use ", conndata->subdomain, "\n", NULL);
 			mysql_close(dbh);
 			clearConnData(conndata);
+			clearDBData(dbdata);
 			free(conndata);
+			free(dbdata);
 			continue;
 		}
 		fulldomain = explodeDomain(conndata->subdomain);	// get domain name.
@@ -117,7 +123,9 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			log_event(logfd, " ERROR: File: ", zonepath, " not ready, try again later\n", NULL);
 			mysql_close(dbh);
 			clearConnData(conndata);
+			clearDBData(dbdata);
 			free(conndata);
+			free(dbdata);
 			continue;
 		}
 		/*
@@ -126,7 +134,9 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		if(existEntry(conndata->client_ip_addr, zonepath)) {
 			mysql_close(dbh);
 			clearConnData(conndata);
+			clearDBData(dbdata);
 			free(conndata);
+			free(dbdata);
 			continue;
 		}
 		/*
@@ -166,6 +176,7 @@ static void clearConnData(REMOTEDATA_t * conn) {
 	free(conn->login);
 	free(conn->pass);
 	free(conn->subdomain);
+	free(conn->client_ip_addr);
 }
 static void clearDBData(DB_USERDATA_t * db) {
 	db->active = 0;

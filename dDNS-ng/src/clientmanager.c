@@ -298,7 +298,6 @@ int updateZone(char * subdomain, char * ipaddr, char * serial_from_db, char * fi
     fclose(zf);
     fclose(tmp);
     free(tmpf);
-//    apply(tmp, file, cf->domain);
 
     return 1;
 }

@@ -100,12 +100,12 @@ int dbsync(config_t * cfg, int server_log) {
 				    	log_event(server_log, " ERROR Reload named failed\n", NULL);
 				}
 			}
+			mysql_free_result(nsrec);
 			free(zoneName);
 			free(path);
 			clearData(data, i);
 		}
 		mysql_free_result(domains);
-		mysql_free_result(nsrec);
 		mysql_close(dbh);
 		sleep(15);
 	}

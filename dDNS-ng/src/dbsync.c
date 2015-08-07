@@ -14,6 +14,7 @@ static MYSQL_RES * queryDomains(MYSQL * dbh, int logger);
 static MYSQL_RES * querySubDomain(MYSQL * dbh, char * domain, int server_log);
 static int fileExist(char * path);
 static int updateNamedConf(char * path, char * named_conf_path, char * domain, int logger);
+static void clearData(domain_t * data, int max);
 
 int dbsync(config_t * cfg, int server_log) {
 	MYSQL * dbh;
@@ -100,9 +101,11 @@ int dbsync(config_t * cfg, int server_log) {
 				}
 			}
 			free(zoneName);
-			free(data->records);
-			free(data);
+			free(path);
+			clearData(data, i);
 		}
+		mysql_free_result(domains);
+		mysql_free_result(nsrec);
 		mysql_close(dbh);
 		sleep(15);
 	}
@@ -129,15 +132,6 @@ static int writeFile(char * path, domain_t * data, int max) {
 				data->records[i]->subd_name, data->records[i]->type, data->records[i]->ip);
 	fclose(zone);
 	free(path);
-
-	free(data->origin);
-	free(data->master_dns);
-	free(data->admin_contact);
-	for(i = 0; i < max; i++) {
-		free(data->records[i]->subd_name);
-		free(data->records[i]->type);
-		free(data->records[i]->ip);
-	}
 
 	return 1;
 }
@@ -206,4 +200,19 @@ static int updateNamedConf(char * path, char * named_conf_path, char * domain, i
 
 	fclose(named_conf);
 	return 1;
+}
+static void clearData(domain_t * data, int max) {
+	int i;
+
+	for(i = 0; i < max; i++) {
+		free(data->records[i]->ip);
+		free(data->records[i]->subd_name);
+		free(data->records[i]->type);
+		free(data->records[i]);
+	}
+	free(data->admin_contact);
+	free(data->master_dns);
+	free(data->origin);
+	free(data->records);
+	free(data);
 }

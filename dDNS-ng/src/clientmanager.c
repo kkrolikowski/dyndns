@@ -215,8 +215,11 @@ int existEntry(char * what, char * where) {
 	if((zf = fopen(where, "r")) == NULL)
 		return -1;			// this shouldn't happen
 	while(fgets(buf, sizeof(buf), zf) != NULL)
-		if(strstr(buf, what) != NULL)
+		if(strstr(buf, what) != NULL) {
+			fclose(zf);
 			return 1;		// return success if string found in buffer
+		}
+	fclose(zf);
 	return 0;
 }
 char * stripSerialNo(char * input) {

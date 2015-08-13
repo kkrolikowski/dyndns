@@ -13,13 +13,13 @@
 #include "auth.h"
 #include "clientmanager.h"
 
-int userauth(DB_USERDATA_t *dbdata, char *pass) {
+int userauth(char * secret, char *pass) {
 	char * salt;
 
 	salt = (char *) malloc(16 * sizeof(char));
 
-	get_salt(dbdata->md5, salt);
-	if(strcmp((char *) dbdata->md5, (char *) crypt(pass, salt)) != 0) {
+	get_salt(secret, salt);
+	if(strcmp((char *) secret, (char *) crypt(pass, salt)) != 0) {
 		free(salt);
 		return 0;
 	}

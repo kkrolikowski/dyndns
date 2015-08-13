@@ -13,6 +13,6 @@ void get_salt(char *p, char *salt);
  * 0 - incorrect password
  * 1 - correct password
  */
-int userauth(DB_USERDATA_t *dbdata, char *pass);
+int userauth(char * secret, char *pass);
 
 #endif

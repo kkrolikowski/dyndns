@@ -25,7 +25,6 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 	char * timestamp_s;
 
 	while(1) {
-		conndata = (REMOTEDATA_t *) malloc(sizeof(REMOTEDATA_t));
 		dbdata = (DB_USERDATA_t *) malloc(sizeof(DB_USERDATA_t));
 
 		InitConnData(conndata);
@@ -76,13 +75,11 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		/*
 		 * Check user password.
 		 */
-		if(userauth(dbdata, conndata->pass) == 0) {
+		if(userauth(dbdata->md5, conndata->pass) == 0) {
 			log_event(logfd, " ERROR: Incorrect password for ", conndata->login, " try again later\n", NULL);
 			mysql_close(dbh);
 			clearConnData(conndata);
 			clearDBData(dbdata);
-			free(conndata);
-			free(dbdata);
 			continue;
 		}
 		/*
@@ -93,8 +90,6 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			mysql_close(dbh);
 			clearConnData(conndata);
 			clearDBData(dbdata);
-			free(conndata);
-			free(dbdata);
 			continue;
 		}
 		/*
@@ -105,8 +100,6 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			mysql_close(dbh);
 			clearConnData(conndata);
 			clearDBData(dbdata);
-			free(conndata);
-			free(dbdata);
 			continue;
 		}
 		fulldomain = explodeDomain(conndata->subdomain);	// get domain name.
@@ -124,19 +117,22 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			mysql_close(dbh);
 			clearConnData(conndata);
 			clearDBData(dbdata);
-			free(conndata);
-			free(dbdata);
+			free(fulldomain->dom);
+			free(fulldomain->sub);
+			free(zonepath);
 			continue;
 		}
 		/*
 		 * if client IP address exist -- do nothing
 		 */
 		if(existEntry(conndata->client_ip_addr, zonepath)) {
+			log_event(logfd, " INFO: ", conndata->subdomain, " is up to date\n", NULL);
 			mysql_close(dbh);
 			clearConnData(conndata);
 			clearDBData(dbdata);
-			free(conndata);
-			free(dbdata);
+			free(fulldomain->dom);
+			free(fulldomain->sub);
+			free(zonepath);
 			continue;
 		}
 		/*
@@ -177,6 +173,7 @@ static void clearConnData(REMOTEDATA_t * conn) {
 	free(conn->pass);
 	free(conn->subdomain);
 	free(conn->client_ip_addr);
+	free(conn);
 }
 static void clearDBData(DB_USERDATA_t * db) {
 	db->active = 0;
@@ -186,4 +183,5 @@ static void clearDBData(DB_USERDATA_t * db) {
 	free(db->md5);
 	free(db->subdomain);
 	free(db->serial);
+	free(db);
 }

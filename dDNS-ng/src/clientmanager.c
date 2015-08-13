@@ -71,10 +71,10 @@ REMOTEDATA_t * readCLientData(int sockfd, int logger) {
 	write(conn_data->fd, welcome, strlen(welcome) +1);
 	bzero(readbuf, 256);
 	while(read(conn_data->fd, readbuf, 256) > 0) {
-		val = getdata(readbuf);
 		if(strstr(readbuf, "QUIT") != NULL)
 			break;
-		else if(strstr(readbuf, "LOGIN") != NULL) {
+		val = getdata(readbuf);
+		if(strstr(readbuf, "LOGIN") != NULL) {
 			data->login = (char *) malloc((strlen(val) + 1) * sizeof(char));
 			bzero(data->login, sizeof(data->login));
 			strcpy(data->login, val);
@@ -97,6 +97,7 @@ REMOTEDATA_t * readCLientData(int sockfd, int logger) {
 		free(val);
 		bzero(readbuf, 256);
 	}
+	free(val);
 	close(conn_data->fd);
 	return data;
 }

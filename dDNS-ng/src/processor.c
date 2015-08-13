@@ -51,7 +51,6 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			log_event(logfd, " ERROR: Unknown user ", conndata->login, "\n", NULL);
 			mysql_close(dbh);
 			clearConnData(conndata);
-			free(conndata);
 			continue;
 		}
 		row = mysql_fetch_row(res);
@@ -72,6 +71,8 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		strcpy(dbdata->subdomain, row[3]);
 		strcpy(dbdata->email, row[4]);
 		dbdata->active = atoi(row[5]);
+
+		mysql_free_result(res);
 		/*
 		 * Check user password.
 		 */

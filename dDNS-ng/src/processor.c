@@ -27,6 +27,16 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 	pid_t reload_p;						// pid of bind reload process
 	char * timestamp_s;
 	size_t zonepathLen = 0;
+	size_t ipchange_msg_len = 0;		// custom message lenght
+
+	/*
+	 *  building custom message to send to user
+	 */
+	char * ipchange_msg_1 = "Dear ";
+	char * ipchange_msg_2 = "\nDomain: ";
+	char * ipchange_msg_3 = " has IP: ";
+	char * ipchange_msg;
+	ipchange_msg_len = strlen(ipchange_msg_1) + strlen(ipchange_msg_2) + strlen(ipchange_msg_3);
 
 	while(1) {
 		/*
@@ -160,8 +170,18 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 				timestamp_s = timestamp();
 				if(dbUpdate(dbh, dbdata, fulldomain, inet_ntoa(conndata->client_ip_addr), timestamp_s) == 0)
 					log_event(logfd, " Error: Database update failed\n", NULL);
-				else
+				else {
+					ipchange_msg = (char *) malloc((ipchange_msg_len + strlen(dbdata->login) + strlen(conndata->subdomain) + strlen(inet_ntoa(conndata->client_ip_addr)) + 2) * sizeof(char));
+					strcpy(ipchange_msg, ipchange_msg_1);
+					strcat(ipchange_msg, dbdata->login);
+					strcat(ipchange_msg, ipchange_msg_2);
+					strcat(ipchange_msg, conndata->subdomain);
+					strcat(ipchange_msg, ipchange_msg_3);
+					strcat(ipchange_msg, inet_ntoa(conndata->client_ip_addr));
+					sendmail(cfg_file, dbdata->email, "IP Address Update", ipchange_msg);
+					free(ipchange_msg);
 					log_event(logfd, " INFO: Domain: ", dbdata->subdomain, " updated\n", NULL);
+				}
 				free(timestamp_s);
 			}
 			else

@@ -142,6 +142,7 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			free(zonepath);
 			free(fulldomain->dom);
 			free(fulldomain->sub);
+			free(fulldomain);
 			continue;
 		}
 		/*
@@ -169,10 +170,13 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		/*
 		 * we don't need these data anymore.
 		 */
+		mysql_close(dbh);
 		clearConnData(conndata);
 		clearDBData(dbdata);
-		mysql_close(dbh);
-		free(dbdata);
+		free(zonepath);
+		free(fulldomain->dom);
+		free(fulldomain->sub);
+		free(fulldomain);
 	}
 	return 0;
 }

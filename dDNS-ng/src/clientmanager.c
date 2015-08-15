@@ -4,15 +4,12 @@
 #include <string.h>
 #include <mysql.h>
 #include <time.h>
-#include <netinet/in.h>
 #include <sys/socket.h>
-#include <arpa/inet.h>
 #include "clientmanager.h"
 
 static char * getdata(char *);
 
 void InitConnData(REMOTEDATA_t * conn) {
-	conn->client_ip_addr = NULL;
 	conn->login = NULL;
 	conn->pass = NULL;
 	conn->subdomain = NULL;
@@ -60,7 +57,8 @@ REMOTEDATA_t * readCLientData(int sockfd, int logger) {
 	char readbuf[256];
 
 	data = (REMOTEDATA_t *) malloc(sizeof(REMOTEDATA_t));
-	bzero(readbuf, 256);
+	bzero(data, sizeof(REMOTEDATA_t));
+	InitConnData(data);
 
 	if((conn_data = clientConn(sockfd)) == NULL) {
 		log_event(logger, " ERROR: can't establish connection\n", NULL);
@@ -76,17 +74,14 @@ REMOTEDATA_t * readCLientData(int sockfd, int logger) {
 		val = getdata(readbuf);
 		if(strstr(readbuf, "LOGIN") != NULL) {
 			data->login = (char *) malloc((strlen(val) + 1) * sizeof(char));
-			bzero(data->login, sizeof(data->login));
 			strcpy(data->login, val);
 		}
 		else if(strstr(readbuf, "PASS") != NULL) {
 			data->pass = (char *) malloc((strlen(val) + 1) * sizeof(char));
-			bzero(data->pass, sizeof(data->pass));
 			strcpy(data->pass, val);
 		}
 		else if(strstr(readbuf, "SUBDOMAIN") != NULL) {
 			data->subdomain = (char *) malloc((strlen(val) + 1) * sizeof(char));
-			bzero(data->subdomain, sizeof(data->subdomain));
 			strcpy(data->subdomain, val);
 		}
 		else {
@@ -97,8 +92,8 @@ REMOTEDATA_t * readCLientData(int sockfd, int logger) {
 		free(val);
 		bzero(readbuf, 256);
 	}
-	free(val);
 	close(conn_data->fd);
+	free(conn_data);
 	return data;
 }
 struct conn_st * clientConn(int sock) {
@@ -106,17 +101,17 @@ struct conn_st * clientConn(int sock) {
 	struct sockaddr_in cli_addr;
 	struct conn_st * conn;
 
+	conn = (struct conn_st *) malloc(sizeof(struct conn_st));
+
 	clilen = sizeof(cli_addr);
 	clifd = accept(sock, (struct sockaddr *) &cli_addr, &clilen);
 
 	if(clifd < 0)
 		return NULL;
-	else {
-		conn->client_ip = (char *) malloc((strlen((char *) inet_ntoa(cli_addr.sin_addr)) + 1) * sizeof(char));
-		strcpy(conn->client_ip, (char *) inet_ntoa(cli_addr.sin_addr));
-		conn->fd = clifd;
-		return conn;
-	}
+	conn->client_ip = cli_addr.sin_addr;
+	conn->fd = clifd;
+
+	return conn;
 }
 MYSQL_RES * queryUserData(MYSQL * dbh, char * login, int logger) {
 	MYSQL_RES * res;
@@ -129,7 +124,7 @@ MYSQL_RES * queryUserData(MYSQL * dbh, char * login, int logger) {
 /*
  * build SQL query to get user account information
  */
-	query = (char *) malloc((strlen(query_prefix) + strlen(login) + strlen(query_suffix) + 3) * sizeof(char));
+	query = (char *) malloc((strlen(query_prefix) + strlen(login) + strlen(query_suffix) + 1) * sizeof(char));
 	strcpy(query, query_prefix);
 	strcat(query, login);
 	strcat(query, query_suffix);
@@ -180,6 +175,8 @@ struct subdomain_st * explodeDomain(char * fulldomain) {
 	int dom_len = 0;				// domain string lenght
 	char * cur;						// actual position inside the string
 	int i;
+
+	name = (struct subdomain_st *) malloc(sizeof(struct subdomain_st));
 
 	cur = fulldomain;
 	while(*cur++ != '.')

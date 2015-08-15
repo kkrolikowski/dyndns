@@ -3,6 +3,9 @@
 #include <string.h>
 #include <mysql.h>
 #include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include "dynsrv.h"
@@ -23,12 +26,14 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 	struct subdomain_st * fulldomain; 	// domain and subdomain
 	pid_t reload_p;						// pid of bind reload process
 	char * timestamp_s;
+	size_t zonepathLen = 0;
+
+	dbdata = (DB_USERDATA_t *) malloc(sizeof(DB_USERDATA_t));
+	//fulldomain = (struct subdomain_st *) malloc(sizeof(struct subdomain_st));
 
 	while(1) {
-		dbdata = (DB_USERDATA_t *) malloc(sizeof(DB_USERDATA_t));
-
-		InitConnData(conndata);
 		InitDBData(dbdata);
+
 		/*
 		 * Get data sent by ddns-client
 		 */
@@ -107,7 +112,10 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		/*
 		 * obtain full path to zonefile
 		 */
-		zonepath = (char *) malloc((strlen(cfg_file->server.zonedir) + strlen(fulldomain->dom) + 2) * sizeof(char));
+		zonepathLen = strlen(cfg_file->server.zonedir) + strlen(fulldomain->dom) + 1;
+		zonepath = (char *) malloc(zonepathLen * sizeof(char));
+		bzero(zonepath, zonepathLen);
+		memset(zonepath, 0, zonepathLen);
 		strcpy(zonepath, cfg_file->server.zonedir);
 		strcat(zonepath, fulldomain->dom);
 		/*
@@ -118,29 +126,30 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			mysql_close(dbh);
 			clearConnData(conndata);
 			clearDBData(dbdata);
+			free(zonepath);
 			free(fulldomain->dom);
 			free(fulldomain->sub);
-			free(zonepath);
+			free(fulldomain);
 			continue;
 		}
 		/*
 		 * if client IP address exist -- do nothing
 		 */
-		if(existEntry(conndata->client_ip_addr, zonepath)) {
+		if(existEntry(inet_ntoa(conndata->client_ip_addr), zonepath)) {
 			log_event(logfd, " INFO: ", conndata->subdomain, " is up to date\n", NULL);
 			mysql_close(dbh);
 			clearConnData(conndata);
 			clearDBData(dbdata);
+			free(zonepath);
 			free(fulldomain->dom);
 			free(fulldomain->sub);
-			free(zonepath);
 			continue;
 		}
 		/*
 		 * Update DNS record if exist in zone file
 		 */
 		if(existEntry(fulldomain->sub, zonepath)){
-			if(updateZone(fulldomain->sub, conndata->client_ip_addr, dbdata->serial, zonepath, logfd)) {
+			if(updateZone(fulldomain->sub, inet_ntoa(conndata->client_ip_addr), dbdata->serial, zonepath, logfd)) {
 				reload_p = fork();
 				if(reload_p == 0)
 					namedReload();
@@ -149,7 +158,7 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 				else
 					log_event(logfd, " ERROR Reload named failed\n", NULL);
 				timestamp_s = timestamp();
-				if(dbUpdate(dbh, dbdata, fulldomain, conndata->client_ip_addr, timestamp_s) == 0)
+				if(dbUpdate(dbh, dbdata, fulldomain, inet_ntoa(conndata->client_ip_addr), timestamp_s) == 0)
 					log_event(logfd, " Error: Database update failed\n", NULL);
 				else
 					log_event(logfd, " INFO: Domain: ", dbdata->subdomain, " updated\n", NULL);
@@ -164,7 +173,6 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		clearConnData(conndata);
 		clearDBData(dbdata);
 		mysql_close(dbh);
-		free(conndata);
 		free(dbdata);
 	}
 	return 0;
@@ -173,7 +181,7 @@ static void clearConnData(REMOTEDATA_t * conn) {
 	free(conn->login);
 	free(conn->pass);
 	free(conn->subdomain);
-	free(conn->client_ip_addr);
+	//free(conn->client_ip_addr);
 	free(conn);
 }
 static void clearDBData(DB_USERDATA_t * db) {
@@ -184,5 +192,4 @@ static void clearDBData(DB_USERDATA_t * db) {
 	free(db->md5);
 	free(db->subdomain);
 	free(db->serial);
-	free(db);
 }

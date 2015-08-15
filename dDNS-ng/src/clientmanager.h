@@ -7,7 +7,6 @@ typedef struct remotedata {
 	char * login;
 	char * pass;
 	char * subdomain;
-	//char * client_ip_addr;
 	struct in_addr client_ip_addr;
 } REMOTEDATA_t;
 typedef struct db_userdata {
@@ -21,7 +20,6 @@ typedef struct db_userdata {
 } DB_USERDATA_t;
 struct conn_st {
 	int fd;
-	//char * client_ip;
 	struct in_addr client_ip;
 };
 struct subdomain_st {

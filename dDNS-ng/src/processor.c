@@ -29,7 +29,6 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 	size_t zonepathLen = 0;
 
 	dbdata = (DB_USERDATA_t *) malloc(sizeof(DB_USERDATA_t));
-	//fulldomain = (struct subdomain_st *) malloc(sizeof(struct subdomain_st));
 
 	while(1) {
 		InitDBData(dbdata);
@@ -181,7 +180,6 @@ static void clearConnData(REMOTEDATA_t * conn) {
 	free(conn->login);
 	free(conn->pass);
 	free(conn->subdomain);
-	//free(conn->client_ip_addr);
 	free(conn);
 }
 static void clearDBData(DB_USERDATA_t * db) {

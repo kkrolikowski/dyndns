@@ -28,11 +28,7 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 	char * timestamp_s;
 	size_t zonepathLen = 0;
 
-	dbdata = (DB_USERDATA_t *) malloc(sizeof(DB_USERDATA_t));
-
 	while(1) {
-		InitDBData(dbdata);
-
 		/*
 		 * Get data sent by ddns-client
 		 */
@@ -47,14 +43,18 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			log_event(logfd, " ERROR: Can't connect to database. QUIT process.\n", NULL);
 			return 1;
 		}
+		dbdata = (DB_USERDATA_t *) malloc(sizeof(DB_USERDATA_t));
+		InitDBData(dbdata);
 		/*
 		 * Search for user data based on login read in the first step.
 		 * Log an error if none was found.
 		 */
 		if((res = queryUserData(dbh, conndata->login, logfd)) == NULL) {
 			log_event(logfd, " ERROR: Unknown user ", conndata->login, "\n", NULL);
+			mysql_free_result(res);
 			mysql_close(dbh);
 			clearConnData(conndata);
+			free(dbdata);
 			continue;
 		}
 		row = mysql_fetch_row(res);
@@ -190,4 +190,5 @@ static void clearDBData(DB_USERDATA_t * db) {
 	free(db->md5);
 	free(db->subdomain);
 	free(db->serial);
+	free(db);
 }

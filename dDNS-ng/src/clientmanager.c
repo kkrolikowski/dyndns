@@ -140,8 +140,13 @@ MYSQL_RES * queryUserData(MYSQL * dbh, char * login, int logger) {
  * retrieve sql data from database
  */
 
-	if((res = mysql_store_result(dbh)) == NULL || mysql_num_rows(res) == 0) {
+	if((res = mysql_store_result(dbh)) == NULL) {
 		free(query);
+		return NULL;
+	}
+	if(mysql_num_rows(res) == 0) {
+		free(query);
+		mysql_free_result(res);
 		return NULL;
 	}
 

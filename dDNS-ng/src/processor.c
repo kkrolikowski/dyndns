@@ -23,11 +23,12 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 	REMOTEDATA_t * conndata;			// client login/pass/subdomain recived data
 	DB_USERDATA_t * dbdata;				// database info about particular user
 	char * zonepath;					// full path to zone file
-	struct subdomain_st * fulldomain; 	// domain and subdomain
+	struct subdomain_st * clientDomain; 	// domain and subdomain
 	pid_t reload_p;						// pid of bind reload process
 	char * timestamp_s;
 	size_t zonepathLen = 0;
 	size_t ipchange_msg_len = 0;		// custom message lenght
+	char * clientDomain_str;			// string form of userdomain
 
 	/*
 	 *  building custom message to send to user
@@ -107,26 +108,33 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			clearDBData(dbdata);
 			continue;
 		}
+		clientDomain = explodeDomain(conndata->subdomain);	// get domain name.
+		clientDomain_str = (char *) malloc((clientDomain->len +2) * sizeof(char));
+		strcpy(clientDomain_str, clientDomain->sub);
+		strcat(clientDomain_str, ".");
+		strcat(clientDomain_str, clientDomain->dom);
+
 		/*
 		 * Check if user can use particular domain
 		 */
-		if(strcmp(dbdata->subdomain, conndata->subdomain) != 0) {
-			log_event(logfd, " ERROR: User ", conndata->login, " is not authorized to use ", conndata->subdomain, "\n", NULL);
+		if(strcmp(dbdata->subdomain, clientDomain_str) != 0) {
+			log_event(logfd, " ERROR: User ", conndata->login, " is not authorized to use ", clientDomain_str, "\n", NULL);
 			mysql_close(dbh);
 			clearConnData(conndata);
 			clearDBData(dbdata);
+			free(clientDomain_str);
 			continue;
 		}
-		fulldomain = explodeDomain(conndata->subdomain);	// get domain name.
+		free(clientDomain_str);
 		/*
 		 * obtain full path to zonefile
 		 */
-		zonepathLen = strlen(cfg_file->server.zonedir) + strlen(fulldomain->dom) + 1;
+		zonepathLen = strlen(cfg_file->server.zonedir) + strlen(clientDomain->dom) + 1;
 		zonepath = (char *) malloc(zonepathLen * sizeof(char));
 		bzero(zonepath, zonepathLen);
 		memset(zonepath, 0, zonepathLen);
 		strcpy(zonepath, cfg_file->server.zonedir);
-		strcat(zonepath, fulldomain->dom);
+		strcat(zonepath, clientDomain->dom);
 		/*
 		 * check if zone file exists
 		 */
@@ -136,30 +144,33 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			clearConnData(conndata);
 			clearDBData(dbdata);
 			free(zonepath);
-			free(fulldomain->dom);
-			free(fulldomain->sub);
-			free(fulldomain);
+			free(clientDomain->dom);
+			free(clientDomain->sub);
+			free(clientDomain);
 			continue;
 		}
 		/*
 		 * if client IP address exist -- do nothing
 		 */
 		if(existEntry(inet_ntoa(conndata->client_ip_addr), zonepath)) {
-			log_event(logfd, " INFO: ", conndata->subdomain, " is up to date\n", NULL);
+			if(clientDomain->sub[0] == '@')
+				log_event(logfd, " INFO: ", clientDomain->dom, " is up to date\n", NULL);
+			else
+				log_event(logfd, " INFO: ", conndata->subdomain, " is up to date\n", NULL);
 			mysql_close(dbh);
 			clearConnData(conndata);
 			clearDBData(dbdata);
 			free(zonepath);
-			free(fulldomain->dom);
-			free(fulldomain->sub);
-			free(fulldomain);
+			free(clientDomain->dom);
+			free(clientDomain->sub);
+			free(clientDomain);
 			continue;
 		}
 		/*
 		 * Update DNS record if exist in zone file
 		 */
-		if(existEntry(fulldomain->sub, zonepath)){
-			if(updateZone(fulldomain->sub, inet_ntoa(conndata->client_ip_addr), dbdata->serial, zonepath, logfd)) {
+		if(existEntry(clientDomain->sub, zonepath)){
+			if(updateZone(clientDomain->sub, inet_ntoa(conndata->client_ip_addr), dbdata->serial, zonepath, logfd)) {
 				reload_p = fork();
 				if(reload_p == 0)
 					namedReload();
@@ -168,7 +179,7 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 				else
 					log_event(logfd, " ERROR Reload named failed\n", NULL);
 				timestamp_s = timestamp();
-				if(dbUpdate(dbh, dbdata, fulldomain, inet_ntoa(conndata->client_ip_addr), timestamp_s) == 0)
+				if(dbUpdate(dbh, dbdata, clientDomain, inet_ntoa(conndata->client_ip_addr), timestamp_s) == 0)
 					log_event(logfd, " Error: Database update failed\n", NULL);
 				else {
 					ipchange_msg = (char *) malloc((ipchange_msg_len + strlen(dbdata->login) + strlen(conndata->subdomain) + strlen(inet_ntoa(conndata->client_ip_addr)) + 2) * sizeof(char));
@@ -180,12 +191,15 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 					strcat(ipchange_msg, inet_ntoa(conndata->client_ip_addr));
 					sendmail(cfg_file, dbdata->email, "IP Address Update", ipchange_msg);
 					free(ipchange_msg);
-					log_event(logfd, " INFO: Domain: ", dbdata->subdomain, " updated\n", NULL);
+					if(clientDomain->sub[0] == '@')
+						log_event(logfd, " INFO: Domain: ", clientDomain->dom, " updated\n", NULL);
+					else
+						log_event(logfd, " INFO: Domain: ", dbdata->subdomain, " updated\n", NULL);
 				}
 				free(timestamp_s);
 			}
 			else
-				log_event(logfd, " Error on update zone: ", fulldomain->dom, "\n", NULL);
+				log_event(logfd, " Error on update zone: ", clientDomain->dom, "\n", NULL);
 		}
 		/*
 		 * we don't need these data anymore.
@@ -194,9 +208,9 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		clearConnData(conndata);
 		clearDBData(dbdata);
 		free(zonepath);
-		free(fulldomain->dom);
-		free(fulldomain->sub);
-		free(fulldomain);
+		free(clientDomain->dom);
+		free(clientDomain->sub);
+		free(clientDomain);
 	}
 	return 0;
 }

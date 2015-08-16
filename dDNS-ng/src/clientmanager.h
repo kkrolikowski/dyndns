@@ -25,13 +25,14 @@ struct conn_st {
 struct subdomain_st {
 	char * sub;
 	char * dom;
+	int len;
 };
 MYSQL_RES * queryUserData(MYSQL * dbh, char * login, int logger);
 REMOTEDATA_t * readCLientData(int sockfd, int logger);
 struct conn_st * clientConn(int sock);
 int bindToInterface(int portno);
 int existZoneFile(char * filepath);
-struct subdomain_st * explodeDomain(char * fulldomain);
+struct subdomain_st * explodeDomain(char * clientDomain);
 int existEntry(char * what, char * where);
 char * stripSerialNo(char * input);
 char * newSerialNo(char * serial);

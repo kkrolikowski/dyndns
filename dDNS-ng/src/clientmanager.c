@@ -174,7 +174,7 @@ static char * getdata(char * buf) {
 
 	return val;
 }
-struct subdomain_st * explodeDomain(char * fulldomain) {
+struct subdomain_st * explodeDomain(char * clientDomain) {
 	struct subdomain_st * name;
 	int sub_len = 0;				// subdomain string lenght
 	int dom_len = 0;				// domain string lenght
@@ -183,10 +183,11 @@ struct subdomain_st * explodeDomain(char * fulldomain) {
 	int i;
 	int dot = 0;					// dot count in subdomain
 
-	name = (struct subdomain_st *) malloc(sizeof(struct subdomain_st));
 
-	cur = fulldomain;
-	check = fulldomain;
+	name = (struct subdomain_st *) malloc(sizeof(struct subdomain_st));
+	name->len = 0;					// lenght of entire resulting subdomain;
+	cur = clientDomain;
+	check = clientDomain;
 	/*
 	 * let's check how many dots string has
 	 */
@@ -203,22 +204,25 @@ struct subdomain_st * explodeDomain(char * fulldomain) {
 			sub_len++;
 		name->sub = (char *) malloc((sub_len+1) * sizeof(char));
 		for(i = 0; i < sub_len; i++)
-			name->sub[i] = fulldomain[i];
+			name->sub[i] = clientDomain[i];
 		name->sub[i] = '\0';
-		cur = strchr(fulldomain, '.');
+		name->len += strlen(name->sub);
+		cur = strchr(clientDomain, '.');
 		cur++;
-		fulldomain = cur;
+		clientDomain = cur;
 	}
 	else {
-		name->sub = (char *) malloc(3 * sizeof(char));
+		name->sub = (char *) malloc(2 * sizeof(char));
 		strcpy(name->sub, "@");
+		name->len += 2;
 	}
 	while(*cur++)
 		dom_len++;
 	name->dom = (char *) malloc((dom_len + 1) * sizeof(char));
 	for(i = 0; i < dom_len; i++)
-		name->dom[i] = fulldomain[i];
+		name->dom[i] = clientDomain[i];
 	name->dom[i] = '\0';
+	name->len += strlen(name->dom);
 
 	return name;
 }
@@ -301,13 +305,13 @@ int updateZone(char * subdomain, char * ipaddr, char * serial_from_db, char * fi
     }
 
     while(fgets(buf, sizeof(buf), zf) != NULL) {
-	    if(strstr(buf, "; serial") != NULL) {
+    	if(strstr(buf, "; serial") != NULL) {
 	    	serial = stripSerialNo(buf);
 	    	newserial = newSerialNo(serial);
 	    	strcpy(serial_from_db, newserial);
 	    	sprintf(buf, "\t%s\t; serial\n", newserial);
 	    }
-	    if(strstr(buf, subdomain) != NULL) {
+	    if(strstr(buf, subdomain) != NULL && strstr(buf, "SOA") == NULL && strchr(buf, 'A') != NULL) {
 		    if(strlen(subdomain) < 8)
 		    	sprintf(buf, "%s\t300\tIN\tA\t%s\n", subdomain, ipaddr);
 		    else

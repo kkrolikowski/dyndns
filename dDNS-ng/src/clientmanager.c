@@ -311,7 +311,7 @@ int updateZone(char * subdomain, char * ipaddr, char * serial_from_db, char * fi
 	    	strcpy(serial_from_db, newserial);
 	    	sprintf(buf, "\t%s\t; serial\n", newserial);
 	    }
-	    if(strstr(buf, subdomain) != NULL && strstr(buf, "SOA") == NULL && strchr(buf, 'A') != NULL) {
+	    if(strstr(buf, subdomain) != NULL && strstr(buf, "SOA") == NULL && strstr(buf, "CNAME") != NULL && strchr(buf, 'A') != NULL) {
 		    if(strlen(subdomain) < 8)
 		    	sprintf(buf, "%s\t300\tIN\tA\t%s\n", subdomain, ipaddr);
 		    else

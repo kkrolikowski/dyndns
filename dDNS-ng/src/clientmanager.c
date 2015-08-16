@@ -179,21 +179,40 @@ struct subdomain_st * explodeDomain(char * fulldomain) {
 	int sub_len = 0;				// subdomain string lenght
 	int dom_len = 0;				// domain string lenght
 	char * cur;						// actual position inside the string
+	char * check;					// check for domain
 	int i;
+	int dot = 0;					// dot count in subdomain
 
 	name = (struct subdomain_st *) malloc(sizeof(struct subdomain_st));
 
 	cur = fulldomain;
-	while(*cur++ != '.')
-		sub_len++;
-	name->sub = (char *) malloc((sub_len+1) * sizeof(char));
-	for(i = 0; i < sub_len; i++)
-		name->sub[i] = fulldomain[i];
-	name->sub[i] = '\0';
-
-	cur = strchr(fulldomain, '.');
-	cur++;
-	fulldomain = cur;
+	check = fulldomain;
+	/*
+	 * let's check how many dots string has
+	 */
+	while(*check++) {
+		if(*check == '.')
+			dot++;
+	}
+	/*
+	 * if it has more than one dot, so this is subdomain
+	 * otherwise it is domain itself.
+	 */
+	if(dot > 1) {
+		while(*cur++ != '.')
+			sub_len++;
+		name->sub = (char *) malloc((sub_len+1) * sizeof(char));
+		for(i = 0; i < sub_len; i++)
+			name->sub[i] = fulldomain[i];
+		name->sub[i] = '\0';
+		cur = strchr(fulldomain, '.');
+		cur++;
+		fulldomain = cur;
+	}
+	else {
+		name->sub = (char *) malloc(3 * sizeof(char));
+		strcpy(name->sub, "@");
+	}
 	while(*cur++)
 		dom_len++;
 	name->dom = (char *) malloc((dom_len + 1) * sizeof(char));

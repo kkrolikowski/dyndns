@@ -20,7 +20,6 @@ typedef struct sqldata {
 
 char logmsg[LOG_MSG_LEN];
 char t_stamp[TIMESTAMP_LEN];
-int NewEntry(cfgdata_t * cf, char * file);
 //int ddserv(config_t * cfg_file, int logfd, int sockfd);
 MYSQL * dbLogin(config_t * cf);
 char ** getAdminEmail(MYSQL * dbh);

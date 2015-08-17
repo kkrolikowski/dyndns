@@ -20,44 +20,6 @@
 #include "auth.h"
 #include "common.h"
 
-int NewEntry(cfgdata_t * cf, char * file) {
-    FILE *zf;
-    FILE *tmp;
-    char tmp_path[21];
-    char buf[256];
-    char serial[12];
-    char newserial[12];
-
-    zf = fopen(file, "r");
-    if(zf == NULL) {
-            fprintf(stderr, "Error reading file: %s", file);
-            return 1;
-    }
-    tmp = fopen(tmp_path, "w");
-    if(tmp == NULL) {
-    	fprintf(stderr, "Error creating file: %s", tmp_path);
-    	return 1;
-    }
-    while(fgets(buf, sizeof(buf), zf) != NULL) {
-	    if(strstr(buf, "; serial") != NULL) {
-//			stripSerialNo(buf, serial);
-//			if(!updateSerialNo(serial, newserial))
-//				sprintf(buf, "\t%s\t; serial\n", newserial);
-	    }
-	    fputs(buf, tmp);
-    }
-	if(strlen(cf->subdomain) < 8)
-		sprintf(buf, "%s\t300\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
-	else
-		sprintf(buf, "%s\t300\tIN\tA\t%s\n", cf->subdomain, cf->ip_addr);
-	fputs(buf, tmp);
-
-	fclose(zf);
-    fclose(tmp);
-
-    //apply(tmp_path, file, cf->domain);
-    return 0;
-}
 MYSQL * dbLogin(config_t * cf) {
 	MYSQL * db;
 	db = mysql_init(NULL);

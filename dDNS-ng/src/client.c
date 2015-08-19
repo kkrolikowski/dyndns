@@ -73,7 +73,9 @@ int main(int argc, char *argv[]) {
 		srv_addr.sin_port = htons(portno);
 		if(connect(sockfd, (struct sockaddr *) &srv_addr, sizeof(srv_addr)) < 0) {
 			log_event(logfd, " Error connecting to server, retrying...\n", NULL);
+			close(sockfd);
 			delay++;
+			sleep(config.client.interval * delay);
 			continue;
 		}
 		else {
@@ -105,7 +107,7 @@ int main(int argc, char *argv[]) {
 		}
 		seq = 0;
 		close(sockfd);
-		sleep(config.client.interval * delay);
+		sleep(config.client.interval);
 	}
 	close(logfd);
 	unlink(config.pidf);

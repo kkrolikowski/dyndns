@@ -14,6 +14,7 @@
 	$history = array();
 	$user = array();
 	$subd = array();
+	$userdomains = array();				// user's domains
 	$i = 0;
 	$can_go = 0;
 
@@ -155,6 +156,17 @@
 
 		}
 		$www->assign('userdata', $userdata);
+/*
+ * Getting list of domains of particular user
+*/
+		$q = $dbh->prepare("SELECT id,domain FROM domains WHERE owner = '".$_SESSION['userlogin']."'");
+		$q->execute();
+		if($q->rowCount() > 0) {
+			while($res = $q->fetch()) {
+				$userdomains[$res['id']] = substr($res['domain'], 0, -1);
+			}
+		}
+		$www->assign('UserDomains', $userdomains);
 
 		$q = $dbh->prepare(
 			"SELECT CONCAT(s.subdomain, \".\",  d.domain) as subdomain, dynamic FROM subdomains s, domains d , users u ".

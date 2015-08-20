@@ -375,6 +375,18 @@
                   </div>
                  </form>
             </div>
+            <div role="tabpanel" class="tab-pane fade col-sm-8" id="myDomains">
+              <table class="table table-hover" id="user_domains">
+                <thead>
+                  <th>ID</th><th>Domain</th><th>Action</th>
+                </thead>
+                {foreach from=$UserDomains key=id item=domain}
+                <tr>
+                  <td>{$id}</td><td>{$domain}</td><td><button class="btn btn-primary btn-sm">Edit</button></td>
+                </tr>
+                {/foreach}
+              </table>
+            </div>
             <div id="prevcontent" style="display: none;">
             </div>
 			<div role="tabpanel" class="tab-pane fade col-md-8" id="profile">

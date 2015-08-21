@@ -12,3 +12,9 @@
    z-index: -1;
    align: left;
 }
+#addDomainForm {
+  margin-left: -16px;
+}
+#addDomSubmit {
+  margin-left: -25px;
+}

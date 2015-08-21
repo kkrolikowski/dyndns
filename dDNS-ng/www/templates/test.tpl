@@ -293,10 +293,16 @@
             </div>
             <div role="tabpanel" class="tab-pane fade col-sm-4" id="addDomain">
               <h3><img src="static/tools.png" alt="tools" class="img-rounded toolpic">Add Domain</h3>
-              <p><strong>Just type domain name here we'll do the rest.</strong></p>
-              <form action="index.php" method="post">
-                <input type="text" name="domain">
-                <button type="submit" class="btn btn-primary btn-sm">Add Domain</button>
+              <p><strong>Just type domain name here and we'll do the rest.</strong></p>
+              <form action="index.php" method="post" id="addDomainForm">
+                <div class="form-group">
+                  <div class="col-xs-8">
+                    <input type="text" class="form-control" name="domain">
+                  </div>
+                  <div class="col-xs-4" id="addDomSubmit">
+                    <button type="submit" class="btn btn-primary">Add Domain</button>
+                  </div>
+                </div>
               </form>
             </div>
             <div role="tabpanel" class="tab-pane fade col-sm-8" id="myDomains">

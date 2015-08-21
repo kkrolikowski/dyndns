@@ -270,14 +270,37 @@
  * Adding new domain
 */
 		if(isset($_POST['newDomain'])) {
-			// preparing data
+			// Prepare SOA record
 			$serial = date('Ymd') . "00";
-			$newDomainQuery = "INSERT INTO domains(domain,status,user_id,owner,ttl,admin_contact,master_dns,serial,refresh,retry,expiry,maximum) " .
+			$query = "INSERT INTO domains(domain,status,user_id,owner,ttl,admin_contact,master_dns,serial,refresh,retry,expiry,maximum) " .
 			"VALUES('".$_POST['domain'].".', 'private', (SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), '".$_SESSION['userlogin']."', " .
 			TTL.", '".HOSTMASTER."', '".MASTERDNS."', ".$serial.", 1200, 1200, 2419200, 86400)";
 
 			// put data to Database
-			$q = $dbh->prepare($newDomainQuery);
+			$q = $dbh->prepare($query);
+			$q->execute();
+
+			// We need to get domain_id ASAP
+			$q = $dbh->prepare("SELECT id FROM domains WHERE domain = '".$_POST['domain'].".'");
+			$q->execute();
+			$res = $q->fetch();
+			$domain_id = $res['id'];
+
+			// prepare basic DNS records
+			$NS = unserialize(DNS_SERVERS);
+			foreach ($NS as $ns_record) {
+				$q = $dbh->prepare(
+				"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
+				"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
+				$domain_id.", '@', '".
+				$ns_record."', 'NS')");
+				$q->execute();
+			}
+			$q = $dbh->prepare(
+			"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
+			"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
+			$domain_id.", '@', '".
+			MX_SERVER."', 'MX')");
 			$q->execute();
 		}
 	}

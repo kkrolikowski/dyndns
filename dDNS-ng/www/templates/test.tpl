@@ -291,9 +291,13 @@
                        <button type="submit" class="btn btn-primary" id="chpassBtn">Apply</button>
                  </form>
             </div>
-            <div role="tabpanel" class="tab-pane fade col-sm-8" id="addDomain">
-               <h3>Add Domain</h3>
-               <p>Just type domain name here we'll do the rest.</p>
+            <div role="tabpanel" class="tab-pane fade col-sm-4" id="addDomain">
+              <h3><img src="static/tools.png" alt="tools" class="img-rounded toolpic">Add Domain</h3>
+              <p><strong>Just type domain name here we'll do the rest.</strong></p>
+              <form action="index.php" method="post">
+                <input type="text" name="domain">
+                <button type="submit" class="btn btn-primary btn-sm">Add Domain</button>
+              </form>
             </div>
             <div role="tabpanel" class="tab-pane fade col-sm-8" id="myDomains">
               <table class="table table-hover" id="user_domains">

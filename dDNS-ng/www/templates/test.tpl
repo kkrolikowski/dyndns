@@ -293,87 +293,7 @@
             </div>
             <div role="tabpanel" class="tab-pane fade col-sm-8" id="addDomain">
                <h3>Add Domain</h3>
-                  <form method="post" action="" id="addDomainForm">
-                    <div class="form-group">
-                      <div class="row">
-                        <div class="col-md-4">
-                          <label class="control-label">TTL</label>
-                          <input type="text" class="form-control" name="ttl" value="86400" />
-                        </div>
-                        <div class="col-md-8 col-origin">
-                          <label class="control-label">Domain</label>
-                          <input type="text" class="form-control" name="domain" />
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-md-6 col-admin-contact">
-                          <label class="control-label">Admin</label>
-                          <input type="text" class="form-control" placeholder="admin.email.com." name="admin" />
-                        </div>
-                        <div class="col-md-6 col-masterdns">
-                          <label class="control-label">Master DNS</label>
-                          <input type="text" class="form-control" name="masterdns" />
-                        </div>
-                      </div>
-                      <div class="row ns-records">
-                        <div class="col-md-4 col-subdomain">
-                          <label class="control-label">Subdomain</label>
-                          <input type="text" class="form-control" name="nsrecord[0]" value= "@" />
-                        </div>
-                        <div class="col-md-2">
-                          <label class="control-label">Type</label>
-                          <select name="type[0]" class="form-control">
-                            <option value="NS">NS</option>
-                            <option value="MX">MX</option>
-                            <option value="A">A</option>
-                            <option value="CNAME">CNAME</option>
-                            <option value="TXT">TXT</option>
-                          </select>
-                        </div>
-                        <div class="col-md-5 col-ns-ip">
-                          <label class="control-label">IP or name</label>
-                          <input type="text" class="form-control" name="ip_or_name[0]" />
-                        </div>
-                        <div class="col-md-1">
-                          <label class="control-label">Add</label>
-                          <button type="button" class="btn btn-default addButton"><i class="fa fa-plus"></i></button>
-                        </div>
-                      </div>
-                      <div class="form-group hide" id="addDomainTemplate">
-                        <div class="row ns-records">
-                          <div class="col-md-4 col-subdomain">
-                            <label class="control-label">Subdomain</label>
-                            <input type="text" class="form-control" name="nsrecord" value= "@" />
-                          </div>
-                          <div class="col-md-2">
-                            <label class="control-label">Type</label>
-                            <select name="type" class="form-control">
-                              <option value="NS">NS</option>
-                              <option value="MX">MX</option>
-                              <option value="A">A</option>
-                              <option value="CNAME">CNAME</option>
-                              <option value="TXT">TXT</option>
-                            </select>
-                          </div>
-                          <div class="col-md-5 col-ns-ip">
-                            <label class="control-label">IP or name</label>
-                            <input type="text" class="form-control" name="ip_or_name" />
-                          </div>
-                          <div class="col-md-1">
-                            <label class="control-label">Del</label>
-                            <button type="button" class="btn btn-default removeButton"><i class="fa fa-minus"></i></button>
-                          </div>
-                        </div>
-                      </div>
-                      <div clas="row" style="padding-top: 10px;">
-                        <div>
-                          <button type="button" class="btn btn-primary" id="addDomainButton">Add domain</button>
-                          <button type="button" class="btn btn-primary prevcfg" data-toggle="popover" title="aaa" data-content="test" id="prevButton">Preview</button>
-                          <button type="submit" class="btn btn-primary">Slave config</button>
-                        </div>
-                      </div>
-                  </div>
-                 </form>
+               <p>Just type domain name here we'll do the rest.</p>
             </div>
             <div role="tabpanel" class="tab-pane fade col-sm-8" id="myDomains">
               <table class="table table-hover" id="user_domains">
@@ -382,7 +302,7 @@
                 </thead>
                 {foreach from=$UserDomains key=id item=domain}
                 <tr>
-                  <td>{$id}</td><td>{$domain}</td><td><button class="btn btn-primary btn-sm">Edit</button></td>
+                  <td>{$id}</td><td>{$domain}</td><td><button class="btn btn-primary btn-sm editdomain">Edit</button></td>
                 </tr>
                 {/foreach}
               </table>

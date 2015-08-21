@@ -296,7 +296,7 @@
               <p><strong>Just type domain name here and we'll do the rest.</strong></p>
               <form action="index.php" method="post" id="addDomainForm">
                 <div class="form-group">
-                  <div class="col-xs-8">
+                  <div class="col-xs-8" id="addDomTXT">
                     <input type="text" class="form-control" name="domain" placeholder="example.com">
                   </div>
                   <div class="col-xs-4" id="addDomSubmit">

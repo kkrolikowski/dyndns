@@ -1,8 +1,14 @@
 <?php
+/*
+ * Database connection
+*/
 	define('DBNAME', 'dyndns');
 	define('LOGIN', 'dyndns');
 	define('PASS', 'password');
 	define('DB_HOST', 'localhost');
+/*
+ * Other settings
+*/
 	define('SMARTY_LIB', 'Smarty.class.php');
 	define('ADM_EMAIL', 'admin@example.com');
 ?>

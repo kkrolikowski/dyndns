@@ -297,7 +297,7 @@
               <form action="index.php" method="post" id="addDomainForm">
                 <div class="form-group">
                   <div class="col-xs-8">
-                    <input type="text" class="form-control" name="domain">
+                    <input type="text" class="form-control" name="domain" placeholder="example.com">
                   </div>
                   <div class="col-xs-4" id="addDomSubmit">
                     <button type="submit" class="btn btn-primary">Add Domain</button>

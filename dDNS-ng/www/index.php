@@ -266,6 +266,20 @@
 			$q = $dbh->prepare("UPDATE subdomains SET dynamic = 0 WHERE ID = ".$active_record);
 			$q->execute();
 		}
+/*
+ * Adding new domain
+*/
+		if(isset($_POST['newDomain'])) {
+			// preparing data
+			$serial = date('Ymd') . "00";
+			$newDomainQuery = "INSERT INTO domains(domain,status,user_id,owner,ttl,admin_contact,master_dns,serial,refresh,retry,expiry,maximum) " .
+			"VALUES('".$_POST['domain'].".', 'private', (SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), '".$_SESSION['userlogin']."', " .
+			TTL.", '".HOSTMASTER."', '".MASTERDNS."', ".$serial.", 1200, 1200, 2419200, 86400)";
+
+			// put data to Database
+			$q = $dbh->prepare($newDomainQuery);
+			$q->execute();
+		}
 	}
 	$www->assign('title', 'dDNS Service');
 	$www->assign('desc', 'Dynamic DNS system');

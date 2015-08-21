@@ -1,9 +1,4 @@
 $(document).ready(function() {
-  var ttl, origin, admin, masterdns, index, serial;
-  var rec_name = [];
-  var rec_type = [];
-  var rec_val = [];
-
    $('.nav-tabs a').on('click', function(e) {
       e.preventDefault();
       $(this).tab('show');
@@ -484,4 +479,44 @@ $(document).ready(function() {
     bootbox.alert('New password emailed to user');
   });
     });
+  $('#addDomainForm').formValidation({
+    framework: 'bootstrap',
+    icon: {
+       valid: 'glyphicon glyphicon-ok',
+       invalid: 'glyphicon glyphicon-remove',
+       validating: 'glyphicon glyphicon-refresh'
+    },
+    addOns: {
+       mandatoryIcon: {
+          icon: 'glyphicon glyphicon-asterisk'
+       }
+    },
+    fields: {
+      domain: {
+        err: 'tooltip',
+        required: 'true',
+        validators: {
+          notEmpty: {
+            message: 'Domain required'
+          }
+        }
+      }
+    }
+  })
+  .on('success.form.fv', function(e) {
+   e.preventDefault();
+   var $form = $(e.target),
+   fv = $form.data('formValidation');
+   $.ajax({
+     url: $form.attr('action'),
+     type: 'POST',
+     data: $form.serialize(),
+     success: function(e) {
+       bootbox.alert("Domain added!");
+     },
+     error: function(xhr) {
+       bootbox.alert(xhr.getResponseHeader('X-Message'));
+     }
+   });
+  });
 });

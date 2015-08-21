@@ -7,6 +7,14 @@
 	define('PASS', 'password');
 	define('DB_HOST', 'localhost');
 /*
+ * DNS settings
+*/
+	define('HOSTMASTER', 'hostmaster.example.com.');
+	define('MASTERDNS', 'ns1.example.com.');
+	define('TTL', '86400');
+	define('DNS_SERVERS', serialize(array('ns1.example.com.', 'ns2.example.com.')));
+	define('MX_SERVER', 'mx.example.com.');
+/*
  * Other settings
 */
 	define('SMARTY_LIB', 'Smarty.class.php');

@@ -295,6 +295,7 @@
               <h3><img src="static/tools.png" alt="tools" class="img-rounded toolpic">Add Domain</h3>
               <p><strong>Just type domain name here and we'll do the rest.</strong></p>
               <form action="index.php" method="post" id="addDomainForm">
+                <input type="hidden" name="newDomain">
                 <div class="form-group">
                   <div class="col-xs-8" id="addDomTXT">
                     <input type="text" class="form-control" name="domain" placeholder="example.com">

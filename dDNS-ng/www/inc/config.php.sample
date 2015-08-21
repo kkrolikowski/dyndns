@@ -13,7 +13,7 @@
 	define('MASTERDNS', 'ns1.example.com.');
 	define('TTL', '86400');
 	define('DNS_SERVERS', serialize(array('ns1.example.com.', 'ns2.example.com.')));
-	define('MX_SERVER', 'mx.example.com.');
+	define('MX_SERVER', '10 mx.example.com.');
 /*
  * Other settings
 */

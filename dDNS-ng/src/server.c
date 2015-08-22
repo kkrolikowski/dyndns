@@ -44,6 +44,9 @@ int main(int argc, char *argv[]) {
 	umask(0);
 	sess = setsid();
 	chdir("/");
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
 	log_fd = open(config.logfile, O_RDWR|O_CREAT|O_APPEND, 0644);
 	sockfd = bindToInterface(config.port);
 	sprintf(port_str, "%d", config.port);
@@ -63,10 +66,6 @@ int main(int argc, char *argv[]) {
 	else if(sync_pid == 0)
 		dbsync(&config, log_fd);
 	else {
-		printf("Starting dbSync. PID: %d\n", sync_pid);
-		close(STDIN_FILENO);
-		close(STDOUT_FILENO);
-		close(STDERR_FILENO);
 		//ddserv(&config, log_fd, sockfd);
 		clientManager(&config, log_fd, sockfd);
 	}

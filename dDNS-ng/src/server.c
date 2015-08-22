@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 		exit(-1);
 	}
 	if(pid > 0) {
-		printf("Starting clientManager. PID: %d\n", pid);
+		printf("Starting dDNS-ng server. PID: %d\n", pid);
 		pidfile(pid, config.pidf);
 		exit(0);
 	}

@@ -6,3 +6,18 @@
 .popover{
     max-width: 100%;
 }
+.toolpic {
+   width: 70px;
+   height: 70px;
+   z-index: -1;
+   align: left;
+}
+#addDomainForm {
+  margin-left: -16px;
+}
+#addDomSubmit {
+  margin-left: -25px;
+}
+#addDomTXT > i {
+  right: 10px;
+}

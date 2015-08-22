@@ -1,9 +1,4 @@
 $(document).ready(function() {
-  var ttl, origin, admin, masterdns, index, serial;
-  var rec_name = [];
-  var rec_type = [];
-  var rec_val = [];
-
    $('.nav-tabs a').on('click', function(e) {
       e.preventDefault();
       $(this).tab('show');
@@ -484,245 +479,44 @@ $(document).ready(function() {
     bootbox.alert('New password emailed to user');
   });
     });
-  var subdomainValidators = {
-    row: '.col-subdomain',
-    validators: {
-      notEmpty: {
-        message: 'Subdomain required'
-      }
-    }
-  },
-  ipValidators = {
-    row: '.col-ns-ip',
-    validators: {
-      notEmpty: {
-        message: "Record cannot be empty"
-      },
-      regexp: {
-        enabled: true,
-        regexp: /\.$/,
-        message: "Domain name must end with dot"
-      },
-      ip: {
-        enabled: false,
-        message: "Invalid IP Address"
-      }
-    }
-  },
-  originValidators = {
-    row: '.col-origin',
-    validators: {
-      notEmpty: {
-        message: "Domain name required"
-      },
-      regexp: {
-        regexp: /\.$/,
-        message: "Domain name must end with dot"
-      }
-    }
-  },
-  adminValidators = {
-    row: '.col-admin-contact',
-    validators: {
-      notEmpty: {
-        message: "Admin required"
-      },
-      regexp: {
-        regexp: /\.$/,
-        message: "Admin name must end with dot"
-      }
-    }
-  },
-  masterdnsValidators = {
-    row: '.col-masterdns',
-    validators: {
-      notEmpty: {
-        message: "Domain name required"
-      },
-      regexp: {
-        regexp: /\.$/,
-        message: "Domain name must end with dot"
-      }
-    }
-  },
-  fieldIndex = 0;
-  $('#addDomainForm')
-    .formValidation({
-      framework: 'bootstrap',
-      icon: {
-        valid: 'glyphicon glyphicon-ok',
-        invalid: 'glyphicon glyphicon-remove',
-        validating: 'glyphicon glyphicon-refresh'
-      },
-      fields: {
-        'domain': originValidators,
-        'admin': adminValidators,
-        'masterdns': masterdnsValidators,
-        'nsrecord[0]': subdomainValidators,
-        'ip_or_name[0]': ipValidators
-      }
-    })
-    .on('input keyup', '[name="ip_or_name['+ fieldIndex + ']"]', function() {
-      var t = $('#addDomainForm').find('select option:selected').val();
-      if(t == "A") {
-        $('#addDomainForm')
-          .formValidation('enableFieldValidators', 'ip_or_name[' + fieldIndex + ']', false, 'regexp')
-          .formValidation('enableFieldValidators', 'ip_or_name[' + fieldIndex + ']', true, 'ip')
-          .formValidation('revalidateField', 'ip_or_name[' + fieldIndex + ']');
-      }
-      else {
-        $('#addDomainForm')
-          .formValidation('enableFieldValidators', 'ip_or_name[' + fieldIndex + ']', true, 'regexp')
-          .formValidation('enableFieldValidators', 'ip_or_name[' + fieldIndex + ']', false, 'ip')
-          .formValidation('revalidateField', 'ip_or_name[' + fieldIndex + ']');
-      }
-    })
-    .on('click', '.addButton', function() {
-      fieldIndex++;
-      var $template = $('#addDomainTemplate'),
-        $clone = $template
-                    .clone()
-                    .removeClass('hide')
-                    .removeAttr('id')
-                    .attr('field-index', fieldIndex)
-                    .insertBefore($template);
-      $clone
-        .find('[name="nsrecord"]').attr('name', 'nsrecord[' + fieldIndex + ']').end()
-        .find('[name="type"]').attr('name', 'type[' + fieldIndex + ']').end()
-        .find('[name="ip_or_name"]').attr('name', 'ip_or_name[' + fieldIndex + ']').end();
-      $('#addDomainForm').on('input keyup', '[name="ip_or_name['+ fieldIndex + ']"]', function() {
-        var t = $('#addDomainForm').find('[name="type[' + fieldIndex + ']"] option:selected').val();
-        if(t == "A") {
-          $('#addDomainForm')
-            .formValidation('enableFieldValidators', 'ip_or_name[' + fieldIndex + ']', false, 'regexp')
-            .formValidation('enableFieldValidators', 'ip_or_name[' + fieldIndex + ']', true, 'ip')
-            .formValidation('revalidateField', 'ip_or_name[' + fieldIndex + ']');
-        }
-        else {
-          $('#addDomainForm')
-            .formValidation('enableFieldValidators', 'ip_or_name[' + fieldIndex + ']', true, 'regexp')
-            .formValidation('enableFieldValidators', 'ip_or_name[' + fieldIndex + ']', false, 'ip')
-            .formValidation('revalidateField', 'ip_or_name[' + fieldIndex + ']');
-        }
-      });
-      $('#addDomainForm')
-        .formValidation('addField', 'nsrecord[' + fieldIndex + ']', subdomainValidators)
-        .formValidation('addField', 'ip_or_name[' + fieldIndex + ']', ipValidators);
-    })
-    .on('click', '.removeButton', function() {
-      var $row = $(this).parents('.row'),
-      index = $row.attr('field-index');
-
-      $('#addDomainForm')
-      .formValidation('removeField', $row.find('[name="nsrecord[' + index + '"]'))
-      .formValidation('removeField', $row.find('[name="type[' + index + '"]'))
-      .formValidation('removeField', $row.find('[name="ip_or_name[' + index + '"]'));
-      $row.remove();
-    })
-    .on('click', '.prevcfg', function() {
-      var $row = $('#addDomainForm .row');
-      ttl = $row.find('[name="ttl"]').val();
-      origin = $row.find('[name="domain"]').val();
-      admin = $row.find('[name="admin"]').val();
-      masterdns = $row.find('[name="masterdns"]').val();
-
-      index = $('#addDomainForm .ns-records').length - 1;
-
-      for(i = 0; i < index; i++) {
-        rec_name[i] = $row.find('[name="nsrecord[' + i + ']"]').val();
-        rec_type[i] = $row.find('[name="type[' + i + ']"]').val();
-        rec_val[i] = $row.find('[name="ip_or_name[' + i + ']"]').val();
-      }
-
-      var date = new Date();
-      var y = date.getFullYear();
-      var m = date.getMonth() + 1;
-      var d = date.getDate();
-
-      var ystr = y.toString();
-      var mstr = m.toString();
-      var dstr = d.toString();
-
-      if(m < 10) {
-        var mstr = "0" + m.toString();
-      }
-      if(d < 10) {
-        var dstr = "0" + d.toString();
-      }
-      serial = ystr + mstr + dstr + "00";
-      var content = "<pre>$TTL " + ttl + "<br>" +
-                "$ORIGIN " + origin + "<br><br>" +
-                "@    IN SOA  " + masterdns + " " + admin + " (<br>" +
-                "      " + serial + " ; serial<br>" +
-                    "      1200       ; refresh<br>" +
-                    "      1200       ; retry<br>" +
-                    "      2419200    ; expiry<br>" +
-                    "      86400      ; maximum<br>" +
-                    ")<br>";
-      for(i = 0; i < index; i++) {
-        content += rec_name[i] + " IN  " + rec_type[i] + " " + rec_val[i] + "<br>";
-      }
-      content += "</pre>";
-      $('.popover-title').text("zone: " + origin);
-      $('.popover-content').html(content);
-    })
-    .on('click', '#addDomainButton', function(e) {
-      e.preventDefault();
-      var $row = $('#addDomainForm .row');
-      ttl = $row.find('[name="ttl"]').val();
-      origin = $row.find('[name="domain"]').val();
-      admin = $row.find('[name="admin"]').val();
-      masterdns = $row.find('[name="masterdns"]').val();
-
-      index = $('#addDomainForm .ns-records').length - 1;
-
-      for(i = 0; i < index; i++) {
-        rec_name[i] = $row.find('[name="nsrecord[' + i + ']"]').val();
-        rec_type[i] = $row.find('[name="type[' + i + ']"]').val();
-        rec_val[i] = $row.find('[name="ip_or_name[' + i + ']"]').val();
-      }
-
-      var date = new Date();
-      var y = date.getFullYear();
-      var m = date.getMonth() + 1;
-      var d = date.getDate();
-
-      var ystr = y.toString();
-      var mstr = m.toString();
-      var dstr = d.toString();
-
-      if(m < 10) {
-        var mstr = "0" + m.toString();
-      }
-      if(d < 10) {
-        var dstr = "0" + d.toString();
-      }
-      serial = ystr + mstr + dstr + "00";
-      var data = {
-        "ttl": ttl,
-        "origin": origin,
-        "admin": admin,
-        "masterdns": masterdns,
-        "serial": serial,
-        "subdomain": rec_name,
-        "type": rec_type,
-        "ip_or_name": rec_val
-      };
-      $.ajax({
-        url: "/domains.php",
-        method: 'PUT',
-        data: {"data": data},
-        success: function() {
-          bootbox.alert("Domain added");
-          for(i = 1; i <= index; i++) {
-            $('[field-index="'+ i +'"]').remove();
+  $('#addDomainForm').formValidation({
+    framework: 'bootstrap',
+    icon: {
+       valid: 'glyphicon glyphicon-ok',
+       invalid: 'glyphicon glyphicon-remove',
+       validating: 'glyphicon glyphicon-refresh'
+    },
+    addOns: {
+       mandatoryIcon: {
+          icon: 'glyphicon glyphicon-asterisk'
+       }
+    },
+    fields: {
+      domain: {
+        err: 'tooltip',
+        required: 'true',
+        validators: {
+          notEmpty: {
+            message: 'Domain required'
           }
-          $('#addDomainForm')[0].reset();
-        },
-        error: function(xhr) {
-          bootbox.alert(xhr.getResponseHeader('X-Message'));
         }
-      });
-    });
-    $('[data-toggle="popover"]').popover();
+      }
+    }
+  })
+  .on('success.form.fv', function(e) {
+   e.preventDefault();
+   var $form = $(e.target),
+   fv = $form.data('formValidation');
+   $.ajax({
+     url: $form.attr('action'),
+     type: 'POST',
+     data: $form.serialize(),
+     success: function(e) {
+       bootbox.alert("Domain added!");
+     },
+     error: function(xhr) {
+       bootbox.alert(xhr.getResponseHeader('X-Message'));
+     }
+   });
+  });
 });

@@ -14,6 +14,7 @@
 	$history = array();
 	$user = array();
 	$subd = array();
+	$userdomains = array();				// user's domains
 	$i = 0;
 	$can_go = 0;
 
@@ -155,6 +156,17 @@
 
 		}
 		$www->assign('userdata', $userdata);
+/*
+ * Getting list of domains of particular user
+*/
+		$q = $dbh->prepare("SELECT id,domain FROM domains WHERE owner = '".$_SESSION['userlogin']."'");
+		$q->execute();
+		if($q->rowCount() > 0) {
+			while($res = $q->fetch()) {
+				$userdomains[$res['id']] = substr($res['domain'], 0, -1);
+			}
+		}
+		$www->assign('UserDomains', $userdomains);
 
 		$q = $dbh->prepare(
 			"SELECT CONCAT(s.subdomain, \".\",  d.domain) as subdomain, dynamic FROM subdomains s, domains d , users u ".
@@ -252,6 +264,43 @@
 				$q->execute();
 			}
 			$q = $dbh->prepare("UPDATE subdomains SET dynamic = 0 WHERE ID = ".$active_record);
+			$q->execute();
+		}
+/*
+ * Adding new domain
+*/
+		if(isset($_POST['newDomain'])) {
+			// Prepare SOA record
+			$serial = date('Ymd') . "00";
+			$query = "INSERT INTO domains(domain,status,user_id,owner,ttl,admin_contact,master_dns,serial,refresh,retry,expiry,maximum) " .
+			"VALUES('".$_POST['domain'].".', 'private', (SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), '".$_SESSION['userlogin']."', " .
+			TTL.", '".HOSTMASTER."', '".MASTERDNS."', ".$serial.", 1200, 1200, 2419200, 86400)";
+
+			// put data to Database
+			$q = $dbh->prepare($query);
+			$q->execute();
+
+			// We need to get domain_id ASAP
+			$q = $dbh->prepare("SELECT id FROM domains WHERE domain = '".$_POST['domain'].".'");
+			$q->execute();
+			$res = $q->fetch();
+			$domain_id = $res['id'];
+
+			// prepare basic DNS records
+			$NS = unserialize(DNS_SERVERS);
+			foreach ($NS as $ns_record) {
+				$q = $dbh->prepare(
+				"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
+				"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
+				$domain_id.", '@', '".
+				$ns_record."', 'NS')");
+				$q->execute();
+			}
+			$q = $dbh->prepare(
+			"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
+			"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
+			$domain_id.", '@', '".
+			MX_SERVER."', 'MX')");
 			$q->execute();
 		}
 	}

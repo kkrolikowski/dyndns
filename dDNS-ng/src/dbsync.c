@@ -57,7 +57,7 @@ int dbsync(config_t * cfg, int server_log) {
 			data->refresh = atoi(row[6]);
 			data->retry = atoi(row[7]);
 
-			path = (char *) malloc((strlen(path_prefix) + strlen(data->origin) + 2) * sizeof(char));
+			path = (char *) malloc((strlen(path_prefix) + strlen(data->origin) + 1) * sizeof(char));
 			strcpy(path, path_prefix);
 			strncat(path, data->origin, strlen(data->origin) - 1);
 			path[strlen(path)] = '\0';
@@ -138,7 +138,7 @@ static int writeFile(char * path, domain_t * data, int max) {
 static MYSQL_RES * queryDomains(MYSQL * dbh, int logger) {
 	MYSQL_RES * res;
 
-	char * query = "SELECT id,domain,ttl,admin_contact,master_dns,serial,refresh,retry,expiry,maximum \
+	char * query = "SELECT id,domain,ttl,admin_contact,master_dns,serial,refresh,retry,expiry,maximum, owner \
 				FROM domains WHERE owner NOT LIKE 'root'";
 
 	if(mysql_query(dbh, query) != 0) {

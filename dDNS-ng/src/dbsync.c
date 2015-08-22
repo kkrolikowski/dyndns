@@ -92,8 +92,13 @@ int dbsync(config_t * cfg, int server_log) {
 					log_event(server_log, " ERROR FileUpdate: ",cfg->server.namedconf, " failed\n", NULL);
 				else {
 					reload_pid = fork();
-					if(reload_pid == 0)
+					if(reload_pid == 0) {
+                        mysql_free_result(nsrec);
+                        free(zoneName);
+                        free(path);
+                        clearData(data, i);
 						namedReload();
+                    }
 				    else if(reload_pid > 0)
 				    	waitpid(reload_pid, NULL, WNOHANG);
 				    else

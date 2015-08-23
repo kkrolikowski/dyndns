@@ -5,6 +5,7 @@
      public $retval = 0;
      public $token;
      public $md5pass;
+     public $newserial;
 
      public function checkPass($hash, $pass) {
         $salt = substr($hash, 0, 12);
@@ -34,6 +35,24 @@
        $mailq = $dbh->prepare("INSERT INTO mailqueue(mailto,mailfrom,subject,reply_to,x_mailer,message) VALUES('"
        .$mailto."','".ADM_EMAIL."','[dDNS] ".$subject."','".ADM_EMAIL."','dDNS messanger','".$message."')");
        $mailq->execute();
+     }
+     public function calculateSerial($domain) {
+       $dsn = 'mysql:host='.DB_HOST.';dbname='.DBNAME;
+       $dbh = new PDO($dsn, LOGIN, PASS);
+
+       $dayStartSerial = date('Ymd') . "00";
+       $q = $dbh->prepare("SELECT serial FROM domains WHERE domain = '".$domain.".'");
+       $q->execute();
+       $res = $q->fetch();
+       $actual_serial = $res['serial'];
+
+       if(intval($actual_serial) < intval($dayStartSerial)) {
+         $newserial = $dayStartSerial;
+       }
+       else {
+         $newserial = intval($actual_serial) + 1;
+       }
+       return $newserial;
      }
   }
 ?>

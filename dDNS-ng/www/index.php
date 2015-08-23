@@ -314,6 +314,26 @@
 			MX_SERVER."', 'MX')");
 			$q->execute();
 		}
+/*
+ * Adding new subdomain to an existing domain
+*/
+		if(isset($_POST['newSubdomain'])) {
+			// obtain domain serial value from database
+			$actual_serial = $func->calculateSerial($_POST['basedomain']);
+
+			// add subdomain record
+			$q = $dbh->prepare(
+			"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
+			"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
+			"(SELECT id FROM domains WHERE domain = '".$_POST['basedomain'].".'), '".
+			$_POST['domain']. "', '127.0.0.1', 'A')");
+			$q->execute();
+
+			// update zone serial
+			$q = $dbh->prepare("UPDATE domains SET serial = ".$actual_serial.
+			" WHERE domain = '".$_POST['basedomain'].".'");
+			$q->execute();
+		}
 	}
 	$www->assign('title', 'dDNS Service');
 	$www->assign('desc', 'Dynamic DNS system');

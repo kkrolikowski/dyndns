@@ -325,7 +325,8 @@
                     <input type="text" class="form-control" name="domain">
                   </div>
                   <div class="col-xs-4 domFields">
-                    <input type="text" class="form-control" name="base" disabled="disabled" value="{$domain}">
+                    <input type="hidden" class="form-control" name="basedomain" value="{$domain}"/>
+                    <input type="text" class="form-control" name="basedomain" disabled="disabled" value="{$domain}">
                   </div>
                   <div class="col-xs-4 domFields">
                     <button type="submit" class="btn btn-primary">Add subdomain</button>

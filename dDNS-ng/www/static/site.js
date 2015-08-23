@@ -512,7 +512,7 @@ $(document).ready(function() {
      type: 'POST',
      data: $form.serialize(),
      success: function(e) {
-       bootbox.alert("Domain added!");
+       bootbox.alert("Operation done!");
      },
      error: function(xhr) {
        bootbox.alert(xhr.getResponseHeader('X-Message'));

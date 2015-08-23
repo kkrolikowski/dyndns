@@ -12,12 +12,12 @@
    z-index: -1;
    align: left;
 }
-#addDomainForm {
+.addDomainForm {
   margin-left: -16px;
 }
-#addDomSubmit {
+.domFields {
   margin-left: -25px;
 }
-#addDomTXT > i {
+.addDomTXT > i {
   right: 10px;
 }

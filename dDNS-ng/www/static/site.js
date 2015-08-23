@@ -479,7 +479,7 @@ $(document).ready(function() {
     bootbox.alert('New password emailed to user');
   });
     });
-  $('#addDomainForm').formValidation({
+  $('.addDomainForm').formValidation({
     framework: 'bootstrap',
     icon: {
        valid: 'glyphicon glyphicon-ok',

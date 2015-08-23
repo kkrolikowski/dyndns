@@ -301,13 +301,13 @@
             <div role="tabpanel" class="tab-pane fade col-sm-4" id="addDomain">
               <h3><img src="static/tools.png" alt="tools" class="img-rounded toolpic">Add Domain</h3>
               <p><strong>Just type domain name here and we'll do the rest.</strong></p>
-              <form action="index.php" method="post" id="addDomainForm">
+              <form action="index.php" method="post" class="addDomainForm">
                 <input type="hidden" name="newDomain">
                 <div class="form-group">
-                  <div class="col-xs-8" id="addDomTXT">
+                  <div class="col-xs-8 addDomTXT">
                     <input type="text" class="form-control" name="domain" placeholder="example.com">
                   </div>
-                  <div class="col-xs-4" id="addDomSubmit">
+                  <div class="col-xs-4 domFields">
                     <button type="submit" class="btn btn-primary">Add Domain</button>
                   </div>
                 </div>
@@ -318,7 +318,20 @@
               <h1>{$domain}</h1>
               <hr>
               {if $sub[0] eq 'Empty'}
-              <p>Domain has no defined subdomains</p>
+              <form action="index.php" type="post" class="addDomainForm">
+                <input type="hidden" name="newSubdomain">
+                <div class="form-group">
+                  <div class="col-xs-4 addDomTXT">
+                    <input type="text" class="form-control" name="domain">
+                  </div>
+                  <div class="col-xs-4 domFields">
+                    <input type="text" class="form-control" name="base" disabled="disabled" value="{$domain}">
+                  </div>
+                  <div class="col-xs-4 domFields">
+                    <button type="submit" class="btn btn-primary">Add subdomain</button>
+                  </div>
+                </div>
+              </form>
               {else}
                 {foreach from=$sub item=record}
                   {if $record eq '@'}

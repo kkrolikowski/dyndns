@@ -140,8 +140,16 @@
                <ul class="dropdown-menu" role="menu">
                   <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Edit Profile</a></li>
                   <li role="presentation"><a href="#chpass" aria-controls="profile" role="tab" data-toggle="tab">Change Password</a></li>
+               </ul>
+            </li>
+            <li role="presentation" class="dropdown">
+               <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Domains<span class="caret"></span></a>
+               <ul class="dropdown-menu" role="menu">
                   <li role="presentation"><a href="#addDomain" aria-controls="profile" role="tab" data-toggle="tab">Add domain</a></li>
                   <li role="presentation"><a href="#myDomains" aria-controls="profile" role="tab" data-toggle="tab">My domains</a></li>
+                  {foreach from=$UserDomains key=id item=domain}
+                  <li role="presentation"><a href="#dom_id{$id}" aria-controls="profile" role="tab" data-toggle="tab">{$domain}</a></li>
+                  {/foreach}
                </ul>
             </li>
          </ul>
@@ -318,6 +326,11 @@
                 {/foreach}
               </table>
             </div>
+            {foreach from=$UserDomains key=id item=domain}
+            <div role="tabpanel" class="tab-pane fade col-sm-8" id="dom_id{$id}">
+              <h1>{$domain}<h1>
+            </div>
+            {/foreach}
             <div id="prevcontent" style="display: none;">
             </div>
 			<div role="tabpanel" class="tab-pane fade col-md-8" id="profile">

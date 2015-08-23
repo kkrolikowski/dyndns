@@ -146,8 +146,8 @@
                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Domains<span class="caret"></span></a>
                <ul class="dropdown-menu" role="menu">
                   <li role="presentation"><a href="#addDomain" aria-controls="profile" role="tab" data-toggle="tab">Add domain</a></li>
-                  {foreach from=$UserDomains key=id item=domain}
-                  <li role="presentation"><a href="#dom_id{$id}" aria-controls="profile" role="tab" data-toggle="tab">{$domain}</a></li>
+                  {foreach from=$subDomList key=domain item=sub}
+                  <li role="presentation"><a href="#{$domain|regex_replace:"/\./":"_"}" aria-controls="profile" role="tab" data-toggle="tab">{$domain}</a></li>
                   {/foreach}
                </ul>
             </li>
@@ -313,9 +313,21 @@
                 </div>
               </form>
             </div>
-            {foreach from=$UserDomains key=id item=domain}
-            <div role="tabpanel" class="tab-pane fade col-sm-8" id="dom_id{$id}">
-              <h1>{$domain}<h1>
+            {foreach from=$subDomList key=domain item=sub}
+            <div role="tabpanel" class="tab-pane fade col-sm-8" id="{$domain|regex_replace:"/\./":"_"}">
+              <h1>{$domain}</h1>
+              <hr>
+              {if $sub[0] eq 'Empty'}
+              <p>Domain has no defined subdomains</p>
+              {else}
+                {foreach from=$sub item=record}
+                  {if $record eq '@'}
+                    <p>{$domain}</p>
+                  {else}
+                    <p>{$record}.{$domain}</p>
+                  {/if}
+                {/foreach}
+              {/if}
             </div>
             {/foreach}
             <div id="prevcontent" style="display: none;">

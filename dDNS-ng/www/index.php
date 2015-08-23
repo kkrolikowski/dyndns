@@ -15,6 +15,7 @@
 	$user = array();
 	$subd = array();
 	$userdomains = array();				// user's domains
+	$domHost = array();						// hosts of particular domain
 	$i = 0;
 	$can_go = 0;
 
@@ -157,16 +158,26 @@
 		}
 		$www->assign('userdata', $userdata);
 /*
- * Getting list of domains of particular user
+ * Get subdomains associated with particular domain
 */
-		$q = $dbh->prepare("SELECT id,domain FROM domains WHERE owner = '".$_SESSION['userlogin']."'");
+		$q = $dbh->prepare("SELECT domain FROM domains WHERE owner = '".$_SESSION['userlogin']."'");
 		$q->execute();
 		if($q->rowCount() > 0) {
-			while($res = $q->fetch()) {
-				$userdomains[$res['id']] = substr($res['domain'], 0, -1);
+			while ($res = $q->fetch()) {
+				$subq = $dbh->prepare("SELECT subdomain FROM subdomains WHERE domain_id = (SELECT id FROM domains WHERE domain = '".$res['domain']."') AND type = 'A'");
+				$subq->execute();
+				if($subq->rowCount() > 0) {
+					while($subres = $subq->fetch()) {
+						$domHost[substr($res['domain'], 0, -1)][] = $subres['subdomain'];
+					}
+				}
+				else {
+					$domHost[substr($res['domain'], 0, -1)][] = "Empty";
+				}
 			}
+			$www->assign('subDomList', $domHost);
 		}
-		$www->assign('UserDomains', $userdomains);
+
 
 		$q = $dbh->prepare(
 			"SELECT CONCAT(s.subdomain, \".\",  d.domain) as subdomain, dynamic FROM subdomains s, domains d , users u ".

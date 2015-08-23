@@ -146,7 +146,6 @@
                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Domains<span class="caret"></span></a>
                <ul class="dropdown-menu" role="menu">
                   <li role="presentation"><a href="#addDomain" aria-controls="profile" role="tab" data-toggle="tab">Add domain</a></li>
-                  <li role="presentation"><a href="#myDomains" aria-controls="profile" role="tab" data-toggle="tab">My domains</a></li>
                   {foreach from=$UserDomains key=id item=domain}
                   <li role="presentation"><a href="#dom_id{$id}" aria-controls="profile" role="tab" data-toggle="tab">{$domain}</a></li>
                   {/foreach}
@@ -313,18 +312,6 @@
                   </div>
                 </div>
               </form>
-            </div>
-            <div role="tabpanel" class="tab-pane fade col-sm-8" id="myDomains">
-              <table class="table table-hover" id="user_domains">
-                <thead>
-                  <th>ID</th><th>Domain</th><th>Action</th>
-                </thead>
-                {foreach from=$UserDomains key=id item=domain}
-                <tr>
-                  <td>{$id}</td><td>{$domain}</td><td><button class="btn btn-primary btn-sm editdomain">Edit</button></td>
-                </tr>
-                {/foreach}
-              </table>
             </div>
             {foreach from=$UserDomains key=id item=domain}
             <div role="tabpanel" class="tab-pane fade col-sm-8" id="dom_id{$id}">

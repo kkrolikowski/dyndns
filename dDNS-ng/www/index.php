@@ -307,11 +307,20 @@
 				$ns_record."', 'NS')");
 				$q->execute();
 			}
+
+			// insert MX record
 			$q = $dbh->prepare(
 			"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
 			"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
 			$domain_id.", '@', '".
 			MX_SERVER."', 'MX')");
+			$q->execute();
+
+			// insert IP for added domain
+			$q = $dbh->prepare(
+			"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
+			"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
+			$domain_id.", '@', '".$_SERVER['REMOTE_ADDR']."', 'A')");
 			$q->execute();
 		}
 /*

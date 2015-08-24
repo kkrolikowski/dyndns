@@ -317,10 +317,11 @@
 			$q->execute();
 
 			// insert IP for added domain
+			$clientip = $func->clientIP();
 			$q = $dbh->prepare(
 			"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
 			"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
-			$domain_id.", '@', '".$_SERVER['REMOTE_ADDR']."', 'A')");
+			$domain_id.", '@', '".$clientip."', 'A')");
 			$q->execute();
 		}
 /*

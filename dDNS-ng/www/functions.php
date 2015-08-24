@@ -6,6 +6,7 @@
      public $token;
      public $md5pass;
      public $newserial;
+     public $ip;
 
      public function checkPass($hash, $pass) {
         $salt = substr($hash, 0, 12);
@@ -53,6 +54,16 @@
          $newserial = intval($actual_serial) + 1;
        }
        return $newserial;
+     }
+     public function clientIP() {
+       $headers = apache_request_headers();
+       if(isset($headers['X-Forwarded-For'])) {
+         $ip = $headers['X-Forwarded-For'];
+       }
+       else {
+         $ip = $_SERVER['REMOTE_ADDR'];
+       }
+       return $ip;
      }
   }
 ?>

@@ -15,6 +15,7 @@
 	$user = array();
 	$subd = array();
 	$userdomains = array();				// user's domains
+	$domHost = array();						// hosts of particular domain
 	$i = 0;
 	$can_go = 0;
 
@@ -157,16 +158,26 @@
 		}
 		$www->assign('userdata', $userdata);
 /*
- * Getting list of domains of particular user
+ * Get subdomains associated with particular domain
 */
-		$q = $dbh->prepare("SELECT id,domain FROM domains WHERE owner = '".$_SESSION['userlogin']."'");
+		$q = $dbh->prepare("SELECT domain FROM domains WHERE owner = '".$_SESSION['userlogin']."'");
 		$q->execute();
 		if($q->rowCount() > 0) {
-			while($res = $q->fetch()) {
-				$userdomains[$res['id']] = substr($res['domain'], 0, -1);
+			while ($res = $q->fetch()) {
+				$subq = $dbh->prepare("SELECT subdomain FROM subdomains WHERE domain_id = (SELECT id FROM domains WHERE domain = '".$res['domain']."') AND type = 'A'");
+				$subq->execute();
+				if($subq->rowCount() > 0) {
+					while($subres = $subq->fetch()) {
+						$domHost[substr($res['domain'], 0, -1)][] = $subres['subdomain'];
+					}
+				}
+				else {
+					$domHost[substr($res['domain'], 0, -1)][] = "Empty";
+				}
 			}
+			$www->assign('subDomList', $domHost);
 		}
-		$www->assign('UserDomains', $userdomains);
+
 
 		$q = $dbh->prepare(
 			"SELECT CONCAT(s.subdomain, \".\",  d.domain) as subdomain, dynamic FROM subdomains s, domains d , users u ".
@@ -296,11 +307,41 @@
 				$ns_record."', 'NS')");
 				$q->execute();
 			}
+
+			// insert MX record
 			$q = $dbh->prepare(
 			"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
 			"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
 			$domain_id.", '@', '".
 			MX_SERVER."', 'MX')");
+			$q->execute();
+
+			// insert IP for added domain
+			$clientip = $func->clientIP();
+			$q = $dbh->prepare(
+			"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
+			"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
+			$domain_id.", '@', '".$clientip."', 'A')");
+			$q->execute();
+		}
+/*
+ * Adding new subdomain to an existing domain
+*/
+		if(isset($_POST['newSubdomain'])) {
+			// obtain domain serial value from database
+			$actual_serial = $func->calculateSerial($_POST['basedomain']);
+
+			// add subdomain record
+			$q = $dbh->prepare(
+			"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
+			"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
+			"(SELECT id FROM domains WHERE domain = '".$_POST['basedomain'].".'), '".
+			$_POST['domain']. "', '127.0.0.1', 'A')");
+			$q->execute();
+
+			// update zone serial
+			$q = $dbh->prepare("UPDATE domains SET serial = ".$actual_serial.
+			" WHERE domain = '".$_POST['basedomain'].".'");
 			$q->execute();
 		}
 	}

@@ -479,7 +479,7 @@ $(document).ready(function() {
     bootbox.alert('New password emailed to user');
   });
     });
-  $('#addDomainForm').formValidation({
+  $('.addDomainForm').formValidation({
     framework: 'bootstrap',
     icon: {
        valid: 'glyphicon glyphicon-ok',
@@ -512,7 +512,7 @@ $(document).ready(function() {
      type: 'POST',
      data: $form.serialize(),
      success: function(e) {
-       bootbox.alert("Domain added!");
+       bootbox.alert("Operation done!");
      },
      error: function(xhr) {
        bootbox.alert(xhr.getResponseHeader('X-Message'));

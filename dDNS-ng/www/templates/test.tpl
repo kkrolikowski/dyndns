@@ -140,8 +140,15 @@
                <ul class="dropdown-menu" role="menu">
                   <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Edit Profile</a></li>
                   <li role="presentation"><a href="#chpass" aria-controls="profile" role="tab" data-toggle="tab">Change Password</a></li>
+               </ul>
+            </li>
+            <li role="presentation" class="dropdown">
+               <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Domains<span class="caret"></span></a>
+               <ul class="dropdown-menu" role="menu">
                   <li role="presentation"><a href="#addDomain" aria-controls="profile" role="tab" data-toggle="tab">Add domain</a></li>
-                  <li role="presentation"><a href="#myDomains" aria-controls="profile" role="tab" data-toggle="tab">My domains</a></li>
+                  {foreach from=$subDomList key=domain item=sub}
+                  <li role="presentation"><a href="#{$domain|regex_replace:"/\./":"_"}" aria-controls="profile" role="tab" data-toggle="tab">{$domain}</a></li>
+                  {/foreach}
                </ul>
             </li>
          </ul>
@@ -294,30 +301,49 @@
             <div role="tabpanel" class="tab-pane fade col-sm-4" id="addDomain">
               <h3><img src="static/tools.png" alt="tools" class="img-rounded toolpic">Add Domain</h3>
               <p><strong>Just type domain name here and we'll do the rest.</strong></p>
-              <form action="index.php" method="post" id="addDomainForm">
+              <form action="index.php" method="post" class="addDomainForm">
                 <input type="hidden" name="newDomain">
                 <div class="form-group">
-                  <div class="col-xs-8" id="addDomTXT">
+                  <div class="col-xs-8 addDomTXT">
                     <input type="text" class="form-control" name="domain" placeholder="example.com">
                   </div>
-                  <div class="col-xs-4" id="addDomSubmit">
+                  <div class="col-xs-4 domFields">
                     <button type="submit" class="btn btn-primary">Add Domain</button>
                   </div>
                 </div>
               </form>
             </div>
-            <div role="tabpanel" class="tab-pane fade col-sm-8" id="myDomains">
-              <table class="table table-hover" id="user_domains">
-                <thead>
-                  <th>ID</th><th>Domain</th><th>Action</th>
-                </thead>
-                {foreach from=$UserDomains key=id item=domain}
-                <tr>
-                  <td>{$id}</td><td>{$domain}</td><td><button class="btn btn-primary btn-sm editdomain">Edit</button></td>
-                </tr>
+            {foreach from=$subDomList key=domain item=sub}
+            <div role="tabpanel" class="tab-pane fade col-sm-8" id="{$domain|regex_replace:"/\./":"_"}">
+              <h1>{$domain}</h1>
+              <hr>
+              {if $sub[0] eq 'Empty'}
+              <form action="index.php" type="post" class="addDomainForm">
+                <input type="hidden" name="newSubdomain">
+                <div class="form-group">
+                  <div class="col-xs-4 addDomTXT">
+                    <input type="text" class="form-control" name="domain">
+                  </div>
+                  <div class="col-xs-4 domFields">
+                    <input type="hidden" class="form-control" name="basedomain" value="{$domain}"/>
+                    <input type="text" class="form-control" name="basedomain" disabled="disabled" value="{$domain}">
+                  </div>
+                  <div class="col-xs-4 domFields">
+                    <button type="submit" class="btn btn-primary">Add subdomain</button>
+                  </div>
+                </div>
+              </form>
+              {else}
+                {foreach from=$sub item=record}
+                  {if $record eq '@'}
+                    <p>{$domain}</p>
+                  {else}
+                    <p>{$record}.{$domain}</p>
+                  {/if}
                 {/foreach}
-              </table>
+              {/if}
             </div>
+            {/foreach}
             <div id="prevcontent" style="display: none;">
             </div>
 			<div role="tabpanel" class="tab-pane fade col-md-8" id="profile">

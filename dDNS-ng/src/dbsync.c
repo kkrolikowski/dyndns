@@ -92,15 +92,10 @@ int dbsync(config_t * cfg, int server_log) {
 					log_event(server_log, " ERROR FileUpdate: ",cfg->server.namedconf, " failed\n", NULL);
 				else {
 					reload_pid = fork();
-					if(reload_pid == 0) {
-                        mysql_free_result(nsrec);
-                        free(zoneName);
-                        free(path);
-                        clearData(data, i);
+					if(reload_pid == 0)
 						namedReload();
-                    }
 				    else if(reload_pid > 0)
-				    	waitpid(reload_pid, NULL, WNOHANG);
+                       waitpid(reload_pid, NULL, WNOHANG);
 				    else
 				    	log_event(server_log, " ERROR Reload named failed\n", NULL);
 				}
@@ -136,7 +131,6 @@ static int writeFile(char * path, domain_t * data, int max) {
 		fprintf(zone, "%s\tIN\t\%s\t%s\n",
 				data->records[i]->subd_name, data->records[i]->type, data->records[i]->ip);
 	fclose(zone);
-	free(path);
 
 	return 1;
 }
@@ -215,9 +209,9 @@ static void clearData(domain_t * data, int max) {
 		free(data->records[i]->type);
 		free(data->records[i]);
 	}
+	free(data->records);
 	free(data->admin_contact);
 	free(data->master_dns);
 	free(data->origin);
-	free(data->records);
 	free(data);
 }

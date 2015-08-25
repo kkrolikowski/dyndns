@@ -65,10 +65,9 @@ int main(int argc, char *argv[]) {
 	}
 	else if(sync_pid == 0)
 		dbsync(&config, log_fd);
-	else {
-		//ddserv(&config, log_fd, sockfd);
+	else
 		clientManager(&config, log_fd, sockfd);
-	}
+
 	close(log_fd);
 	free(config.logfile);
 	unlink(config.pidf);

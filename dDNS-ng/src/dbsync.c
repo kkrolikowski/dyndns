@@ -8,6 +8,7 @@
 #include "common.h"
 #include "dynsrv.h"
 #include "dbsync.h"
+#include "clientmanager.h"
 
 static int writeFile(char * path, domain_t * data, int max);
 static MYSQL_RES * queryDomains(MYSQL * dbh, int logger);
@@ -15,6 +16,7 @@ static MYSQL_RES * querySubDomain(MYSQL * dbh, char * domain, int server_log);
 static int fileExist(char * path);
 static int updateNamedConf(char * path, char * named_conf_path, char * domain, int logger);
 static void clearData(domain_t * data, int max);
+static int oldDomain(char * path, int dbserial);
 
 int dbsync(config_t * cfg, int server_log) {
 	MYSQL * dbh;
@@ -56,7 +58,6 @@ int dbsync(config_t * cfg, int server_log) {
 			data->maximum = atoi(row[9]);
 			data->refresh = atoi(row[6]);
 			data->retry = atoi(row[7]);
-
 			path = (char *) malloc((strlen(path_prefix) + strlen(data->origin) + 1) * sizeof(char));
 			strcpy(path, path_prefix);
 			strncat(path, data->origin, strlen(data->origin) - 1);
@@ -99,6 +100,20 @@ int dbsync(config_t * cfg, int server_log) {
 				    else
 				    	log_event(server_log, " ERROR Reload named failed\n", NULL);
 				}
+			}
+			else {
+                if(oldDomain(path, data->serial) == 1)
+                    if(writeFile(path, data, recCnt) > 0) {
+                        reload_pid = fork();
+                        if(reload_pid == 0)
+                            namedReload();
+                        else if(reload_pid > 0)
+                           waitpid(reload_pid, NULL, WNOHANG);
+                        else
+                            log_event(server_log, " ERROR Reload named failed\n", NULL);
+                    }
+                    else
+                        log_event(server_log, " ERROR: Unable to update zone: ", path, "\n", NULL);
 			}
 			mysql_free_result(nsrec);
 			free(zoneName);
@@ -199,6 +214,31 @@ static int updateNamedConf(char * path, char * named_conf_path, char * domain, i
 
 	fclose(named_conf);
 	return 1;
+}
+static int oldDomain(char * path, int dbserial) {
+    FILE * zf;
+    char buf[256];
+    char * fileserial;
+    int status = 0;
+
+    if((zf = fopen(path, "r")) == NULL)
+        return -1;
+    while(fgets(buf, sizeof(buf), zf) != NULL) {
+        if(strstr(buf, "; serial") != NULL) {
+            fileserial = stripSerialNo(buf);
+            if(atoi(fileserial) < dbserial) {
+                status = 1;
+                break;
+            }
+            else {
+                status = 0;
+                break;
+            }
+        }
+    }
+    free(fileserial);
+    fclose(zf);
+    return status;
 }
 static void clearData(domain_t * data, int max) {
 	int i;

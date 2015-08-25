@@ -18,6 +18,7 @@
 	$domHost = array();						// hosts of particular domain
 	$i = 0;
 	$can_go = 0;
+	$clientip = $func->clientIP(); 			// client IP
 
 	if(isset($_POST['send'])) {
 		if($_POST['login'] == NULL || $_POST['pass'] == NULL)
@@ -317,7 +318,6 @@
 			$q->execute();
 
 			// insert IP for added domain
-			$clientip = $func->clientIP();
 			$q = $dbh->prepare(
 			"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
 			"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
@@ -336,7 +336,7 @@
 			"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
 			"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
 			"(SELECT id FROM domains WHERE domain = '".$_POST['basedomain'].".'), '".
-			$_POST['domain']. "', '127.0.0.1', 'A')");
+			$_POST['domain']. "', '".$clientip."', 'A')");
 			$q->execute();
 
 			// update zone serial

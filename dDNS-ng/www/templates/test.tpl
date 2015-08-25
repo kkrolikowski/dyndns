@@ -317,7 +317,6 @@
             <div role="tabpanel" class="tab-pane fade col-sm-8" id="{$domain|regex_replace:"/\./":"_"}">
               <h1>{$domain}</h1>
               <hr>
-              {if $sub[0] eq 'Empty'}
               <form action="index.php" type="post" class="addDomainForm">
                 <input type="hidden" name="newSubdomain">
                 <div class="form-group">
@@ -333,19 +332,16 @@
                   </div>
                 </div>
               </form>
-              {else}
+              <br>
+              <h2>Subdomains</h2>
+              <hr>
                 {foreach from=$sub item=record}
-                  {if $record eq '@'}
-                    <p>{$domain}</p>
-                  {else}
+                  {if $record neq '@'}
                     <p>{$record}.{$domain}</p>
                   {/if}
                 {/foreach}
-              {/if}
             </div>
             {/foreach}
-            <div id="prevcontent" style="display: none;">
-            </div>
 			<div role="tabpanel" class="tab-pane fade col-md-8" id="profile">
 				<h3>Personal information</h3>
 				<form method="post" action="" id="profileUpdate" class="form-horizontal">

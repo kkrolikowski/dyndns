@@ -31,11 +31,11 @@ int dbsync(config_t * cfg, int server_log) {
 	int i;
 	pid_t reload_pid;
 
-	log_event(server_log, " INFO: synchronization process is ready\n", NULL);
+	log_event(server_log, " INFO [dbSync]: synchronization process is ready\n", NULL);
 	while(1) {
 		dbh = dbLogin(cfg);
 		if(dbh == NULL) {
-			log_event(server_log, " ERROR Error connecting to database\n", NULL);
+			log_event(server_log, " ERROR [dbSync] Error connecting to database\n", NULL);
 			exit(-1);
 		}
 		if((domains = queryDomains(dbh, server_log)) == NULL) {
@@ -86,19 +86,20 @@ int dbsync(config_t * cfg, int server_log) {
 			}
 			if(fileExist(path) == 0) {
 				if(writeFile(path, data, recCnt) < 0) {
-					log_event(server_log, " ERROR Create zone: ", path, " failed\n", NULL);
+					log_event(server_log, " ERROR [dbSync] Create zone: ", path, " failed\n", NULL);
 					break;
 				}
 				if(updateNamedConf(path, cfg->server.namedconf, zoneName, server_log) == 0)
-					log_event(server_log, " ERROR FileUpdate: ",cfg->server.namedconf, " failed\n", NULL);
+					log_event(server_log, " ERROR [dbSync] FileUpdate: ",cfg->server.namedconf, " failed\n", NULL);
 				else {
+                    log_event(server_log, " INFO [dbSync]: New domain: ", zoneName, "\n", NULL);
 					reload_pid = fork();
 					if(reload_pid == 0)
 						namedReload();
 				    else if(reload_pid > 0)
                        waitpid(reload_pid, NULL, WNOHANG);
 				    else
-				    	log_event(server_log, " ERROR Reload named failed\n", NULL);
+				    	log_event(server_log, " ERROR [dbSync] Reload named failed\n", NULL);
 				}
 			}
 			else {
@@ -110,10 +111,11 @@ int dbsync(config_t * cfg, int server_log) {
                         else if(reload_pid > 0)
                            waitpid(reload_pid, NULL, WNOHANG);
                         else
-                            log_event(server_log, " ERROR Reload named failed\n", NULL);
+                            log_event(server_log, " ERROR [dbSync] Reload named failed\n", NULL);
+                    log_event(server_log, " INFO [dbSync]: Domain ", zoneName, " synced from DB\n", NULL);
                     }
                     else
-                        log_event(server_log, " ERROR: Unable to update zone: ", path, "\n", NULL);
+                        log_event(server_log, " ERROR [dbSync]: Unable to update zone: ", path, "\n", NULL);
 			}
 			mysql_free_result(nsrec);
 			free(zoneName);

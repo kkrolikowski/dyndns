@@ -315,49 +315,55 @@
             </div>
             {foreach from=$subDomList key=domain item=sub}
             <div role="tabpanel" class="tab-pane fade col-sm-8" id="{$domain|regex_replace:"/\./":"_"}">
-              <h1>{$domain}</h1>
-              <hr>
-              <form action="index.php" type="post" class="addDomainForm">
-                <input type="hidden" name="newSubdomain">
-                <div class="form-group">
-                  <div class="col-xs-4 addDomTXT">
-                    <input type="text" class="form-control" name="domain">
-                  </div>
-                  <div class="col-xs-4 domFields">
-                    <input type="hidden" class="form-control" name="basedomain" value="{$domain}"/>
-                    <input type="text" class="form-control" name="basedomain" disabled="disabled" value="{$domain}">
-                  </div>
-                  <div class="col-xs-4 domFields">
-                    <button type="submit" class="btn btn-primary">Add subdomain</button>
-                  </div>
+              <div class="row">
+                <div class="col-xs-6">
+                  <h1>{$domain} <button type="submit" class="btn btn-default">New subdomain</button></h1>
                 </div>
-              </form>
-              <br>
+              </div>
               <hr>
-              <table class="table table-hover">
-                <thead>
-                  <th>ID</th><th>Subdomain</th><th>Action</th>
-                </thead>
-                <tbody>
-                  {foreach from=$sub item=record}
-                    {if $record[0] neq '@'}
-                      <tr><td>{$record[1]}</td><td>{$record[0]}.{$domain}</td>
-                          <ul role="tablist" class="nav">
-                        <td>
-                            <li role="presentation" class="dropdown">
-                              <button class="btn btn-primary btn-sm" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Action<span class="caret"></span></button>
-                               <ul class="dropdown-menu" role="menu">
-                                <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$record[1]}" class="editopt">Edit</a></li>
-                                <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$record[1]}" class="rmuser">Remove</a></li>
-                               </ul>
-                            </li>
-                          </ul>
-                        </td></tr>
-                    {/if}
-                  {/foreach}
-                </tbody>
-              </table>
+              <div class="row">
+                <div class="col-xs-6">
+                  <table class="table table-hover">
+                    <thead>
+                      <th>ID</th><th>Subdomain</th><th>Action</th>
+                    </thead>
+                    <tbody>
+                      {foreach from=$sub item=record}
+                        {if $record[0] neq '@'}
+                          <tr><td>{$record[1]}</td><td>{$record[0]}.{$domain}</td>
+                              <ul role="tablist" class="nav">
+                            <td>
+                                <li role="presentation" class="dropdown" style="list-style-type: none;">
+                                  <button class="btn btn-primary btn-sm" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Action<span class="caret"></span></button>
+                                   <ul class="dropdown-menu" role="menu">
+                                    <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$record[1]}" class="editdom">Edit</a></li>
+                                    <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$record[1]}" class="rmuser">Remove</a></li>
+                                   </ul>
+                                </li>
+                              </ul>
+                            </td></tr>
+                        {/if}
+                      {/foreach}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
+            <form action="index.php" type="post" class="addDomainForm editDomainForm" id="form_{$domain|regex_replace:"/\./":"_"}" style="display: none;">
+              <input type="hidden" name="newSubdomain">
+              <div class="form-group">
+                <div class="col-xs-4 addDomTXT">
+                  <input type="text" class="form-control" name="domain">
+                </div>
+                <div class="col-xs-4 domFields">
+                  <input type="hidden" class="form-control" name="basedomain" value="{$domain}"/>
+                  <input type="text" class="form-control" name="basedomain" disabled="disabled" value="{$domain}">
+                </div>
+                <div class="col-xs-4 domFields">
+                  <button type="submit" class="btn btn-primary">Edit subdomain</button>
+                </div>
+              </div>
+            </form>
             {/foreach}
 			<div role="tabpanel" class="tab-pane fade col-md-8" id="profile">
 				<h3>Personal information</h3>

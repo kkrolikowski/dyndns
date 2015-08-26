@@ -21,3 +21,6 @@
 .addDomTXT > i {
   right: 10px;
 }
+.editDomainForm {
+  margin-top: -40px;
+}

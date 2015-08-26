@@ -519,4 +519,81 @@ $(document).ready(function() {
      }
    });
   });
+  $('.editDomainForm').formValidation({
+    framework: 'bootstrap',
+    icon: {
+       valid: 'glyphicon glyphicon-ok',
+       invalid: 'glyphicon glyphicon-remove',
+       validating: 'glyphicon glyphicon-refresh'
+    },
+    addOns: {
+       mandatoryIcon: {
+          icon: 'glyphicon glyphicon-asterisk'
+       }
+    },
+    fields: {
+      domain: {
+        err: 'tooltip',
+        required: 'true',
+        validators: {
+          notEmpty: {
+            message: 'Domain required'
+          }
+        }
+      }
+    }
+  })
+  .on('success.form.fv', function(e) {
+    e.preventDefault();
+    var $form = $('.editDomainForm'),
+    id = $form.find('[name="id"]').val();
+    $.ajax({
+      url: "/domains.php?id=" + id,
+      method: 'PUT',
+      data: $form.serialize()
+    }).success(function(response) {
+      var $link = $('a[data-id="' + response.id + '"]'),
+      $tr = $link.closest('tr'),
+      $cells  = $tr.find('td');
+      var $subdomain = response.domain + "." + response.basename;
+      // Update the cell data
+     $cells
+       .eq(1).html($subdomain).end();
+
+       // Hide the dialog
+       $form.parents('.bootbox').modal('hide');
+
+       // You can inform the user that the data is updated successfully
+       // by highlighting the row or showing a message box
+       bootbox.alert('The user profile is updated');
+    });
+  });
+  $('.editdom').on('click', function() {
+   var id = $(this).attr('data-id');
+   $.ajax({
+     url: "/domains.php?id=" + id,
+     method: 'GET'
+  }).success(function(response) {
+    var domain = response.domain.substring(0, response.domain.length - 1);
+    var domain_id = domain.replace(/\./g, '_');
+    $('#form_'+ domain_id)
+     .find('[name="domain"]').val(response.subdomain).end()
+     .find('[name="basename"]').val(domain).end();
+     bootbox
+       .dialog({
+         title: 'Edit Subdomain',
+         message: $('#form_'+ domain_id),
+         show: false
+       })
+       .on('shown.bs.modal', function() {
+         $('#form_'+ domain_id)
+           .show()
+           .formValidation('resetForm');
+       })
+       .on('hide.bs.modal', function(e) {
+         $('#form_'+ domain).hide().appendTo('body');
+       })
+       .modal('show');
+     });
+  });
 });

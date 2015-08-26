@@ -165,11 +165,11 @@
 		$q->execute();
 		if($q->rowCount() > 0) {
 			while ($res = $q->fetch()) {
-				$subq = $dbh->prepare("SELECT subdomain FROM subdomains WHERE domain_id = (SELECT id FROM domains WHERE domain = '".$res['domain']."') AND type = 'A'");
+				$subq = $dbh->prepare("SELECT id,subdomain FROM subdomains WHERE domain_id = (SELECT id FROM domains WHERE domain = '".$res['domain']."') AND type = 'A'");
 				$subq->execute();
 				if($subq->rowCount() > 0) {
 					while($subres = $subq->fetch()) {
-						$domHost[substr($res['domain'], 0, -1)][] = $subres['subdomain'];
+						$domHost[substr($res['domain'], 0, -1)][] = array($subres['subdomain'], $subres['id']);
 					}
 				}
 				else {
@@ -178,7 +178,6 @@
 			}
 			$www->assign('subDomList', $domHost);
 		}
-
 
 		$q = $dbh->prepare(
 			"SELECT CONCAT(s.subdomain, \".\",  d.domain) as subdomain, dynamic FROM subdomains s, domains d , users u ".

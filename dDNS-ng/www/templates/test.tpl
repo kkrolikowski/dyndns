@@ -333,13 +333,30 @@
                 </div>
               </form>
               <br>
-              <h2>Subdomains</h2>
               <hr>
-                {foreach from=$sub item=record}
-                  {if $record neq '@'}
-                    <p>{$record}.{$domain}</p>
-                  {/if}
-                {/foreach}
+              <table class="table table-hover">
+                <thead>
+                  <th>ID</th><th>Subdomain</th><th>Action</th>
+                </thead>
+                <tbody>
+                  {foreach from=$sub item=record}
+                    {if $record[0] neq '@'}
+                      <tr><td>{$record[1]}</td><td>{$record[0]}.{$domain}</td>
+                          <ul role="tablist" class="nav">
+                        <td>
+                            <li role="presentation" class="dropdown">
+                              <button class="btn btn-primary btn-sm" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Action<span class="caret"></span></button>
+                               <ul class="dropdown-menu" role="menu">
+                                <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$record[1]}" class="editopt">Edit</a></li>
+                                <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$record[1]}" class="rmuser">Remove</a></li>
+                               </ul>
+                            </li>
+                          </ul>
+                        </td></tr>
+                    {/if}
+                  {/foreach}
+                </tbody>
+              </table>
             </div>
             {/foreach}
 			<div role="tabpanel" class="tab-pane fade col-md-8" id="profile">

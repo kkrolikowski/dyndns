@@ -337,7 +337,7 @@
                                   <button class="btn btn-primary btn-sm" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Action<span class="caret"></span></button>
                                    <ul class="dropdown-menu" role="menu">
                                     <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$record[1]}" class="editdom">Edit</a></li>
-                                    <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$record[1]}" class="rmuser">Remove</a></li>
+                                    <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$record[1]}" class="rmsubdomain">Remove</a></li>
                                    </ul>
                                 </li>
                               </ul>

@@ -592,4 +592,16 @@ $(document).ready(function() {
        .modal('show');
      });
   });
+  $('.rmsubdomain').on('click', function(e) {
+   e.preventDefault();
+    var id = $(this).attr('data-id');
+     $.ajax({
+       url: "/domains.php?rm=" + id,
+       method: 'GET'
+     }).success(function() {
+       var $link = $('a[data-id=' + id + ']'),
+       $tr = $link.closest('tr');
+       $tr.remove();
+     });
+  });
 });

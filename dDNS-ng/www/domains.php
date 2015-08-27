@@ -8,6 +8,24 @@
   $tool = new Toolkit;
 
   if(isset($_SESSION['userlogin'])) {
+    if(isset($_GET['rm'])) {
+      // resolve domain name
+      $q = $dbh->prepare("SELECT domain FROM domains WHERE id = (SELECT domain_id FROM subdomains WHERE subdomains.id = ".$_GET['rm'].")");
+      $q->execute();
+      $res = $q->fetch();
+      $domain = substr($res['domain'], 0, -1);
+
+      // prepare serial
+      $serial = $tool->calculateSerial($domain);
+
+      // delete subdomain
+      $q = $dbh->prepare("DELETE FROM subdomains WHERE id = ".$_GET['rm']);
+      $q->execute();
+
+      // update serial
+      $q = $dbh->prepare("UPDATE domains SET serial = ".$serial." WHERE domain = '".$domain.".'");
+      $q->execute();
+    }
     if(isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] != 'PUT') {
       $q = $dbh->prepare(
       "SELECT subdomain, domain FROM subdomains s, domains d WHERE s.id = ".$_GET['id']." AND d.domain = (SELECT domain FROM domains WHERE id = s.domain_id)");

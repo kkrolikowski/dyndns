@@ -349,8 +349,9 @@
                 </div>
               </div>
               <div class="row">
-                <form action="index.php" type="post" class="addDomainForm editDomainForm form-horizontal" id="form_{$domain|regex_replace:"/\./":"_"}" style="display: none;">
+                <form action="" type="post" class="editDomainForm form-horizontal" id="form_{$domain|regex_replace:"/\./":"_"}" style="display: none;">
                   <input type="hidden" name="newSubdomain">
+                  <input type="hidden" name="id" value="{$record[1]}">
                   <div class="form-group">
                     <div class="col-xs-4 addDomTXT">
                       <input type="text" class="form-control" name="domain">

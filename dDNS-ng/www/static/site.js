@@ -545,7 +545,7 @@ $(document).ready(function() {
   })
   .on('success.form.fv', function(e) {
     e.preventDefault();
-    var $form = $('.editDomainForm'),
+    var $form = $(this),
     id = $form.find('[name="id"]').val();
     $.ajax({
       url: "/domains.php?id=" + id,
@@ -555,17 +555,13 @@ $(document).ready(function() {
       var $link = $('a[data-id="' + response.id + '"]'),
       $tr = $link.closest('tr'),
       $cells  = $tr.find('td');
-      var $subdomain = response.domain + "." + response.basename;
+      var $subdomain = response.subdomain + "." + response.domain;
       // Update the cell data
      $cells
        .eq(1).html($subdomain).end();
 
        // Hide the dialog
        $form.parents('.bootbox').modal('hide');
-
-       // You can inform the user that the data is updated successfully
-       // by highlighting the row or showing a message box
-       bootbox.alert('The user profile is updated');
     });
   });
   $('.editdom').on('click', function() {

@@ -22,5 +22,8 @@
   right: 10px;
 }
 .editDomainForm {
-  margin-top: -40px;
+  margin-left: 10px;
+}
+.to-left-65px {
+  margin-left: -65px;
 }

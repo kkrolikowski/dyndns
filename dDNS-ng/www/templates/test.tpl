@@ -348,22 +348,29 @@
                   </table>
                 </div>
               </div>
-            </div>
-            <form action="index.php" type="post" class="addDomainForm editDomainForm" id="form_{$domain|regex_replace:"/\./":"_"}" style="display: none;">
-              <input type="hidden" name="newSubdomain">
-              <div class="form-group">
-                <div class="col-xs-4 addDomTXT">
-                  <input type="text" class="form-control" name="domain">
-                </div>
-                <div class="col-xs-4 domFields">
-                  <input type="hidden" class="form-control" name="basedomain" value="{$domain}"/>
-                  <input type="text" class="form-control" name="basedomain" disabled="disabled" value="{$domain}">
-                </div>
-                <div class="col-xs-4 domFields">
-                  <button type="submit" class="btn btn-primary">Edit subdomain</button>
-                </div>
+              <div class="row">
+                <form action="index.php" type="post" class="addDomainForm editDomainForm form-horizontal" id="form_{$domain|regex_replace:"/\./":"_"}" style="display: none;">
+                  <input type="hidden" name="newSubdomain">
+                  <div class="form-group">
+                    <div class="col-xs-4 addDomTXT">
+                      <input type="text" class="form-control" name="domain">
+                    </div>
+                    <div class="col-xs-4 domFields">
+                      <input type="hidden" class="form-control" name="basedomain" value="{$domain}"/>
+                      <input type="text" class="form-control" name="basedomain" disabled="disabled" value="{$domain}">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-xs-4">
+                      <button type="submit" class="btn btn-primary">Edit subdomain</button>
+                    </div>
+                    <div class="col-xs-4 to-left-65px">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                  </div>
+                </form>
               </div>
-            </form>
+            </div>
             {/foreach}
 			<div role="tabpanel" class="tab-pane fade col-md-8" id="profile">
 				<h3>Personal information</h3>

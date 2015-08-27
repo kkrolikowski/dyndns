@@ -591,7 +591,7 @@ $(document).ready(function() {
            .formValidation('resetForm');
        })
        .on('hide.bs.modal', function(e) {
-         $('#form_'+ domain).hide().appendTo('body');
+         $('#form_'+ domain_id).hide().appendTo('body');
        })
        .modal('show');
      });

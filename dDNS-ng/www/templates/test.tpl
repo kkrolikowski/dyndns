@@ -317,11 +317,23 @@
             {foreach from=$subDomList key=domain item=sub}
             <div role="tabpanel" class="tab-pane fade col-sm-8" id="{$domain|regex_replace:"/\./":"_"}">
               <div class="row">
-                <div class="col-xs-6">
-                  <h1>{$domain} <button type="submit" class="btn btn-default">New subdomain</button></h1>
-                </div>
+                <nav class="navbar navbar-default margin-top-20">
+                  <div class="navbar-header">
+                    <a class="navbar-brand" >{$domain}</a>
+                  </div>
+                  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <form class="navbar-form navbar-left" method="post">
+                      <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Subdomain">
+                      </div>
+                      <button type="submit" class="btn btn-default">Add</button>
+                    </form>
+                    <ul class="nav navbar-nav navbar-right">
+                      <li><button type="submit" class="btn btn-danger margin-top-7">Delete</button></li>
+                    </ul>
+                  </div>
+                </nav>
               </div>
-              <hr>
               <div class="row">
                 <div class="col-xs-6">
                   <table class="table table-hover">

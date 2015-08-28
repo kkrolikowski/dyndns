@@ -25,6 +25,40 @@
       // update serial
       $q = $dbh->prepare("UPDATE domains SET serial = ".$serial." WHERE domain = '".$domain.".'");
       $q->execute();
+    /*
+     * Adding new subdomain to an existing domain
+    */
+    }
+    if(isset($_GET['subd'])) {
+    	// obtain domain serial value from database
+    	$actual_serial = $tool->calculateSerial($_GET['domain']);
+
+    	// add subdomain record
+    	$q = $dbh->prepare(
+    	"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
+    	"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
+    	"(SELECT id FROM domains WHERE domain = '".$_GET['domain'].".'), '".
+    	$_GET['subd']. "', '".$clientip."', 'A')");
+    	$q->execute();
+
+    	// update zone serial
+    	$q = $dbh->prepare("UPDATE domains SET serial = ".$actual_serial.
+    	" WHERE domain = '".$_GET['domain'].".'");
+    	$q->execute();
+
+      // return json wih added subdomain data
+      $q = $dbh->prepare("SELECT s.id, subdomain, domain FROM subdomains s, domains d WHERE s.subdomain = '".$_GET['subd']."' AND d.domain = (SELECT domain FROM domains WHERE id = s.domain_id)");
+      $q->execute();
+      $res = $q->fetch();
+
+      $domain = substr($res['domain'], 0, -1);
+      $json = array(
+        "id" => $res['id'],
+        "subdomain" => $res['subdomain'],
+        "domain" => $domain
+      );
+      header('Content-Type: application/json');
+      echo json_encode($json);
     }
     if(isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] != 'PUT') {
       $q = $dbh->prepare(

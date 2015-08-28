@@ -319,12 +319,14 @@
               <div class="row">
                 <nav class="navbar navbar-default margin-top-20">
                   <div class="navbar-header">
-                    <a class="navbar-brand" >{$domain}</a>
+                    <a class="navbar-brand">{$domain}</a>
                   </div>
                   <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <form class="navbar-form navbar-left" method="post">
+                    <form class="navbar-form navbar-left addSubdomainForm" method="post" action="">
                       <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Subdomain">
+                        <input type="hidden" name="domain" value="{$domain}">
+                        <input type="hidden" name="addSubdomain">
+                        <input type="text" class="form-control" name="subdomain" placeholder="Subdomain">
                       </div>
                       <button type="submit" class="btn btn-default">Add</button>
                     </form>
@@ -336,7 +338,7 @@
               </div>
               <div class="row">
                 <div class="col-xs-6">
-                  <table class="table table-hover">
+                  <table class="table table-hover" id="subd_{$domain|regex_replace:"/\./":"_"}">
                     <thead>
                       <th>ID</th><th>Subdomain</th><th>Action</th>
                     </thead>

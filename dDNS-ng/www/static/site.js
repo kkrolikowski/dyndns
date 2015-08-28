@@ -604,4 +604,49 @@ $(document).ready(function() {
        $tr.remove();
      });
   });
+  $('.addSubdomainForm').formValidation({
+    framework: 'bootstrap',
+    icon: {
+       valid: 'glyphicon glyphicon-ok',
+       invalid: 'glyphicon glyphicon-remove',
+       validating: 'glyphicon glyphicon-refresh'
+    },
+    addOns: {
+       mandatoryIcon: {
+          icon: 'glyphicon glyphicon-asterisk'
+       }
+    },
+    fields: {
+      subdomain: {
+        err: 'tooltip',
+        required: 'true',
+        validators: {
+          notEmpty: {
+            message: 'Domain required'
+          }
+        }
+      }
+    }
+  })
+  .on('success.form.fv', function(e) {
+   e.preventDefault();
+   var $form = $(this),
+   fv = $form.data('formValidation');
+   var subdomain = $form.find('[name="subdomain"]').val();
+   $.ajax({
+     url: "/domains.php?subd=" + subdomain,
+     type: 'GET',
+     data: $form.serialize()
+   }).success(function(response) {
+     var domain = response.domain;
+     var domain_id = domain.replace(/\./g, '_');
+     var $table = $('#subd_' + domain_id)
+     $table.append('<tr><td>'+ response.id +'</td><td>'+ response.subdomain +'.'+response.domain+'</td><td><li role="presentation" class="dropdown" style="list-style-type: none;">' +
+       '<button class="btn btn-primary btn-sm" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Action<span class="caret"></span></button>' +
+        '<ul class="dropdown-menu" role="menu">'+
+         '<li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="' + response.id + '" class="editdom">Edit</a></li>' +
+         '<li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="' + response.id + '" class="rmsubdomain">Remove</a></li>' +
+        '</ul></li></ul></td></tr>');
+   });
+  });
 });

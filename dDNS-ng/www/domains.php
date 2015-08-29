@@ -33,7 +33,10 @@
     	// obtain domain serial value from database
     	$actual_serial = $tool->calculateSerial($_GET['domain']);
 
-    	// add subdomain record
+      // obtain client IP Address
+      $clientip = $tool->clientIP();
+
+      // add subdomain record
     	$q = $dbh->prepare(
     	"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
     	"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".

@@ -58,6 +58,8 @@ int dbsync(config_t * cfg, int server_log) {
 			data->maximum = atoi(row[9]);
 			data->refresh = atoi(row[6]);
 			data->retry = atoi(row[7]);
+			data->owner = (char *) malloc((strlen(row[10]) + 1) * sizeof(char));
+			strcpy(data->owner, row[10]);
 			path = (char *) malloc((strlen(path_prefix) + strlen(data->origin) + 1) * sizeof(char));
 			strcpy(path, path_prefix);
 			strncat(path, data->origin, strlen(data->origin) - 1);
@@ -255,5 +257,6 @@ static void clearData(domain_t * data, int max) {
 	free(data->admin_contact);
 	free(data->master_dns);
 	free(data->origin);
+	free(data->owner);
 	free(data);
 }

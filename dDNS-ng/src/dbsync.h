@@ -8,6 +8,7 @@ struct domain {
 	int ttl;
 	char * admin_contact;
 	char * master_dns;
+	char * owner;
 	int serial;
 	int refresh;
 	int retry;

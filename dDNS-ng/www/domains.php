@@ -31,7 +31,7 @@
     }
     if(isset($_GET['subd'])) {
     	// obtain domain serial value from database
-    	$actual_serial = $tool->calculateSerial($_GET['domain']);
+    	$actual_serial = $tool->calculateSerial($_POST['domain']);
 
       // obtain client IP Address
       $clientip = $tool->clientIP();
@@ -40,13 +40,13 @@
     	$q = $dbh->prepare(
     	"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
     	"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
-    	"(SELECT id FROM domains WHERE domain = '".$_GET['domain'].".'), '".
+    	"(SELECT id FROM domains WHERE domain = '".$_POST['domain'].".'), '".
     	$_GET['subd']. "', '".$clientip."', 'A')");
     	$q->execute();
 
     	// update zone serial
     	$q = $dbh->prepare("UPDATE domains SET serial = ".$actual_serial.
-    	" WHERE domain = '".$_GET['domain'].".'");
+    	" WHERE domain = '".$_POST['domain'].".'");
     	$q->execute();
 
       // return json wih added subdomain data
@@ -65,10 +65,11 @@
     }
     if(isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] != 'PUT') {
       $q = $dbh->prepare(
-      "SELECT subdomain, domain FROM subdomains s, domains d WHERE s.id = ".$_GET['id']." AND d.domain = (SELECT domain FROM domains WHERE id = s.domain_id)");
+      "SELECT s.id, subdomain, domain FROM subdomains s, domains d WHERE s.id = ".$_GET['id']." AND d.domain = (SELECT domain FROM domains WHERE id = s.domain_id)");
       $q->execute();
       $res = $q->fetch();
       $json_resp = array(
+        "id" => $res['id'],
         "subdomain" => $res['subdomain'],
         "domain" => $res['domain']
       );

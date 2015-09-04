@@ -564,7 +564,7 @@ $(document).ready(function() {
        $form.parents('.bootbox').modal('hide');
     });
   });
-  $('.editdom').on('click', function() {
+  $(document).on('click', '.editdom', function() {
    var id = $(this).attr('data-id');
    $.ajax({
      url: "/domains.php?id=" + id,
@@ -573,8 +573,9 @@ $(document).ready(function() {
     var domain = response.domain.substring(0, response.domain.length - 1);
     var domain_id = domain.replace(/\./g, '_');
     $('#form_'+ domain_id)
-     .find('[name="domain"]').val(response.subdomain).end()
-     .find('[name="basename"]').val(domain).end();
+    .find('[name="id"]').val(response.id).end()
+    .find('[name="domain"]').val(response.subdomain).end()
+    .find('[name="basename"]').val(domain).end();
      bootbox
        .dialog({
          title: 'Edit Subdomain',
@@ -635,7 +636,7 @@ $(document).ready(function() {
    var subdomain = $form.find('[name="subdomain"]').val();
    $.ajax({
      url: "/domains.php?subd=" + subdomain,
-     type: 'GET',
+     type: 'POST',
      data: $form.serialize()
    }).success(function(response) {
      var domain = response.domain;

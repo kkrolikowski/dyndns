@@ -15,7 +15,7 @@
 </head>
 <body>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
     <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script type="text/javascript" src="static/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="lib/formvalidation/dist/js/formValidation.min.js"></script>
@@ -365,7 +365,6 @@
               </div>
               <div class="row">
                 <form action="" type="post" class="editDomainForm form-horizontal" id="form_{$domain|regex_replace:"/\./":"_"}" style="display: none;">
-                  <input type="hidden" name="newSubdomain">
                   <input type="hidden" name="id" value="{$record[1]}">
                   <div class="form-group">
                     <div class="col-xs-4 addDomTXT">

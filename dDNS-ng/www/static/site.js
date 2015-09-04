@@ -593,7 +593,7 @@ $(document).ready(function() {
        .modal('show');
      });
   });
-  $('.rmsubdomain').on('click', function(e) {
+  $(document).on('click', '.rmsubdomain', function(e) {
    e.preventDefault();
     var id = $(this).attr('data-id');
      $.ajax({

@@ -519,4 +519,135 @@ $(document).ready(function() {
      }
    });
   });
+  $('.editDomainForm').formValidation({
+    framework: 'bootstrap',
+    icon: {
+       valid: 'glyphicon glyphicon-ok',
+       invalid: 'glyphicon glyphicon-remove',
+       validating: 'glyphicon glyphicon-refresh'
+    },
+    addOns: {
+       mandatoryIcon: {
+          icon: 'glyphicon glyphicon-asterisk'
+       }
+    },
+    fields: {
+      domain: {
+        err: 'tooltip',
+        required: 'true',
+        validators: {
+          notEmpty: {
+            message: 'Domain required'
+          }
+        }
+      }
+    }
+  })
+  .on('success.form.fv', function(e) {
+    e.preventDefault();
+    var $form = $(this),
+    id = $form.find('[name="id"]').val();
+    $.ajax({
+      url: "/domains.php?id=" + id,
+      method: 'PUT',
+      data: $form.serialize()
+    }).success(function(response) {
+      var $link = $('a[data-id="' + response.id + '"]'),
+      $tr = $link.closest('tr'),
+      $cells  = $tr.find('td');
+      var $subdomain = response.subdomain + "." + response.domain;
+      // Update the cell data
+     $cells
+       .eq(1).html($subdomain).end();
+
+       // Hide the dialog
+       $form.parents('.bootbox').modal('hide');
+    });
+  });
+  $(document).on('click', '.editdom', function() {
+   var id = $(this).attr('data-id');
+   $.ajax({
+     url: "/domains.php?id=" + id,
+     method: 'GET'
+  }).success(function(response) {
+    var domain = response.domain.substring(0, response.domain.length - 1);
+    var domain_id = domain.replace(/\./g, '_');
+    $('#form_'+ domain_id)
+    .find('[name="id"]').val(response.id).end()
+    .find('[name="domain"]').val(response.subdomain).end()
+    .find('[name="basename"]').val(domain).end();
+     bootbox
+       .dialog({
+         title: 'Edit Subdomain',
+         message: $('#form_'+ domain_id),
+         show: false
+       })
+       .on('shown.bs.modal', function() {
+         $('#form_'+ domain_id)
+           .show()
+           .formValidation('resetForm');
+       })
+       .on('hide.bs.modal', function(e) {
+         $('#form_'+ domain_id).hide().appendTo('body');
+       })
+       .modal('show');
+     });
+  });
+  $(document).on('click', '.rmsubdomain', function(e) {
+   e.preventDefault();
+    var id = $(this).attr('data-id');
+     $.ajax({
+       url: "/domains.php?rm=" + id,
+       method: 'GET'
+     }).success(function() {
+       var $link = $('a[data-id=' + id + ']'),
+       $tr = $link.closest('tr');
+       $tr.remove();
+     });
+  });
+  $('.addSubdomainForm').formValidation({
+    framework: 'bootstrap',
+    icon: {
+       valid: 'glyphicon glyphicon-ok',
+       invalid: 'glyphicon glyphicon-remove',
+       validating: 'glyphicon glyphicon-refresh'
+    },
+    addOns: {
+       mandatoryIcon: {
+          icon: 'glyphicon glyphicon-asterisk'
+       }
+    },
+    fields: {
+      subdomain: {
+        err: 'tooltip',
+        required: 'true',
+        validators: {
+          notEmpty: {
+            message: 'Domain required'
+          }
+        }
+      }
+    }
+  })
+  .on('success.form.fv', function(e) {
+   e.preventDefault();
+   var $form = $(this),
+   fv = $form.data('formValidation');
+   var subdomain = $form.find('[name="subdomain"]').val();
+   $.ajax({
+     url: "/domains.php?subd=" + subdomain,
+     type: 'POST',
+     data: $form.serialize()
+   }).success(function(response) {
+     var domain = response.domain;
+     var domain_id = domain.replace(/\./g, '_');
+     var $table = $('#subd_' + domain_id)
+     $table.append('<tr><td>'+ response.id +'</td><td>'+ response.subdomain +'.'+response.domain+'</td><td><li role="presentation" class="dropdown" style="list-style-type: none;">' +
+       '<button class="btn btn-primary btn-sm" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Action<span class="caret"></span></button>' +
+        '<ul class="dropdown-menu" role="menu">'+
+         '<li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="' + response.id + '" class="editdom">Edit</a></li>' +
+         '<li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="' + response.id + '" class="rmsubdomain">Remove</a></li>' +
+        '</ul></li></ul></td></tr>');
+   });
+  });
 });

@@ -165,11 +165,11 @@
 		$q->execute();
 		if($q->rowCount() > 0) {
 			while ($res = $q->fetch()) {
-				$subq = $dbh->prepare("SELECT subdomain FROM subdomains WHERE domain_id = (SELECT id FROM domains WHERE domain = '".$res['domain']."') AND type = 'A'");
+				$subq = $dbh->prepare("SELECT id,subdomain FROM subdomains WHERE domain_id = (SELECT id FROM domains WHERE domain = '".$res['domain']."') AND type = 'A'");
 				$subq->execute();
 				if($subq->rowCount() > 0) {
 					while($subres = $subq->fetch()) {
-						$domHost[substr($res['domain'], 0, -1)][] = $subres['subdomain'];
+						$domHost[substr($res['domain'], 0, -1)][] = array($subres['subdomain'], $subres['id']);
 					}
 				}
 				else {
@@ -178,7 +178,6 @@
 			}
 			$www->assign('subDomList', $domHost);
 		}
-
 
 		$q = $dbh->prepare(
 			"SELECT CONCAT(s.subdomain, \".\",  d.domain) as subdomain, dynamic FROM subdomains s, domains d , users u ".
@@ -322,26 +321,6 @@
 			"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
 			"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
 			$domain_id.", '@', '".$clientip."', 'A')");
-			$q->execute();
-		}
-/*
- * Adding new subdomain to an existing domain
-*/
-		if(isset($_POST['newSubdomain'])) {
-			// obtain domain serial value from database
-			$actual_serial = $func->calculateSerial($_POST['basedomain']);
-
-			// add subdomain record
-			$q = $dbh->prepare(
-			"INSERT INTO subdomains(user_id,domain_id,subdomain,ip,type) VALUES(".
-			"(SELECT id FROM users WHERE login = '".$_SESSION['userlogin']."'), ".
-			"(SELECT id FROM domains WHERE domain = '".$_POST['basedomain'].".'), '".
-			$_POST['domain']. "', '".$clientip."', 'A')");
-			$q->execute();
-
-			// update zone serial
-			$q = $dbh->prepare("UPDATE domains SET serial = ".$actual_serial.
-			" WHERE domain = '".$_POST['basedomain'].".'");
 			$q->execute();
 		}
 	}

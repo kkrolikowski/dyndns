@@ -59,6 +59,7 @@ char ** getAdminEmail(MYSQL * dbh) {
 		strcpy(admins[i], row[0]);
 		i++;
 	}
+	admins[i] = NULL;
 	mysql_free_result(res);
 
 	return admins;

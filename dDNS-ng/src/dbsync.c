@@ -17,6 +17,7 @@ static int fileExist(char * path);
 static int updateNamedConf(char * path, char * named_conf_path, char * domain, int logger);
 static void clearData(domain_t * data, int max);
 static int oldDomain(char * path, int dbserial);
+static void newDomainNotify(MYSQL * dbh, config_t * cf, char * owner, char * domainName);
 
 int dbsync(config_t * cfg, int server_log) {
 	MYSQL * dbh;
@@ -27,6 +28,7 @@ int dbsync(config_t * cfg, int server_log) {
 	char * path_prefix = cfg->server.zonedir;
 	char * path;
 	char * zoneName;
+	char ** admins;
 	int recCnt;
 	int i;
 	pid_t reload_pid;
@@ -95,6 +97,7 @@ int dbsync(config_t * cfg, int server_log) {
 					log_event(server_log, " ERROR [dbSync] FileUpdate: ",cfg->server.namedconf, " failed\n", NULL);
 				else {
                     log_event(server_log, " INFO [dbSync]: New domain: ", zoneName, "\n", NULL);
+                    newDomainNotify(dbh, cfg, data->owner, zoneName);
 					reload_pid = fork();
 					if(reload_pid == 0)
 						namedReload();
@@ -243,6 +246,35 @@ static int oldDomain(char * path, int dbserial) {
     free(fileserial);
     fclose(zf);
     return status;
+}
+static void newDomainNotify(MYSQL * dbh, config_t * cf, char * owner, char * domainName) {
+    char ** adminMail;
+    int msglen = 0;
+    char * msg_1 = "Hello admin!\n\n";
+    char * msg_2 = "User ";
+    char * msg_3 = " has added new domain: ";
+    char * msg;
+
+    msglen = strlen(msg_1) + strlen(msg_2) + strlen(msg_3) + strlen(owner) + strlen(domainName);
+    adminMail = getAdminEmail(dbh);
+    msg = (char *) malloc((msglen + 1) * sizeof(char));
+
+    strcpy(msg, msg_1);
+    strcat(msg, msg_2);
+    strcat(msg, owner);
+    strcat(msg, msg_3);
+    strcat(msg, domainName);
+
+    while(*adminMail) {
+        sendmail(cf, *adminMail, "New domain was configured", msg);
+        adminMail++;
+    }
+
+    free(msg);
+    while(*adminMail) {
+        free(adminMail);
+        adminMail++;
+    }
 }
 static void clearData(domain_t * data, int max) {
 	int i;

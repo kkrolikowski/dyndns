@@ -161,7 +161,7 @@
 /*
  * Get subdomains associated with particular domain
 */
-		$q = $dbh->prepare("SELECT domain FROM domains WHERE owner = '".$_SESSION['userlogin']."'");
+		$q = $dbh->prepare("SELECT domain FROM domains WHERE owner = '".$_SESSION['userlogin']."' AND domainstatus = 'active'");
 		$q->execute();
 		if($q->rowCount() > 0) {
 			while ($res = $q->fetch()) {

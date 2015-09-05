@@ -213,11 +213,10 @@ static int updateNamedConf(char * path, char * named_conf_path, char * domain, i
 		return 0;
 	}
 
-	fprintf(named_conf, "zone \"%s\" {\n", domain);
-	fprintf(named_conf, "\ttype master;\n");
-	fprintf(named_conf, "\tallow-update { none; };\n");
-	fprintf(named_conf, "\tfile \"%s\";\n", path);
-	fprintf(named_conf, "};\n");
+	fprintf(named_conf, "zone \"%s\" { ", domain);
+	fprintf(named_conf, "type master; ");
+	fprintf(named_conf, "allow-update { none; }; ");
+	fprintf(named_conf, "file \"%s\"; };\n", path);
 
 	fclose(named_conf);
 	return 1;

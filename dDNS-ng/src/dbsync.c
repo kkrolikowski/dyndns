@@ -19,6 +19,7 @@ static void clearData(domain_t * data, int max);
 static int oldDomain(char * path, int dbserial);
 static void newDomainNotify(MYSQL * dbh, config_t * cf, char * owner, char * domainName);
 static int deleteDomain(char * path, char * namedconf, char * zoneName);
+static int deleteFromDB(MYSQL * dbh, char * domain);
 
 int dbsync(config_t * cfg, int server_log) {
 	MYSQL * dbh;
@@ -128,6 +129,10 @@ int dbsync(config_t * cfg, int server_log) {
 			if(strcmp(data->domainstatus, "delete") == 0) {
                 if(deleteDomain(path, cfg->server.namedconf, zoneName)) {
                     log_event(server_log, " INFO [dbSync] Domain: ", zoneName, " removed by ", data->owner, "\n", NULL);
+                    if(deleteFromDB(dbh, zoneName))
+                        log_event(server_log, " INFO [dbSync] Domain: ", zoneName, " removed from database\n", NULL);
+                    else
+                        log_event(server_log, " ERROR [dbSync] Failed removal domain ", zoneName, " from database\n", NULL);
                     reload_pid = fork();
 					if(reload_pid == 0)
 						namedReload();
@@ -333,6 +338,39 @@ static int deleteDomain(char * path, char * namedconf, char * zoneName) {
         return 0;
     }
     free(tmpPath);
+    return 1;
+}
+static int deleteFromDB(MYSQL * dbh, char * domain) {
+    char * subdomain_del_1 = "DELETE FROM subdomains WHERE domain_id = (SELECT id FROM domains WHERE domain = '";
+    char * subdomain_del_2 = "' AND domainstatus = 'delete')";
+    char * subdomain_del;
+
+    char * domain_del_1 = "DELETE FROM domains WHERE domain = '";
+    char * domain_del_2 = "' AND domainstatus = 'delete'";
+    char * domain_del;
+
+    subdomain_del = (char *) malloc((strlen(subdomain_del_1) + strlen(subdomain_del_2) + strlen(domain) + 1) * sizeof(char));
+    strcpy(subdomain_del, subdomain_del_1);
+    strcat(subdomain_del, domain);
+    strcat(subdomain_del, subdomain_del_2);
+
+    domain_del = (char *) malloc((strlen(domain_del_1) + strlen(domain_del_2) + strlen(domain) + 1) * sizeof(char));
+    strcpy(domain_del, domain_del_1);
+    strcat(domain_del, domain);
+    strcat(domain_del, domain_del_2);
+
+    if(mysql_query(dbh, subdomain_del) != 0) {
+        free(subdomain_del);
+        free(domain_del);
+        return 0;
+    }
+    if(mysql_query(dbh, domain_del) != 0) {
+        free(subdomain_del);
+        free(domain_del);
+        return 0;
+    }
+    free(subdomain_del);
+    free(domain_del);
     return 1;
 }
 static void clearData(domain_t * data, int max) {

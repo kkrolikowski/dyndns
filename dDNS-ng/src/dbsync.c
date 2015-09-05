@@ -92,24 +92,24 @@ int dbsync(config_t * cfg, int server_log) {
 				strcpy(data->records[i]->type, row2[2]);
 				i++;
 			}
-			if(fileExist(path) == 0) {
-				if(writeFile(path, data, recCnt) < 0) {
-					log_event(server_log, " ERROR [dbSync] Create zone: ", path, " failed\n", NULL);
-					break;
-				}
-				if(updateNamedConf(path, cfg->server.namedconf, zoneName, server_log) == 0)
-					log_event(server_log, " ERROR [dbSync] FileUpdate: ",cfg->server.namedconf, " failed\n", NULL);
-				else {
+			if(fileExist(path) == 0 && strcmp(data->domainstatus, "active") == 0) {
+                if(writeFile(path, data, recCnt) < 0) {
+                    log_event(server_log, " ERROR [dbSync] Create zone: ", path, " failed\n", NULL);
+                    break;
+                }
+                if(updateNamedConf(path, cfg->server.namedconf, zoneName, server_log) == 0)
+                    log_event(server_log, " ERROR [dbSync] FileUpdate: ",cfg->server.namedconf, " failed\n", NULL);
+                else {
                     log_event(server_log, " INFO [dbSync]: New domain: ", zoneName, "\n", NULL);
                     newDomainNotify(dbh, cfg, data->owner, zoneName);
-					reload_pid = fork();
-					if(reload_pid == 0)
-						namedReload();
-				    else if(reload_pid > 0)
+                    reload_pid = fork();
+                    if(reload_pid == 0)
+                        namedReload();
+                    else if(reload_pid > 0)
                        waitpid(reload_pid, NULL, WNOHANG);
-				    else
-				    	log_event(server_log, " ERROR [dbSync] Reload named failed\n", NULL);
-				}
+                    else
+                        log_event(server_log, " ERROR [dbSync] Reload named failed\n", NULL);
+                }
 			}
 			else {
                 if(oldDomain(path, data->serial) == 1)
@@ -308,7 +308,7 @@ static int deleteDomain(char * path, char * namedconf, char * zoneName) {
 
     if((namedConf = fopen(namedconf, "r")) == NULL)
         return -1;
-    if((tmp = fopen(tmpPath, "w")) == NULL)
+    if((tmp = fopen(tmpPath, "w+")) == NULL)
         return -1;
 
     while(fgets(buf, sizeof(buf), namedConf) != NULL) {
@@ -342,11 +342,11 @@ static int deleteDomain(char * path, char * namedconf, char * zoneName) {
 }
 static int deleteFromDB(MYSQL * dbh, char * domain) {
     char * subdomain_del_1 = "DELETE FROM subdomains WHERE domain_id = (SELECT id FROM domains WHERE domain = '";
-    char * subdomain_del_2 = "' AND domainstatus = 'delete')";
+    char * subdomain_del_2 = ".' AND domainstatus = 'delete')";
     char * subdomain_del;
 
     char * domain_del_1 = "DELETE FROM domains WHERE domain = '";
-    char * domain_del_2 = "' AND domainstatus = 'delete'";
+    char * domain_del_2 = ".' AND domainstatus = 'delete'";
     char * domain_del;
 
     subdomain_del = (char *) malloc((strlen(subdomain_del_1) + strlen(subdomain_del_2) + strlen(domain) + 1) * sizeof(char));

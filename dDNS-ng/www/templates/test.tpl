@@ -315,7 +315,7 @@
               </form>
             </div>
             {foreach from=$subDomList key=domain item=sub}
-            <div role="tabpanel" class="tab-pane fade col-sm-8" id="{$domain|regex_replace:"/\./":"_"}">
+            <div role="tabpanel" class="tab-pane fade col-sm-8 domain-select" id="{$domain|regex_replace:"/\./":"_"}">
               <div class="row">
                 <nav class="navbar navbar-default margin-top-20">
                   <div class="navbar-header">
@@ -331,7 +331,7 @@
                       <button type="submit" class="btn btn-default">Add</button>
                     </form>
                     <ul class="nav navbar-nav navbar-right">
-                      <li><button type="submit" class="btn btn-danger margin-top-7">Delete</button></li>
+                      <li><button type="submit" class="btn btn-danger margin-top-7 rmdomain">Delete</button></li>
                     </ul>
                   </div>
                 </nav>

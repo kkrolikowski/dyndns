@@ -25,10 +25,25 @@
       // update serial
       $q = $dbh->prepare("UPDATE domains SET serial = ".$serial." WHERE domain = '".$domain.".'");
       $q->execute();
+    }
+    /*
+     * Delete domain
+    */
+    if(isset($_GET['rmdomain'])) {
+      // verify if domain is in use
+      $q = $dbh->prepare("SELECT subdomain FROM subdomains WHERE domain_id = (SELECT id FROM domains WHERE domain = '".$_GET['rmdomain'].".') AND dynamic = 1");
+      $q->execute();
+      if($q->rowCount() > 0) {
+        header('X-Message: Domain is still in use! Check your profile', true, 406);
+      }
+      else {
+        $q = $dbh->prepare("UPDATE domains SET domainstatus = 'delete' WHERE domain = '".$_GET['rmdomain'].".'");
+        $q->execute();
+      }
+    }
     /*
      * Adding new subdomain to an existing domain
     */
-    }
     if(isset($_GET['subd'])) {
     	// obtain domain serial value from database
     	$actual_serial = $tool->calculateSerial($_POST['domain']);

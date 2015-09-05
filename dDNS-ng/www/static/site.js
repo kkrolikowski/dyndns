@@ -650,4 +650,20 @@ $(document).ready(function() {
         '</ul></li></ul></td></tr>');
    });
   });
+  $(document).on('click', '.rmdomain', function() {
+    var ul = $(this).parentsUntil('div');
+    var div = ul.parents('div');
+    var div2 = div.siblings('.navbar-header');
+    var domain = div2.find("a").text();
+    $.ajax({
+      url: "/domains.php?rmdomain=" + domain,
+      type: 'GET',
+      success: function(e) {
+        bootbox.alert("Domain removed!");
+      },
+      error: function(xhr) {
+        bootbox.alert(xhr.getResponseHeader('X-Message'));
+      }
+    });
+  });
 });

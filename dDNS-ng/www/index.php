@@ -165,7 +165,7 @@
 		$q->execute();
 		if($q->rowCount() > 0) {
 			while ($res = $q->fetch()) {
-				$subq = $dbh->prepare("SELECT id,subdomain FROM subdomains WHERE domain_id = (SELECT id FROM domains WHERE domain = '".$res['domain']."') AND type = 'A'");
+				$subq = $dbh->prepare("SELECT id,subdomain FROM subdomains WHERE domain_id = (SELECT id FROM domains WHERE domain = '".$res['domain']."' AND domainstatus = 'active') AND type = 'A'");
 				$subq->execute();
 				if($subq->rowCount() > 0) {
 					while($subres = $subq->fetch()) {
@@ -181,7 +181,7 @@
 
 		$q = $dbh->prepare(
 			"SELECT CONCAT(s.subdomain, \".\",  d.domain) as subdomain, dynamic FROM subdomains s, domains d , users u ".
-			"WHERE s.domain_id = d.id AND s.type = 'A' AND u.id = s.user_id and u.login = '".$_SESSION['userlogin']."'");
+			"WHERE s.domain_id = d.id AND s.type = 'A' AND u.id = s.user_id AND u.login = '".$_SESSION['userlogin']."' AND d.domainstatus = 'active'");
 		$q->execute();
 		while($r = $q->fetch()) {
 			if(strstr($r['subdomain'], "@.") != NULL) {
@@ -211,7 +211,7 @@
 		$q = $dbh->prepare("SELECT u.id, u.name,u.login, u.email, u.role, u.active, ip, lastupdate, ".
 		"CONCAT(s.subdomain, \".\",  d.domain) as subdomain ".
 		"FROM subdomains s, domains d , users u ".
-		"WHERE s.domain_id = d.id and u.id = s.user_id AND s.dynamic = 1");
+		"WHERE s.domain_id = d.id and u.id = s.user_id AND s.dynamic = 1 AND d.domainstatus = 'active'");
 		$q->execute();
 		if($q->rowCount() > 0) {
 		$i = 0;

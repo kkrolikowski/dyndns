@@ -18,6 +18,7 @@ static int updateNamedConf(char * path, char * named_conf_path, char * domain, i
 static void clearData(domain_t * data, int max);
 static int oldDomain(char * path, int dbserial);
 static void newDomainNotify(MYSQL * dbh, config_t * cf, char * owner, char * domainName);
+static int deleteDomain(char * path, char * namedconf, char * zoneName);
 
 int dbsync(config_t * cfg, int server_log) {
 	MYSQL * dbh;
@@ -62,6 +63,8 @@ int dbsync(config_t * cfg, int server_log) {
 			data->retry = atoi(row[7]);
 			data->owner = (char *) malloc((strlen(row[10]) + 1) * sizeof(char));
 			strcpy(data->owner, row[10]);
+			data->domainstatus = (char *) malloc((strlen(row[11]) +1) * sizeof(char));
+			strcpy(data->domainstatus, row[11]);
 			path = (char *) malloc((strlen(path_prefix) + strlen(data->origin) + 1) * sizeof(char));
 			strcpy(path, path_prefix);
 			strncat(path, data->origin, strlen(data->origin) - 1);
@@ -122,6 +125,21 @@ int dbsync(config_t * cfg, int server_log) {
                     else
                         log_event(server_log, " ERROR [dbSync]: Unable to update zone: ", path, "\n", NULL);
 			}
+			if(strcmp(data->domainstatus, "delete") == 0) {
+                if(deleteDomain(path, cfg->server.namedconf, zoneName)) {
+                    log_event(server_log, " INFO [dbSync] Domain: ", zoneName, " removed by ", data->owner, "\n", NULL);
+                    reload_pid = fork();
+					if(reload_pid == 0)
+						namedReload();
+				    else if(reload_pid > 0)
+                       waitpid(reload_pid, NULL, WNOHANG);
+				    else
+				    	log_event(server_log, " ERROR [dbSync] Reload named failed\n", NULL);
+                }
+                else {
+                    log_event(server_log, " ERROR [dbSync] Error removing domain ", zoneName, "\n", NULL);
+                }
+			}
 			mysql_free_result(nsrec);
 			free(zoneName);
 			free(path);
@@ -159,8 +177,8 @@ static int writeFile(char * path, domain_t * data, int max) {
 static MYSQL_RES * queryDomains(MYSQL * dbh, int logger) {
 	MYSQL_RES * res;
 
-	char * query = "SELECT id,domain,ttl,admin_contact,master_dns,serial,refresh,retry,expiry,maximum, owner \
-				FROM domains WHERE owner NOT LIKE 'root'";
+	char * query = "SELECT id,domain,ttl,admin_contact,master_dns,serial,refresh,retry,expiry,maximum, owner, \
+				 domainstatus FROM domains WHERE owner NOT LIKE 'root'";
 
 	if(mysql_query(dbh, query) != 0) {
 		log_event(logger, " ERROR SQL query ", query, " failed\n", NULL);
@@ -275,6 +293,48 @@ static void newDomainNotify(MYSQL * dbh, config_t * cf, char * owner, char * dom
         adminMail++;
     }
 }
+static int deleteDomain(char * path, char * namedconf, char * zoneName) {
+    FILE * namedConf;
+    FILE * tmp;
+    char * tmpPath;
+    char buf[256];
+
+    tmpPath = tempFile(8);
+
+    if((namedConf = fopen(namedconf, "r")) == NULL)
+        return -1;
+    if((tmp = fopen(tmpPath, "w")) == NULL)
+        return -1;
+
+    while(fgets(buf, sizeof(buf), namedConf) != NULL) {
+        if(strstr(buf, zoneName) != NULL)
+            continue;
+        fputs(buf, tmp);
+    }
+    fclose(namedConf);
+    rewind(tmp);
+    if((namedConf = fopen(namedconf, "w")) == NULL) {
+        fclose(tmp);
+        remove(tmpPath);
+        free(tmpPath);
+        return -1;
+    }
+    while(fgets(buf, sizeof(buf), tmp) != NULL)
+        fputs(buf, namedConf);
+
+    fclose(tmp);
+    fclose(namedConf);
+    if(remove(tmpPath) < 0) {
+        free(tmpPath);
+        return 0;
+    }
+    if(remove(path) < 0) {
+        free(tmpPath);
+        return 0;
+    }
+    free(tmpPath);
+    return 1;
+}
 static void clearData(domain_t * data, int max) {
 	int i;
 
@@ -289,5 +349,6 @@ static void clearData(domain_t * data, int max) {
 	free(data->master_dns);
 	free(data->origin);
 	free(data->owner);
+	free(data->domainstatus);
 	free(data);
 }

@@ -9,6 +9,7 @@ struct domain {
 	char * admin_contact;
 	char * master_dns;
 	char * owner;
+	char * domainstatus;
 	int serial;
 	int refresh;
 	int retry;

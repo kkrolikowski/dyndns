@@ -5,6 +5,7 @@
 #include <mysql.h>
 #include <time.h>
 #include <sys/socket.h>
+#include "dynsrv.h"
 #include "clientmanager.h"
 
 static char * getdata(char *);
@@ -331,27 +332,6 @@ int updateZone(char * subdomain, char * ipaddr, char * serial_from_db, char * fi
     free(tmpf);
 
     return 1;
-}
-char * tempFile(int len) {
-    char * entropy = "1qaz2wsx3edc4rfv5tgb6yhn7ujm8i0poklaZAQ1XSW2CDE3VFR4BGT5NHY6MJU6MJU7";
-    int n, i;
-    struct timeval tv;
-    char * tmp_prefix = "/tmp/dyndns_";             // prefix of temp file
-    char * tmp_path;                                // full path to tempfile
-    char * cur;
-
-    tmp_path = (char *) malloc((strlen(tmp_prefix) + len + 2) * sizeof(char));
-    strcpy(tmp_path, tmp_prefix);
-    cur = tmp_path+strlen(tmp_prefix);
-
-    for(i=0; i<len; i++, cur++) {                  // while counter is smaller then lenght of random part
-            gettimeofday(&tv, NULL);                // get current time
-            srand(tv.tv_usec);                      // generate new seed with time in micro seconds
-            n = rand() % strlen(entropy);           // generate new random character
-            *cur = entropy[n];                     // and put it in the next field of an array.
-    }
-    *cur = '\0';                                   // end of string containing random filename
-    return tmp_path;
 }
 int dbUpdate(MYSQL * dbh, DB_USERDATA_t * data, struct subdomain_st * domain, char * ipaddr, char * timestamp_s) {
 	int len = 0;

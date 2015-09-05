@@ -36,6 +36,7 @@ CREATE TABLE `domains` (
   `retry` int(11) NOT NULL default '1200',
   `expiry` int(11) NOT NULL default '2419200',
   `maximum` int(11) NOT NULL default '86400',
+  `domainstatus` varchar(7) default 'active',
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
@@ -128,4 +129,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-07-15 11:13:51
+-- Dump completed on 2015-09-05  7:33:24

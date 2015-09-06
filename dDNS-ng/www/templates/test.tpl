@@ -504,13 +504,12 @@ pid = /var/run/ddns-client.pid
          <ul style="list-style-type: none; padding: 0px;">
             <li><a href="https://github.com/kkrolikowski/dyndns/wiki" target="_blank" style="text-decoration: none;"><img src="static/documentation.png" class="img-rounded" alt="Documentation" style="max-width: 20%; height: auto;"> <strong>dDNS project wiki</strong></a>
             <li><a href="http://ddns-ng.net/" target="_blank" style="text-decoration: none;"><img src="static/website.png" class="img-rounded" alt="Homepage" style="max-width: 20%; height: auto;"> <strong>dDNS project site</strong></a>
-			<li><a href="#help" style="text-decoration: none;"><img src="static/information.ico" class="img-rounded" alt="Information" style="max-width: 20%; height: auto;"> <strong>How to use</strong></a>
          </ul>
 	   </div>
     </div>
 	<hr>
 	<div class="row" id="help">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <h2>How to use</h2>
           <p>To start using dynamic DNS service download appropriate client version. Zip archive contains ddns-client binary and ddns-client.conf configuration file.
           Put client binary somewhere in your $PATH and configuration file in /etc. Configuration file contains sample values that need to be changed. To get your username

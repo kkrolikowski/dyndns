@@ -510,13 +510,59 @@ pid = /var/run/ddns-client.pid
 	<hr>
 	<div class="row" id="help">
         <div class="col-md-12">
-          <h2>How to use</h2>
-          <p>To start using dynamic DNS service download appropriate client version. Zip archive contains ddns-client binary and ddns-client.conf configuration file.
-          Put client binary somewhere in your $PATH and configuration file in /etc. Configuration file contains sample values that need to be changed. To get your username
-          and password you need to register account. After completing registration form and account activation go to Profile -> Edit profile option and copy contents of
-          Client Configuration section. Now you can paste it into your config file. The last thing you should do is setting password to one you've chosen while registration process.</p>
+          <div class="media">
+            <div class="media-left">
+              <img src="static/question-mark.jpg" width="200">
+            </div>
+            <div class="media-body">
+              <h2>How to use</h2>
+              <p>To start using dynamic DNS service download appropriate client version. Zip archive contains ddns-client binary and ddns-client.conf configuration file.
+              Put client binary somewhere in your $PATH and configuration file in /etc. Configuration file contains sample values that need to be changed. To get your username
+              and password you need to register an account. After completing registration form and account activation go to Profile -> Edit profile option and copy contents of
+              Client Configuration section. Now you can paste it into your config file. The last thing you should do is setting password in your file to one you've chosen while registration process.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="media">
+            <div class="media-left">
+              <img src="static/domain-name.jpg" width="200">
+            </div>
+            <div class="media-body">
+              <h2>Custom Domains</h2>
+              <p>Every registered user can use his own domain. It's extremly simple.</p>
+              <ul>
+                <li>Point your domain to our DNS servers.</li>
+                <li>Add domain name through webpanel</li>
+              </ul>
+              <p>After that user can also add some subdomains if he want. He can also edit subdomain entries, delete them and even delete whole domain from the system. Below
+              is the list of DNS servers that are used by our system.</p>
+              <div class="alert alert-danger glyphicon glyphicon-fire" role="alert">
+                It's important that domain has to be delegated to those servers!
+              </div>
+              <div class="col-md-6">
+                <table class="table">
+                  <thead>
+                    <th>DNS server</th><th>IP Address</th>
+                  </thead>
+                  <tbody>
+                    <tr><td>dns.bsdaemon.pl</td><td>91.121.177.85</td></tr>
+                    <tr><td>fns1.42.pl</td><td>79.98.145.34</td></tr>
+                    <tr><td>fns2.42.pl</td><td>195.80.237.194</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       {/if}
     </div>
+    <hr>
+    <footer>
+      <ul>
+        <li>Powered by: <a href="http://ddns-ng.net" target="_blank">dDNS-ng</a></li>
+        <li>Author: Krzysztof Królikowski</li>
+      </ul>
+    </footer>
 </body>
 </html>

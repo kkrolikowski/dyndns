@@ -41,6 +41,24 @@
     background-size: cover;
     overflow: hidden;
 }
-.jumbotron > .container > h1, .jumbotron > .container > p {
+.jumbotron * h1, .jumbotron * p {
   color: white;
+}
+div#help * li {
+  list-style-image: url('check.png');
+}
+h2 {
+  font-weight: bold;
+}
+footer > ul {
+  margin: 0;
+  margin-top: -10px;
+  list-style-type: none;
+  text-align: center;
+}
+footer * li {
+  display: inline;
+}
+div.alert {
+  letter-spacing: 2px;
 }

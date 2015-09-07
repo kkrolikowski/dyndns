@@ -256,7 +256,9 @@
 			$q->execute();
 			$r = $q->fetch();
 			$active_record = $r['id'];
-
+			$q = $dbh->prepare("UPDATE subdomains SET dynamic = 0 WHERE ID = ".$active_record);
+			$q->execute();
+			
 			// check if this is domain or subdomain
 			$q = $dbh->prepare("SELECT id FROM domains WHERE domain = '".$_POST['subdomain'].".'");
 			$q->execute();
@@ -274,8 +276,6 @@
 				);
 				$q->execute();
 			}
-			$q = $dbh->prepare("UPDATE subdomains SET dynamic = 0 WHERE ID = ".$active_record);
-			$q->execute();
 		}
 /*
  * Adding new domain

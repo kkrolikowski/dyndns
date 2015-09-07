@@ -163,6 +163,22 @@ $(document).ready(function() {
             }
          }
       }
+   })
+   .on('success.form.fv', function(e) {
+     e.preventDefault();
+     var $form = $(e.target),
+     fv = $form.data('formValidation');
+     $.ajax({
+       url: $form.attr('action'),
+       type: 'POST',
+       data: $form.serialize(),
+       success: function() {
+         window.location.reload(true);
+       },
+       error: function(xhr) {
+         bootbox.alert(xhr.getResponseHeader('X-Message'));
+       }
+     });
    });
 	$('#newPassForm').formValidation({
       framework: 'bootstrap',

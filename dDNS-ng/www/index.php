@@ -27,13 +27,13 @@
 			$q = $dbh->query("SELECT login, pass FROM users WHERE login = '".$_POST['login']."' AND active = 1");
 			$q->execute();
 			if($q->rowCount() == 0)
-				$www->assign('loginError', "Unknown user / Account inactive");
+				header('X-Message: Incorrect login or password', true, 406);
 			else {
 				$res = $q->fetch();
-                if($func->checkPass($res['pass'], $_POST['pass']))
+        if($func->checkPass($res['pass'], $_POST['pass']))
 					$_SESSION['userlogin'] = $_POST['login'];
-                else
-					$www->assign('loginError', "Password incorrect");
+        else
+					header('X-Message: Incorrect login or password', true, 406);
 			}
 		}
 	}
@@ -258,7 +258,7 @@
 			$active_record = $r['id'];
 			$q = $dbh->prepare("UPDATE subdomains SET dynamic = 0 WHERE ID = ".$active_record);
 			$q->execute();
-			
+
 			// check if this is domain or subdomain
 			$q = $dbh->prepare("SELECT id FROM domains WHERE domain = '".$_POST['subdomain'].".'");
 			$q->execute();

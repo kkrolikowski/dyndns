@@ -666,4 +666,5 @@ $(document).ready(function() {
       }
     });
   });
+  $('.download').off('click');
 });

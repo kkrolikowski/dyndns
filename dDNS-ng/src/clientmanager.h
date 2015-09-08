@@ -16,6 +16,7 @@ typedef struct db_userdata {
 	char * subdomain;
 	char * email;
 	char * serial;
+	char * domstatus;
 	int active;
 } DB_USERDATA_t;
 struct conn_st {

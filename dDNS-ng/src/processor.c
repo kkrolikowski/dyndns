@@ -77,6 +77,7 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		dbdata->subdomain = (char *) malloc((strlen(row[3]) + 1) * sizeof(char));
 		dbdata->email = (char *) malloc((strlen(row[4]) + 1) * sizeof(char));
 		dbdata->serial = (char *) malloc((strlen(row[7]) + 1) * sizeof(char));
+		dbdata->domstatus = (char *) malloc((strlen(row[8]) + 1) * sizeof(char));
 
 		dbdata->id = atoi(row[0]);
 		strcpy(dbdata->login, row[1]);
@@ -86,6 +87,7 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		strcpy(dbdata->subdomain, row[3]);
 		strcpy(dbdata->email, row[4]);
 		dbdata->active = atoi(row[5]);
+		strcpy(dbdata->domstatus, row[8]);
 
 		mysql_free_result(res);
 		/*
@@ -228,5 +230,6 @@ static void clearDBData(DB_USERDATA_t * db) {
 	free(db->md5);
 	free(db->subdomain);
 	free(db->serial);
+	free(db->domstatus);
 	free(db);
 }

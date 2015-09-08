@@ -27,13 +27,13 @@
 			$q = $dbh->query("SELECT login, pass FROM users WHERE login = '".$_POST['login']."' AND active = 1");
 			$q->execute();
 			if($q->rowCount() == 0)
-				header('X-Message: Incorrect login or password', true, 406);
+				header('X-Message: User not found', true, 406);
 			else {
 				$res = $q->fetch();
         if($func->checkPass($res['pass'], $_POST['pass']))
 					$_SESSION['userlogin'] = $_POST['login'];
         else
-					header('X-Message: Incorrect login or password', true, 406);
+					header('X-Message: Incorrect password', true, 406);
 			}
 		}
 	}

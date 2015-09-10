@@ -59,6 +59,10 @@ REMOTEDATA_t * readCLientData(int sockfd, int logger) {
 	char readbuf[256];
 
 	data = (REMOTEDATA_t *) malloc(sizeof(REMOTEDATA_t));
+	if(data == NULL) {
+        log_event(logger, " FATAL ERROR: memory allocation for client data\n", NULL);
+        exit(-1);
+	}
 	bzero(data, sizeof(REMOTEDATA_t));
 	InitConnData(data);
 
@@ -76,14 +80,26 @@ REMOTEDATA_t * readCLientData(int sockfd, int logger) {
 		val = getdata(readbuf);
 		if(strstr(readbuf, "LOGIN") != NULL) {
 			data->login = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			if(data->login == NULL) {
+                log_event(logger, " FATAL ERROR: Memory allocation for login\n", NULL);
+                exit(-1);
+			}
 			strcpy(data->login, val);
 		}
 		else if(strstr(readbuf, "PASS") != NULL) {
 			data->pass = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			if(data->pass == NULL) {
+                log_event(logger, " FATAL ERROR: Memory allocation for password\n", NULL);
+                exit(-1);
+			}
 			strcpy(data->pass, val);
 		}
 		else if(strstr(readbuf, "SUBDOMAIN") != NULL) {
 			data->subdomain = (char *) malloc((strlen(val) + 1) * sizeof(char));
+			if(data->subdomain == NULL) {
+                log_event(logger, " FATAL ERROR: Memory allocation for subdomain\n", NULL);
+                exit(-1);
+			}
 			strcpy(data->subdomain, val);
 		}
 		else {
@@ -104,7 +120,8 @@ struct conn_st * clientConn(int sock) {
 	struct conn_st * conn;
 
 	conn = (struct conn_st *) malloc(sizeof(struct conn_st));
-
+    if(conn == NULL)
+        return NULL;
 	clilen = sizeof(cli_addr);
 	clifd = accept(sock, (struct sockaddr *) &cli_addr, &clilen);
 

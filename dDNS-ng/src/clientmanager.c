@@ -411,3 +411,51 @@ int dbUpdate(MYSQL * dbh, DB_USERDATA_t * data, struct subdomain_st * domain, ch
 	free(query);
 	return 1;
 }
+int appendDomain(char * zonepath, char * subdomain, char * ipaddr) {
+    FILE * zf;
+    FILE * tmp;
+    char buf[256];
+    char * oldserial;
+    char * newserial;
+    char * tmppath;
+
+    tmppath = tempFile(8);
+
+    if((zf = fopen(zonepath, "r+")) == NULL) {
+        free(tmppath);
+        return 0;
+    }
+    if((tmp = fopen(tmppath, "w+")) == NULL) {
+        free(tmppath);
+        return 0;
+    }
+
+    while(fgets(buf, sizeof(buf), zf) != NULL) {
+        if(strstr(buf, "; serial") != NULL) {
+            oldserial = stripSerialNo(buf);
+            newserial = newSerialNo(oldserial);
+            sprintf(buf, "\t%s\t; serial\n", newserial);
+            free(oldserial);
+            free(newserial);
+        }
+        fputs(buf, tmp);
+    }
+    fclose(zf);
+    fprintf(tmp, "%s\t300\tIN\tA\t%s\n", subdomain, ipaddr);
+    rewind(tmp);
+    if((zf = fopen(zonepath, "w")) == NULL) {
+        fclose(tmp);
+        remove(tmppath);
+        free(tmppath);
+        return 0;
+    }
+    while(fgets(buf, sizeof(buf), tmp) != NULL)
+        fputs(buf, zf);
+
+    fclose(tmp);
+    fclose(zf);
+    remove(tmppath);
+    free(tmppath);
+
+    return 1;
+}

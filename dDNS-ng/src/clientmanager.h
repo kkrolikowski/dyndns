@@ -41,4 +41,5 @@ int updateZone(char * subdomain, char * ipaddr, char * serial_from_db, char * fi
 void InitConnData(REMOTEDATA_t * conn);
 void InitDBData(DB_USERDATA_t * db);
 int dbUpdate(MYSQL * dbh, DB_USERDATA_t * data, struct subdomain_st * domain, char * ipaddr, char * timestamp_s);
+int appendDomain(char * zonepath, char * subdomain, char * ipaddr);
 #endif

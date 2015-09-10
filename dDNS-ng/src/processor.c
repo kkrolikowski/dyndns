@@ -171,7 +171,7 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		/*
 		 * Update DNS record if exist in zone file
 		 */
-		if(existEntry(clientDomain->sub, zonepath)){
+		if(existEntry(clientDomain->sub, zonepath)) {
 			if(updateZone(clientDomain->sub, inet_ntoa(conndata->client_ip_addr), dbdata->serial, zonepath, logfd)) {
 				reload_p = fork();
 				if(reload_p == 0)
@@ -202,6 +202,31 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			}
 			else
 				log_event(logfd, " Error on update zone: ", clientDomain->dom, "\n", NULL);
+		}
+		/*
+		 * adding subdomains by fresh users.
+		*/
+		if(strcmp(dbdata->domstatus, "public") == 0) {
+            if(appendDomain(zonepath, clientDomain->sub, inet_ntoa(conndata->client_ip_addr)) == 0) {
+                log_event(logfd, " ERROR: append zone: ", zonepath, " failed\n", NULL);
+                mysql_close(dbh);
+                clearConnData(conndata);
+                clearDBData(dbdata);
+                free(zonepath);
+                free(clientDomain->dom);
+                free(clientDomain->sub);
+                free(clientDomain);
+            }
+            else {
+                log_event(logfd, " INFO: New subdomain: ", dbdata->subdomain, "\n", NULL);
+                reload_p = fork();
+				if(reload_p == 0)
+					namedReload();
+				else if(reload_p > 0)
+					waitpid(reload_p, NULL, WNOHANG);
+				else
+					log_event(logfd, " ERROR Reload named failed\n", NULL);
+            }
 		}
 		/*
 		 * we don't need these data anymore.

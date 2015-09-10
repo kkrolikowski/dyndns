@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #define LOG_MSG_LEN 256				// MAX lenght of a log entry
 #define TIMESTAMP_LEN 32			// lenght of timestamp string
-#define FPATH_MAX 256				// lenght of file path
 
 /*
  * userconfig_t stores client configuration data

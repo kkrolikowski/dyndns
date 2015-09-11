@@ -1,17 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/uio.h>
 #define _XOPEN_SOURCE
 #include <unistd.h>
 #ifndef __FreeBSD__
 #define _GNU_SOURCE
 #include <crypt.h>
 #endif
-#include "common.h"
 #include "auth.h"
-#include "clientmanager.h"
 
 int userauth(char * secret, char *pass) {
 	char * salt;

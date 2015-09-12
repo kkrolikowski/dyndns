@@ -4,6 +4,15 @@ This is dynamic DNS server and client software. In this version i've made decisi
 > _**I Assume that you have at least one domain ready to be used for dynamic purposes.**_
 
 With dDNS-ng everyone can be dynamic DNS service provider.
+## Table of contents
+* [Server Requirements](#server-requirements)
+* [Web environment](#web-environment)
+* [Synopsis](#synopsis)
+* [Installation](#installation)
+  * [Database preparation](#database-preparation)
+  * [Installation and configuration](#installation-and-configuration)
+    * [Configuration file](#configuration-file)
+    * [Running a server](#running-a-server)
 
 ## Server Requirements
 * Operating system: Linux or FreeBSD

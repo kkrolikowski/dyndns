@@ -3,6 +3,8 @@ This is dynamic DNS server and client software. In this version i've made decisi
 
 > _**I Assume that you have at least one domain ready to be used for dynamic purposes.**_
 
+With dDNS-ng everyone can be dynamic DNS service provider.
+
 ## Server Requirements
 * Operating system: Linux or FreeBSD
 * DNS software: Bind

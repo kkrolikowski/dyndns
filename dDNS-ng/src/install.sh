@@ -36,6 +36,11 @@ if [ $1 == "server" ] ; then
 		echo "!!!!		Please edit $CONFDIR/dyndns-server.conf		!!!!"
 		echo 
 	fi
+
+	default="example.com"
+	read -p "Initial domain [$default]: " -a FIRSTDOMAIN
+	FIRSTDOMAIN=${FIRSTDOMAIN:-$default}
+
 	echo "Preparing database"
 	read -p "DB host: " DBHOST
 	read -p "DB user: " DBUSER
@@ -61,7 +66,9 @@ if [ $1 == "server" ] ; then
 	echo
 	IFS= read -r -p "Name: " name
 	read -p "E-mail: " email
-	mysql -h$DBHOST -u$DBUSER -p$DBPASS $DBNAME -e "INSERT INTO users(login,pass,role,active,name,email) VALUES('$login','$md5pass','admin',1,'$name','$email');" 1> /dev/null 2> $ERR
+	mysql -h$DBHOST -u$DBUSER -p$DBPASS $DBNAME -e "INSERT INTO users(login,pass,role,active,name,email) VALUES('$login','$md5pass','admin',1,'$name','$email');" 1> /dev/null 2>> $ERR
+	mysql -h$DBHOST -u$DBUSER -p$DBPASS $DBNAME -e "INSERT INTO domains(domain,status,user_id,owner,ttl,serial,refresh,retry,expiry,maximum,domainstatus) VALUES('$FIRSTDOMAIN','public',0,'root',0,0,1200,1200,2419200,86400,'active');" 1> /dev/null 2>> $ERR
+	mysql -h$DBHOST -u$DBUSER -p$DBPASS $DBNAME -e "INSERT INTO subdomains(user_id,domain_id,subdomain,type,dynamic) VALUES(1,1,'admin','A',1);" 1> /dev/null 2>> $ERR
 	if [ $? == 1 ] ; then
 		cat $ERR
 		unlink $ERR

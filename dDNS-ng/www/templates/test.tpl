@@ -147,6 +147,10 @@
                <ul class="dropdown-menu" role="menu">
                   <li role="presentation"><a href="#addDomain" aria-controls="profile" role="tab" data-toggle="tab"><strong>Add domain</strong></a></li>
                   <li role="separator" class="divider"></li>
+                  {if $userdata.role eq 'admin'}
+                  <li role="presentation"><a href="#manageDomains" aria-controls="profile" role="tab" data-toggle="tab"><strong>Manage domains</strong></a></li>
+                  <li role="separator" class="divider"></li>
+                  {/if}
                   {foreach from=$subDomList key=domain item=sub}
                   <li role="presentation"><a href="#{$domain|regex_replace:"/\./":"_"}" aria-controls="profile" role="tab" data-toggle="tab">{$domain}</a></li>
                   {/foreach}

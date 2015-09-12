@@ -40,8 +40,10 @@ if [ $1 == "server" ] ; then
 	default="example.com"
 	read -p "Initial domain [$default]: " -a FIRSTDOMAIN
 	FIRSTDOMAIN=${FIRSTDOMAIN:-$default}
-
-	echo "Preparing database"
+	
+	echo
+	echo "				>> Preparing database <<			"
+	echo
 	read -p "DB host: " DBHOST
 	read -p "DB user: " DBUSER
 	read -s -p "DB password: " DBPASS
@@ -52,14 +54,15 @@ if [ $1 == "server" ] ; then
 		echo "Please install mysql client"
 		exit 1
 	fi
-	echo "Installing Database"
+	echo
+	echo "				>> Installing Database <<			"
 	mysql -h$DBHOST -u$DBUSER -p$DBPASS $DBNAME < ../doc/dbschema.sql 1> /dev/null 2> $ERR
 	if [ $? == 1 ] ; then
 		cat $ERR
 		unlink $ERR
 		exit 1
 	fi
-	echo "Allmost ready. Lets create initial admin account"
+	echo "				>> Allmost ready. Lets create initial admin account <<"
 	read -p "Login: " login
 	read -s -p "Password: " pass
 	md5pass=`echo $pass |openssl passwd -1 -stdin`
@@ -75,9 +78,10 @@ if [ $1 == "server" ] ; then
 		exit 1
 	fi
 	echo "Database ready."
-	echo "Preparing web interface"
+	echo
+	echo "				>> Preparing web interface <<			"
+	echo
 	echo "DNS information"
-
 	default="hostmaster.example.com"
 	read -p "Hostmaster [$default]: " -a HOSTMASTER
 	HOSTMASTER=${HOSTMASTER:-$default}
@@ -114,8 +118,9 @@ if [ $1 == "server" ] ; then
 	read -p "Service email [$default]: " -a MAIN_EMAIL
 	MAIN_EMAIL=${MAIN_EMAIL:-$default}
 	
-	
-	echo "Installing admin interface."
+	echo
+	echo "				>> Installing admin interface <<		"
+	echo
 	read -p "Enter site address: " SITENAME
 
 	if [ -d "/var/www/html" ] ; then
@@ -176,7 +181,9 @@ EOL
    CustomLog /var/log/apache/$SITENAME-access.log combined
 </VirtualHost>
 EOL
-	echo "Installation done. Below Apache Virtualhost config"
+	echo
+	echo "				>> Installation done. Below Apache Virtualhost config <<"
+	echo
 	cat /tmp/dyndns-apache.conf
 	rm /tmp/dyndns-apache.conf
 	

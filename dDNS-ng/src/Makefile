@@ -4,7 +4,7 @@ ifeq ($(OS), FreeBSD)
 	HEADER = -I/usr/local/include/mysql
 else
 	HEADER = -I/usr/include/mysql
-	LIBB = -L/usr/lib/x86_64-linux-gnu
+	LIBB = -L/usr/lib/x86_64-linux-gnu -L/usr/lib64/mysql
 endif
 	LIBRA = -lcrypt -lmysqlclient
 

@@ -33,7 +33,7 @@ Source code can be obtained from [Download page](https://github.com/kkrolikowski
 | FreeBSD | pkg install mysql56-client                |
 | Centos  | yum -y install mariadb-devel mariadb-libs |
 
-#### Database preparation
+### Database preparation
 Running dDNS-ng for the first time we have to create new database and database user account with decent privileges to tablespace. This can be done with these steps<br>
 ```sql
 mysql> CREATE DATABASE dyndns;
@@ -41,7 +41,9 @@ mysql> GRANT ALL ON dyndns.* to 'dyndns_user'@'%' IDENTIFIED by 'someRandomPassw
 mysql> FLUSH PRIVILEGES;
 ```
 ### Installation and configuration
-Once you allready have new database and database user associated with it you are in position to run **install.sh** script. Go to dDNS-ng/src directory and run a command:<br>
+Once you allready have new database and database user associated with it you are in position to run **install.sh** script. This script will compile the code and configure
+and install web interface.
+Go to dDNS-ng/src directory and run a command:<br>
 ```bash
 # ./install.sh server
 ```

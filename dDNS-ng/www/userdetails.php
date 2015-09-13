@@ -14,10 +14,12 @@
 		   if(isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] != 'PUT') {
 				$q = $dbh->prepare(
 					"SELECT u.id, u.name,u.login, u.email, u.role, u.active, s.subdomain, d.domain ".
-					"FROM subdomains s, domains d , users u where s.domain_id = d.id and u.id = s.user_id and s.user_id = ".$_GET['id']
+					"FROM subdomains s, domains d , users u where s.domain_id = d.id and u.id = s.user_id and s.dynamic = 1 and s.user_id = ".$_GET['id']
 				);
 			   $q->execute();
 			   $res = $q->fetch();
+				 if(substr($res['domain'], -1) == '.')
+				 	$res['domain'] = substr($res['domain'], 0, -1);
 			   $json_resp = array(
 					"id" => $res['id'],
 					"login" => $res['login'],

@@ -469,6 +469,12 @@ $(document).ready(function() {
       .find('[name="role"]').val(response.role).end()
       .find('[name="subdomain"]').val(response.subdomain).end()
       .find('[name="domain"]').val(response.domain).end();
+      if(response.subdomain === '@') {
+        $('#editUserForm').find('[name="subdomain"]').prop('disabled', true).end();
+      }
+      else {
+        $('#editUserForm').find('[name="subdomain"]').prop('disabled', false).end();
+      }
       bootbox
         .dialog({
           title: 'Edit user profile',

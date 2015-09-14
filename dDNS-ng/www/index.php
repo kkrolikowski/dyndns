@@ -16,6 +16,7 @@
 	$subd = array();
 	$userdomains = array();				// user's domains
 	$domHost = array();						// hosts of particular domain
+	$dom = array();								// all domain list
 	$i = 0;
 	$can_go = 0;
 	$clientip = $func->clientIP(); 			// client IP
@@ -158,6 +159,16 @@
 
 		}
 		$www->assign('userdata', $userdata);
+/*
+* Get all domains list to populate admin panel
+*/
+		$q = $dbh->prepare("SELECT id,domain FROM domains WHERE user_id > 0");
+		$q->execute();
+		while($res = $q->fetch()) {
+			$res['domain'] = substr($res['domain'], 0, -1);
+			$dom[$res['id']]= $res['domain'];
+		}
+		$www->assign('domlist', $dom);
 /*
  * Get subdomains associated with particular domain
 */

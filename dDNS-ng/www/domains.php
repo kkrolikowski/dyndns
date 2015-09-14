@@ -8,6 +8,33 @@
   $tool = new Toolkit;
 
   if(isset($_SESSION['userlogin'])) {
+    $q = $dbh->prepare("SELECT role FROM users WHERE login = '".$_SESSION['userlogin']."'");
+    $q->execute();
+    $res = $q->fetch();
+    if($res['role'] == 'admin') {
+      if(isset($_GET['domid'])) {
+        $q = $dbh->prepare("SELECT id,ttl,domain,owner,serial,admin_contact,master_dns FROM domains WHERE id = ".$_GET['domid']);
+        $q->execute();
+        $res = $q->fetch();
+        $q2 = $dbh->prepare("SELECT subdomain,ip,type FROM subdomains WHERE domain_id = ".$_GET['domid']);
+        $q2->execute();
+        while($res2 = $q2->fetch()) {
+          $sub[$res2['subdomain']][] = array('ip' => $res2['ip'], 'type' => $res2['type']);
+        }
+        $json = array(
+          'id' => $res['id'],
+          'owner' => $res['owner'],
+          'serial' => $res['serial'],
+          'ttl' => $res['ttl'],
+          'hostmaster' => $res['admin_contact'],
+          'masterdns' => $res['master_dns'],
+          'origin' => $res['domain'],
+          'records' => $sub
+        );
+        header('Content-Type: application/json');
+        echo json_encode($json);
+      }
+    }
     if(isset($_GET['rm'])) {
       // resolve domain name
       $q = $dbh->prepare("SELECT domain FROM domains WHERE id = (SELECT domain_id FROM subdomains WHERE subdomains.id = ".$_GET['rm'].")");

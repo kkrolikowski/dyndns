@@ -190,6 +190,74 @@
                </table>
             </div>
 			{if $userdata.role eq 'admin'}
+      <div role="tabpanel" class="tab-pane fade col-md-4" id="manageDomains">
+        <table class="table">
+          <thead>
+            <th>ID</th><th>Domain</th><th>Manage</th>
+          </thead>
+          <tbody>
+            {foreach from=$domlist key=id item=domain}
+            <tr>
+              <td>{$id}</td>
+              <td>{$domain}</td>
+              <td>
+                <ul role="tablist" class="nav">
+      						<li role="presentation" class="dropdown">
+      							<button class="btn btn-primary btn-sm" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Action<span class="caret"></span></button>
+      						   <ul class="dropdown-menu" role="menu">
+      							  <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$id}" class="adm_editdom">Edit</a></li>
+      							  <li role="presentation"><a href="#" aria-controls="profile" role="tab" data-toggle="tab" data-id="{$id}" class="adm_rmdom">Remove</a></li>
+      						   </ul>
+      						</li>
+      					</ul>
+              </td>
+            </tr>
+            {/foreach}
+          </tbody>
+        </table>
+      </div>
+      <form id="adm_editdom_form" method="post" style="display: none;">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-sm-2">
+              <label class="control-label">ID</label>
+              <input type="text" class="form-control" name="id" disabled="disabled" />
+            </div>
+            <div class="col-sm-4">
+              <label class="control-label">Owner</label>
+              <input type="text" class="form-control" name="owner" disabled="disabled" />
+            </div>
+            <div class="col-sm-6">
+              <label class="control-label">Serial</label>
+              <input type="text" class="form-control" name="serial" disabled="disabled" />
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="row">
+            <div class="col-sm-2">
+              <label class="control-label">TTL</label>
+              <input type="text" class="form-control" name="ttl" />
+            </div>
+            <div class="col-sm-10">
+              <label class="control-label">Origin</label>
+              <input type="text" class="form-control" name="origin" disabled="disabled" />
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="row">
+            <div class="col-sm-6">
+              <label class="control-label">Hostmaster</label>
+              <input type="text" class="form-control" name="hostmaster" />
+            </div>
+            <div class="col-sm-6">
+              <label class="control-label">Master DNS</label>
+              <input type="text" class="form-control" name="masterdns" />
+            </div>
+          </div>
+        </div>
+      </form>
 			<div role="tabpanel" class="tab-pane fade" id="users">
                <table class="table table-hover" id="allusers">
                <thead>

@@ -689,4 +689,60 @@ $(document).ready(function() {
     });
   });
   $('.download').off('click');
+  $(document).on('click', '.adm_editdom', function() {
+    var i = 0;
+    var id = $(this).attr('data-id');
+    $.ajax({
+     url: "/domains.php?domid=" + id,
+     method: 'GET'
+   }).success(function(response) {
+     var form = $('#adm_editdom_form');
+    form
+     .find('[name="id"]').val(response.id).end()
+     .find('[name="owner"]').val(response.owner).end()
+     .find('[name="serial"]').val(response.serial).end()
+     .find('[name="ttl"]').val(response.ttl).end()
+     .find('[name="masterdns"]').val(response.masterdns).end()
+     .find('[name="hostmaster"]').val(response.hostmaster).end()
+     .find('[name="origin"]').val(response.origin).end();
+     $('.dynamic-div').remove();
+     $.each(response.records, function(key, val) {
+       $.each(val, function(k, v) {
+         var html = "<div class='form-group dynamic-div'>" +
+          "<div class='row'>" +
+             "<div class='col-sm-4'>" +
+               "<label class='control-label'>Record</label>" +
+               "<input type='text' class='form-control' name='rec["+ i +"]' value='"+ key +"'/>" +
+             "</div>" +
+             "<div class='col-sm-2'>" +
+               "<label class='control-label'>Type</label>" +
+               "<input type='text' class='form-control' name='type["+ i +"]' value='"+ v.type +"' />" +
+             "</div>" +
+             "<div class='col-sm-6'>" +
+               "<label class='control-label'>Value</label>" +
+               "<input type='text' class='form-control' name='value["+ i +"]' value='"+ v.ip +"' />" +
+             "</div>" +
+           "</div>" +
+         "</div>";
+         form.append(html);
+         i++;
+       });
+     });
+     bootbox
+       .dialog({
+         title: 'Domain details',
+         message: $('#adm_editdom_form'),
+         show: false
+       })
+       .on('shown.bs.modal', function() {
+         $('#adm_editdom_form')
+           .show()
+           .formValidation('resetForm');
+       })
+       .on('hide.bs.modal', function(e) {
+         $('#adm_editdom_form').hide().appendTo('body');
+       })
+       .modal('show');
+     });
+  });
 });

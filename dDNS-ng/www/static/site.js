@@ -697,6 +697,10 @@ $(document).ready(function() {
      method: 'GET'
    }).success(function(response) {
      var form = $('#adm_editdom_form');
+     var buttons ="<div class='modal-footer submit-domain-data'>" +
+     "<button type='submit' class='btn btn-primary'>Update</button>" +
+       "<button type='button' class='btn btn-default' data-dismiss='modal'>Cancel</button>" +
+     "</div>";
     form
      .find('[name="id"]').val(response.id).end()
      .find('[name="owner"]').val(response.owner).end()
@@ -706,6 +710,7 @@ $(document).ready(function() {
      .find('[name="hostmaster"]').val(response.hostmaster).end()
      .find('[name="origin"]').val(response.origin).end();
      $('.dynamic-div').remove();
+     $('.submit-domain-data').remove();
      $.each(response.records, function(key, val) {
        $.each(val, function(k, v) {
          var html = "<div class='form-group dynamic-div'>" +
@@ -728,6 +733,7 @@ $(document).ready(function() {
          i++;
        });
      });
+     form.append(buttons);
      bootbox
        .dialog({
          title: 'Domain details',

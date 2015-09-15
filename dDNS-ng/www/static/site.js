@@ -719,17 +719,22 @@ $(document).ready(function() {
                "<label class='control-label'>Record</label>" +
                "<input type='text' class='form-control' name='rec["+ i +"]' value='"+ key +"'/>" +
              "</div>" +
-             "<div class='col-sm-2'>" +
+             "<div class='col-sm-3'>" +
                "<label class='control-label'>Type</label>" +
-               "<input type='text' class='form-control' name='type["+ i +"]' value='"+ v.type +"' />" +
+               "<select name='type["+ i +"]' class='form-control'>" +
+                 "<option value='NS'>NS</option>" +
+                 "<option value='MX'>MX</option>" +
+                 "<option value='A'>A</option>" +
+               "</select>"+
              "</div>" +
-             "<div class='col-sm-6'>" +
+             "<div class='col-sm-5'>" +
                "<label class='control-label'>Value</label>" +
                "<input type='text' class='form-control' name='value["+ i +"]' value='"+ v.ip +"' />" +
              "</div>" +
            "</div>" +
          "</div>";
          form.append(html);
+         $('select[name="type['+ i + ']"]').val(v.type).prop('selected', true);
          i++;
        });
      });

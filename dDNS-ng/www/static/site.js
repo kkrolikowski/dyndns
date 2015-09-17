@@ -534,7 +534,7 @@ $(document).ready(function() {
      type: 'POST',
      data: $form.serialize(),
      success: function(e) {
-       bootbox.alert("Operation done!");
+       bootbox.alert("Operation done! Please reload the page")
      },
      error: function(xhr) {
        bootbox.alert(xhr.getResponseHeader('X-Message'));
@@ -698,8 +698,8 @@ $(document).ready(function() {
    }).success(function(response) {
      var form = $('#adm_editdom_form');
      var buttons ="<div class='modal-footer submit-domain-data'>" +
-     "<button type='submit' class='btn btn-primary'>Update</button>" +
-       "<button type='button' class='btn btn-default' data-dismiss='modal'>Cancel</button>" +
+       "<button type='submit' class='btn btn-primary adm_updatedomain'>Update</button>" +
+       "<button type='button' class='btn btn-default' data-dismiss='modal'>Close</button>" +
      "</div>";
     form
      .find('[name="id"]').val(response.id).end()
@@ -717,11 +717,11 @@ $(document).ready(function() {
           "<div class='row'>" +
              "<div class='col-sm-4'>" +
                "<label class='control-label'>Record</label>" +
-               "<input type='text' class='form-control' name='rec["+ i +"]' value='"+ key +"'/>" +
+               "<input type='text' class='form-control' name='subid["+ v.subid +"][]rec["+ i +"]' value='"+ key +"'/>" +
              "</div>" +
              "<div class='col-sm-3'>" +
                "<label class='control-label'>Type</label>" +
-               "<select name='type["+ i +"]' class='form-control'>" +
+               "<select name='subid["+ v.subid +"][]type["+ i +"]' class='form-control'>" +
                  "<option value='NS'>NS</option>" +
                  "<option value='MX'>MX</option>" +
                  "<option value='A'>A</option>" +
@@ -729,12 +729,12 @@ $(document).ready(function() {
              "</div>" +
              "<div class='col-sm-5'>" +
                "<label class='control-label'>Value</label>" +
-               "<input type='text' class='form-control' name='value["+ i +"]' value='"+ v.ip +"' />" +
+               "<input type='text' class='form-control' name='subid["+ v.subid +"][]value["+ i +"]' value='"+ v.ip +"' />" +
              "</div>" +
            "</div>" +
          "</div>";
          form.append(html);
-         $('select[name="type['+ i + ']"]').val(v.type).prop('selected', true);
+         $('select[name="subid['+ v.subid +'][]type['+ i + ']"]').val(v.type).prop('selected', true);
          i++;
        });
      });
@@ -755,5 +755,14 @@ $(document).ready(function() {
        })
        .modal('show');
      });
+  });
+  $('#adm_editdom_form').on('click', '.adm_updatedomain', function() {
+    var form = $('#adm_editdom_form');
+    var domain = form.find('[name="origin"]').val();
+    $.ajax({
+     url: "/domains.php?domain=" + domain,
+     method: 'PUT',
+     data: form.serializeArray()
+   });
   });
 });

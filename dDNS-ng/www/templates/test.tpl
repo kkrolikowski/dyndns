@@ -217,6 +217,8 @@
         </table>
       </div>
       <form id="adm_editdom_form" method="post" style="display: none;">
+        <input type="hidden" name="id"/>
+        <input type="hidden" name="origin"/>
         <div class="form-group">
           <div class="row">
             <div class="col-sm-2">

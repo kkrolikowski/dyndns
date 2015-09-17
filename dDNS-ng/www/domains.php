@@ -47,7 +47,6 @@
             $q = $dbh->prepare("UPDATE subdomains SET subdomain = '".$val[0]."', type = '".$val[1]."', ip = '".$val[2]."' WHERE id = ".$id);
             $q->execute();
           }
-          //print_r($json);
       }
     }
     if(isset($_GET['rm'])) {

@@ -762,7 +762,10 @@ $(document).ready(function() {
     $.ajax({
      url: "/domains.php?domain=" + domain,
      method: 'PUT',
-     data: form.serializeArray()
+     data: form.serializeArray(),
+     success: function() {
+       bootbox.alert("Done!");
+     }
    });
   });
 });

@@ -16,10 +16,10 @@
         $q = $dbh->prepare("SELECT id,ttl,domain,owner,serial,admin_contact,master_dns FROM domains WHERE id = ".$_GET['domid']);
         $q->execute();
         $res = $q->fetch();
-        $q2 = $dbh->prepare("SELECT subdomain,ip,type FROM subdomains WHERE domain_id = ".$_GET['domid']);
+        $q2 = $dbh->prepare("SELECT id,subdomain,ip,type FROM subdomains WHERE domain_id = ".$_GET['domid']);
         $q2->execute();
         while($res2 = $q2->fetch()) {
-          $sub[$res2['subdomain']][] = array('ip' => $res2['ip'], 'type' => $res2['type']);
+          $sub[$res2['subdomain']][] = array('subid' => $res2['id'], 'ip' => $res2['ip'], 'type' => $res2['type']);
         }
         $json = array(
           'id' => $res['id'],
@@ -33,6 +33,21 @@
         );
         header('Content-Type: application/json');
         echo json_encode($json);
+      }
+      if($_SERVER['REQUEST_METHOD'] == 'PUT') {
+          parse_str(file_get_contents("php://input"), $json);
+          $serial = $tool->calculateSerial($json['origin']);
+
+          $q = $dbh->prepare(
+          "UPDATE domains SET ttl = ".$json['ttl']. ", serial = ".$serial.", admin_contact = '".$json['hostmaster']."', " .
+          "master_dns = '".$json['masterdns']."' WHERE id = ".$json['id']);
+          $q->execute();
+
+          foreach ($json['subid'] as $id => $val) {
+            $q = $dbh->prepare("UPDATE subdomains SET subdomain = '".$val[0]."', type = '".$val[1]."', ip = '".$val[2]."' WHERE id = ".$id);
+            $q->execute();
+          }
+          //print_r($json);
       }
     }
     if(isset($_GET['rm'])) {
@@ -118,7 +133,7 @@
       header('Content-Type: application/json');
       echo json_encode($json_resp);
     }
-    if($_SERVER['REQUEST_METHOD'] == 'PUT') {
+    if($_SERVER['REQUEST_METHOD'] == 'PUT' && !isset($_GET['domain'])) {
       parse_str(file_get_contents("php://input"), $json);
 
       $q = $dbh->prepare("UPDATE subdomains SET subdomain = '".$json['domain']."' WHERE id = ".$_GET['id']);

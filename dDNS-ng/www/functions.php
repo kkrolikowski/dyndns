@@ -42,7 +42,13 @@
        $dbh = new PDO($dsn, LOGIN, PASS);
 
        $dayStartSerial = date('Ymd') . "00";
-       $q = $dbh->prepare("SELECT serial FROM domains WHERE domain = '".$domain.".'");
+       if(strstr($domain, -1) == '.') {
+         $query = "SELECT serial FROM domains WHERE domain = '".$domain."'";
+       }
+       else {
+         $query = "SELECT serial FROM domains WHERE domain = '".$domain.".'";
+       }
+       $q = $dbh->prepare($query);
        $q->execute();
        $res = $q->fetch();
        $actual_serial = $res['serial'];

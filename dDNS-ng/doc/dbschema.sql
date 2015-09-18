@@ -16,6 +16,23 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `authlog`
+--
+
+DROP TABLE IF EXISTS `authlog`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `authlog` (
+  `id` int(11) NOT NULL auto_increment,
+  `timestamp` varchar(45) default NULL,
+  `clientip` varchar(45) default NULL,
+  `login` varchar(45) default NULL,
+  `authstatus` varchar(45) default NULL,
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `domains`
 --
 
@@ -129,4 +146,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-09-05  7:33:24
+-- Dump completed on 2015-09-18  8:31:32

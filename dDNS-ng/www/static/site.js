@@ -768,4 +768,18 @@ $(document).ready(function() {
      }
    });
   });
+  $(document).on('click', '.adm_rmdom', function(e) {
+   e.preventDefault();
+    var id = $(this).attr('data-id');
+    var tr = $(this).parentsUntil('tbody');
+    var domain = tr.find("td:nth-child(2)").html();
+     $.ajax({
+       url: "/domains.php?rmdomain=" + domain,
+       method: 'GET'
+     }).success(function() {
+       var $link = $('a[data-id=' + id + ']'),
+       $tr = $link.closest('tr');
+       $tr.remove();
+     });
+  });
 });

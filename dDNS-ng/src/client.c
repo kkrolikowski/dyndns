@@ -104,6 +104,7 @@ int main(int argc, char *argv[]) {
 			}
 			write(sockfd, buf, 256);
 			seq++;
+			bzero(buf, 256);
 		}
 		seq = 0;
 		close(sockfd);

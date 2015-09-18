@@ -184,12 +184,12 @@ static char * getdata(char * buf) {
 			break;
 		}
 	curr = ++buf;
-	while(*buf++ != '\n')
+	while(*buf++ != '\0')
 		len++;
 	val = (char *) malloc((len+1) * sizeof(char));
 	for(i = 0; i < len; i++)
 		val[i] = curr[i];
-	val[strlen(val)] = '\0';
+	val[i] = '\0';
 
 	return val;
 }

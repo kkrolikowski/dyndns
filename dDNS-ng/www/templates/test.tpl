@@ -266,6 +266,18 @@
           </div>
         </div>
       </form>
+      <div role="tabpanel" class="tab-pane fade col-sm-6" id="activity">
+        <table class="table">
+          <thead>
+            <th>Timestamp</th><th>Client IP</th><th>User</th><th>Status</th>
+          </thead>
+          <tbody>
+            {foreach from=$authlogs key=timestamp item=authdata}
+            <tr><td>{$timestamp}</td><td>{$authdata[0]}</td><td>{$authdata[1]}</td><td>{$authdata[2]}</td></tr>
+            {/foreach}
+          </tbody>
+        </table>
+      </div>
 			<div role="tabpanel" class="tab-pane fade" id="users">
                <table class="table table-hover" id="allusers">
                <thead>

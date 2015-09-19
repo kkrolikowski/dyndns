@@ -17,6 +17,7 @@
 	$userdomains = array();				// user's domains
 	$domHost = array();						// hosts of particular domain
 	$dom = array();								// all domain list
+	$auth_log = array();
 	$i = 0;
 	$can_go = 0;
 	$clientip = $func->clientIP(); 			// client IP
@@ -165,6 +166,13 @@
 
 		}
 		$www->assign('userdata', $userdata);
+
+		$q = $dbh->prepare("SELECT timestamp,clientip,login,authstatus FROM authlog ORDER by id DESC");
+		$q->execute();
+		while($res = $q->fetch()) {
+			$auth_log[$res['timestamp']] = array($res['clientip'], $res['login'], $res['authstatus']);
+		}
+		$www->assign('authlogs', $auth_log);
 /*
 * Get all domains list to populate admin panel
 */

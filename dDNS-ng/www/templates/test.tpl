@@ -133,7 +133,13 @@
             <li role="presentation"><a href="#summary" aria-controls="profile" role="tab" data-toggle="tab">Summary</a></li>
 			<li role="presentation"><a href="#history" aria-controls="history" role="tab" data-toggle="tab">History</a></li>
 			{if $userdata.role eq 'admin'}
-            <li role="presentation"><a href="#users"   aria-controls="users"   role="tab" data-toggle="tab">Users</a></li>
+            <li role="presentation" class="dropdown">
+               <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Users<span class="caret"></span></a>
+               <ul class="dropdown-menu" role="menu">
+                  <li role="presentation"><a href="#users" aria-controls="profile" role="tab" data-toggle="tab">List</a></li>
+                  <li role="presentation"><a href="#activity" aria-controls="profile" role="tab" data-toggle="tab">Activity</a></li>
+               </ul>
+            </li>
 			{/if}
             <li role="presentation" class="dropdown">
                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Profile<span class="caret"></span></a>

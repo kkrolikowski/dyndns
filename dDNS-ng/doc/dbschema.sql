@@ -29,7 +29,7 @@ CREATE TABLE `authlog` (
   `login` varchar(45) default NULL,
   `authstatus` varchar(45) default NULL,
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --

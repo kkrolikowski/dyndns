@@ -71,5 +71,14 @@
        }
        return $ip;
      }
+     public function authlog($login, $ip, $status) {
+       $dsn = 'mysql:host='.DB_HOST.';dbname='.DBNAME;
+       $dbh = new PDO($dsn, LOGIN, PASS);
+       $timestamp  = gmdate("Y-m-d H:i:s", time());
+
+       $q = $dbh->prepare("INSERT INTO authlog(timestamp,clientip,login,authstatus) VALUES('".$timestamp."', '".$ip."', '".$login."', '".$status."')");
+       $q->execute();
+
+     }
   }
 ?>

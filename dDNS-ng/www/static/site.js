@@ -176,7 +176,16 @@ $(document).ready(function() {
          window.location.reload(true);
        },
        error: function(xhr) {
-         bootbox.alert(xhr.getResponseHeader('X-Message'));
+         var message = xhr.getResponseHeader('X-Message');
+         if(message === "Incorrect password") {
+           $('#resetPass').modal('show');
+         }
+         else if(message === "User not found") {
+          bootbox.alert("No such user");
+         }
+         else {
+           bootbox.alert("Unknown error");
+         }
        }
      });
    });
@@ -782,4 +791,57 @@ $(document).ready(function() {
        $tr.remove();
      });
   });
+  $("#showreset").change(function() {
+    if( this.checked ) {
+      $('.resetpass_class').show();
+    }
+    else {
+      $('.resetpass_class').hide();
+    }
+  });
+  $('#resetPassForm').formValidation({
+     framework: 'bootstrap',
+     icon: {
+        valid: 'glyphicon glyphicon-ok',
+        invalid: 'glyphicon glyphicon-remove',
+        validating: 'glyphicon glyphicon-refresh'
+     },
+     fields: {
+       email: {
+          err: 'tooltip',
+          required: true,
+          validators: {
+             notEmpty: {
+                message: 'The email is required'
+             },
+             emailAddress: {
+                message: "Invalid e-mail address"
+             },
+             remote: {
+                  message: 'E-mail is not available',
+                  url: '/validate.php',
+                  data: {
+                    type: 'resetpass'
+                  },
+                  type: 'POST',
+                    delay: 2000
+             }
+          }
+       }
+     }
+  })
+  .on('success.form.fv', function(e) {
+   e.preventDefault();
+   var $form = $(this),
+   fv = $form.data('formValidation');
+   var email = $form.find('[name="email"]').val();
+   $.ajax({
+     url: "/userdetails.php?email=" + email,
+     type: 'GET',
+     data: $form.serialize(),
+     success: function() {
+       bootbox.alert("New password was sent.");
+     }
+   });
+});
 });

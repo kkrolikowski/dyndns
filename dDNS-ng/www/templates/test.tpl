@@ -83,6 +83,38 @@
     </div>
   </div>
 </div>
+<div class="modal fade" id="resetPass" tabindex="-1" role="dialog" aria-labelledby="newUserLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="ChangePassLabel"> Incorrect Password</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" id="showreset" value="show-reset" aria-label="Reset password"> <strong>Reset password?</strong>
+            </label>
+          </div>
+        </div>
+        <div class="form-group resetpass_class" style="display: none;">
+          <label for="email" class="control-label">Email:</label>
+          <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">@</span>
+            <form id="resetPassForm" action="post">
+              <input type="text" class="form-control" aria-describedby="basic-addon1" placeholder="user@example.com" id="email" name="email">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer resetpass_class" style="display: none;">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Reset password</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
    <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
          <div class="navbar-header">

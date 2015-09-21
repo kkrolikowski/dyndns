@@ -95,4 +95,24 @@
 			}
 		}
 	}
+	if(isset($_GET['email'])) {
+			$newpass = $tool->genToken(12);
+			$md5pass = $tool->encryptpass($newpass);
+
+			$q = $dbh->prepare("UPDATE users set pass = '".$md5pass."' WHERE email = '".$_GET['email']."'");
+			$q->execute();
+			$q = $dbh->prepare("SELECT name,login,email FROM users WHERE email = '".$_GET['email']."'");
+			$q->execute();
+			$res = $q->fetch();
+
+			$message = 'Hello '. $res['name'] ."!\r\n\r\n".
+			"New credentials:\r\n".
+			"Login: ".$res['login']."\r\n".
+			"Password: ".$newpass."\r\n\r\n".
+			"!!! Remember to update your client config and restart program !!!\r\n\r\n".
+			"--\r\n".
+			"dDNS service";
+
+			$tool->notify($res['email'], "Password reset", $message);
+	}
 ?>

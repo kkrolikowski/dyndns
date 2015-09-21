@@ -13,6 +13,7 @@ With dDNS-ng everyone can be dynamic DNS service provider.
   * [Installation and configuration](#installation-and-configuration)
     * [Configuration file](#configuration-file)
     * [Running a server](#running-a-server)
+    * [Enable cronjob](#cron-job)
 
 ## Server Requirements
 * Operating system: Linux or FreeBSD
@@ -85,3 +86,9 @@ Program will run in background. If you want to keep dDNS server running after sy
 ```bash
 /usr/bin/ddns-server -c /etc/dyndns-server.conf
 ```
+#### Cron job
+The last important thing to do is run a cron.php. I recomend using short - one minute interval
+```
+* * * * * /usr/local/bin/curl -s http://website.example.com/cron.php
+```
+Cron.php is responsible for managing mailing queue.

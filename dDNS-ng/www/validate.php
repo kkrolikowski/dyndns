@@ -1,4 +1,4 @@
-<?
+<?php
    include_once './inc/config.php';
    $dsn = 'mysql:host='.DB_HOST.';dbname='.DBNAME;
    $dbh = new PDO($dsn, LOGIN, PASS);

@@ -27,6 +27,9 @@ function installpkg() {
 		if [ $package == 'php5-mcrypt' ]; then
 			php5enmod mcrypt 2>&1 >/dev/null
 		fi
+		if [ $package == 'php-pear' ]; then
+			pear install Mail 2>&1 >/dev/null
+		fi
 	else
 		if [ $package == 'libmysqlclient' ]; then
 			package="mariadb-libs"

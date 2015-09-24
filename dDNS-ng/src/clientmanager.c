@@ -292,6 +292,7 @@ char * newSerialNo(char * serial) {
     long bigger_serial = 0;
 
     newserial = (char *) malloc((strlen(serial)+1) * sizeof(char));
+    bzero(newserial, sizeof(newserial));
     time(&today);
     localtime_r(&today, &tf);
     strftime(newserial, sizeof(newserial), "%Y%m%d", &tf);

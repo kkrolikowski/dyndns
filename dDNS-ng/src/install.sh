@@ -3,6 +3,57 @@
 # dDNS-ng install script
 # Author: Krzysztof Krolikowski <kkrolikowski@gmail.com>
 #
+
+function checkDistro() {
+	if [ -f "/etc/debian_version" ]; then
+		echo "deb"
+	else
+		echo "rpm"
+	fi
+}
+function installpkg() {
+	package=$1
+	echo -n "$package: "
+
+	if [ $package_system == "deb" ]; then
+		dpkg -l | grep $package |grep -v makedev 2>&1 >/dev/null
+		if [ $? -eq 0 ]; then
+			echo "installed"
+		else
+			echo -n "Installing........ "
+			apt-get -qy install $package 2>&1 >/dev/null
+			echo "[done]"
+		fi
+		if [ $package == 'php5-mcrypt' ]; then
+			php5enmod mcrypt 2>&1 >/dev/null
+		fi
+	else
+		if [ $package == 'libmysqlclient' ]; then
+			package="mariadb-libs"
+		fi
+		if [ $package == "libmysqlclient-dev" ]; then
+			package="mariadb-devel"
+		fi
+		if [ $package == "php5-mcrypt" ]; then
+			package="php-mcrypt"
+			rpm -qa |grep epel 2>&1 >/dev/null
+			if [ $? -eq 1 ]; then
+				yum -y -q install epel-release 2>&1 >/dev/null
+			fi
+		fi
+		if [ $package == 'php-pear' ]; then
+			package="php-pear-Mail"
+		fi
+		rpm -qa |grep -w $package 2>&1 >/dev/null
+		if [ $? -eq 0 ]; then
+			echo "installed"
+		else
+			echo -n "Installing........ "
+			yum -y -q install $package 2>&1 >/dev/null
+			echo "[done]"
+		fi
+	fi
+}
 if [ $(uname -s) == "FreeBSD" ]; then
 	MAKE="gmake"
 	CONFDIR="/usr/local/etc"
@@ -17,14 +68,26 @@ ERR="/tmp/err"
 if [ $# -lt 1 ] ; then
 	echo "Usage: $0 [client|server]"
 	exit 1
-fi	
+fi
 if [ $(id -u) -gt 0 ] ; then
 	echo "Use root account"
 	exit 1
 fi
+package_system=$(checkDistro);
+echo "				>> Collecting inventory <<				"
+
+installpkg make
+installpkg gcc
+installpkg libmysqlclient
+installpkg libmysqlclient-dev
+installpkg php5-mcrypt
+installpkg php-pear
+
 if [ $1 == "server" ] ; then
 	if [ ! -f "ddns-server" ] ; then
-		$MAKE server
+		echo -n "Building server...... "
+		$MAKE server 2>&1 >/dev/null
+		echo "[done]"
 	fi
 	echo "Installing files"
 	if [[ -f "$BINDIR/ddns-server" && -f "$CONFDIR/dyndns-server.conf" ]] ; then
@@ -34,13 +97,13 @@ if [ $1 == "server" ] ; then
 		cp ../doc/dyndns-server.conf $CONFDIR/
 		echo
 		echo "!!!!		Please edit $CONFDIR/dyndns-server.conf		!!!!"
-		echo 
+		echo
 	fi
 
 	default="example.com"
 	read -p "Initial domain [$default]: " -a FIRSTDOMAIN
 	FIRSTDOMAIN=${FIRSTDOMAIN:-$default}
-	
+
 	echo
 	echo "				>> Preparing database <<			"
 	echo
@@ -117,7 +180,7 @@ if [ $1 == "server" ] ; then
 	default="admin@example.com"
 	read -p "Service email [$default]: " -a MAIN_EMAIL
 	MAIN_EMAIL=${MAIN_EMAIL:-$default}
-	
+
 	echo
 	echo "				>> Installing admin interface <<		"
 	echo
@@ -137,7 +200,7 @@ if [ $1 == "server" ] ; then
 	mkdir -p $DEST/lib/Smarty
 	cp -r /tmp/Smarty-3.1.8/libs/* $DEST/lib/Smarty/
 	rm -fr /tmp/Smarty-3.1.8
-	
+
 	mkdir $DEST/templates_c
 	chmod 777 $DEST/templates_c
 
@@ -183,10 +246,11 @@ EOL
 EOL
 	echo
 	echo "				>> Installation done. Below Apache Virtualhost config <<"
+	echo "				>> 		Restart apache to activate installed modules		<<"
 	echo
 	cat /tmp/dyndns-apache.conf
 	rm /tmp/dyndns-apache.conf
-	
+
 elif [ $1 == "client" ] ; then
 	if [ ! -f "ddns-client" ] ; then
 		echo "Run: $MAKE client"

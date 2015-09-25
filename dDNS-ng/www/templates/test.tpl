@@ -197,11 +197,11 @@
             <li role="presentation" class="dropdown">
                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">Download<span class="caret"></span></a>
                <ul class="dropdown-menu" role="menu">
-                  <li role="presentation"><a data-target="#" href="files/ddns-client-linux-32bit.zip" class="download">Linux (32bit)</a></li>
-                  <li role="presentation"><a data-target="#" href="files/ddns-client-linux-64bit.zip" class="download">Linux (64bit)</a></li>
-                  <li role="presentation"><a data-target="#" href="files/ddns-client-freebsd-32bit.zip" class="download">FreeBSD (32bit)</a></li>
-                  <li role="presentation"><a data-target="#" href="files/ddns-client-freebsd-64bit.zip" class="download">FreeBSD (64bit)</a></li>
-                  <li role="presentation"><a data-target="#" href="files/ddns-client-arm-32bit.zip" class="download">ARM (32bit)</a></li>
+                  <li role="presentation"><a data-target="#" href="http://files.ddns-ng.net/download/ddns-client-linux-32bit.zip" class="download">Linux (32bit)</a></li>
+                  <li role="presentation"><a data-target="#" href="http://files.ddns-ng.net/download/ddns-client-linux-64bit.zip" class="download">Linux (64bit)</a></li>
+                  <li role="presentation"><a data-target="#" href="http://files.ddns-ng.net/download/ddns-client-freebsd-32bit.zip" class="download">FreeBSD (32bit)</a></li>
+                  <li role="presentation"><a data-target="#" href="http://files.ddns-ng.net/download/ddns-client-freebsd-64bit.zip" class="download">FreeBSD (64bit)</a></li>
+                  <li role="presentation"><a data-target="#" href="http://files.ddns-ng.net/download/ddns-client-arm-32bit.zip" class="download">ARM (32bit)</a></li>
                </ul>
             </li>
          </ul>
@@ -626,11 +626,11 @@ pid = /var/run/ddns-client.pid
           <h2>Download</h2>
           <p>Client software</p>
           <ul>
-            <li><a href="files/ddns-client-linux-32bit.zip">Linux (32bit)</a></li>
-            <li><a href="files/ddns-client-linux-64bit.zip">Linux (64bit)</a></li>
-            <li><a href="files/ddns-client-freebsd-32bit.zip">FreeBSD (32bit)</a></li>
-            <li><a href="files/ddns-client-freebsd-64bit.zip">FreeBSD (64bit)</a></li>
-            <li><a href="files/ddns-client-arm-32bit.zip">ARM (32bit)</a></li>
+            <li><a href="http://files.ddns-ng.net/download/ddns-client-linux-32bit.zip">Linux (32bit)</a></li>
+            <li><a href="http://files.ddns-ng.net/download/ddns-client-linux-64bit.zip">Linux (64bit)</a></li>
+            <li><a href="http://files.ddns-ng.net/download/ddns-client-freebsd-32bit.zip">FreeBSD (32bit)</a></li>
+            <li><a href="http://files.ddns-ng.net/download/ddns-client-freebsd-64bit.zip">FreeBSD (64bit)</a></li>
+            <li><a href="http://files.ddns-ng.net/download/ddns-client-arm-32bit.zip">ARM (32bit)</a></li>
           </ul>
        </div>
       <div class="col-md-4">

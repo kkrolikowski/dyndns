@@ -111,6 +111,7 @@ CREATE TABLE `user_log` (
   `user_id` int(11) NOT NULL,
   `ip` varchar(16) NOT NULL,
   `date` varchar(30) NOT NULL,
+  `domain` varchar(45) default NULL,
   PRIMARY KEY  (`id`),
   KEY `fk_user_id` (`user_id`),
   CONSTRAINT `usrid_kkk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
@@ -146,4 +147,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-09-18  8:31:32
+-- Dump completed on 2015-09-25 21:03:52

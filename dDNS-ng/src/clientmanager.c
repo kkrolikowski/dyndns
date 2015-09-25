@@ -411,22 +411,24 @@ int dbUpdate(MYSQL * dbh, DB_USERDATA_t * data, struct subdomain_st * domain, ch
 	}
 	free(query);
 
-	len = strlen(q_serial_1) + strlen(q_serial_2) + strlen(q_serial_3) + strlen(data->serial) +
-			strlen(domain->dom);
-	query = (char *) malloc((len+1) * sizeof(char));
+    if(strcmp(data->domstatus, "private") == 0) {
+        len = strlen(q_serial_1) + strlen(q_serial_2) + strlen(q_serial_3) + strlen(data->serial) +
+                strlen(domain->dom);
+        query = (char *) malloc((len+1) * sizeof(char));
 
-	strcpy(query, q_serial_1);
-	strcat(query, data->serial);
-	strcat(query, q_serial_2);
-	strcat(query, domain->dom);
-	strcat(query, q_serial_3);
+        strcpy(query, q_serial_1);
+        strcat(query, data->serial);
+        strcat(query, q_serial_2);
+        strcat(query, domain->dom);
+        strcat(query, q_serial_3);
 
-	if(mysql_query(dbh, query) != 0) {
-		free(query);
-		return 0;
+        if(mysql_query(dbh, query) != 0) {
+            free(query);
+            return 0;
+        }
+
+        free(query);
 	}
-
-	free(query);
 	return 1;
 }
 int appendDomain(char * zonepath, char * subdomain, char * ipaddr) {

@@ -362,7 +362,7 @@ int dbUpdate(MYSQL * dbh, DB_USERDATA_t * data, struct subdomain_st * domain, ch
 	char * q_subdomains_5 = "' AND domain_id = (SELECT id FROM domains WHERE domain LIKE '";
 	char * q_subdomains_6 = "%') AND type = 'A'";
 
-	char * q_userlog = "INSERT INTO user_log(user_id,ip,date) VALUES(";
+	char * q_userlog = "INSERT INTO user_log(user_id,ip,date,domain) VALUES(";
 
 	char * q_serial_1 = "UPDATE domains SET serial = ";
 	char * q_serial_2 = " WHERE domain LIKE '";
@@ -394,7 +394,7 @@ int dbUpdate(MYSQL * dbh, DB_USERDATA_t * data, struct subdomain_st * domain, ch
 	}
 	free(query);
 
-	len = strlen(q_userlog) + strlen(ipaddr) + strlen(timestamp_s) + strlen(userid) + 9;
+	len = strlen(q_userlog) + strlen(ipaddr) + strlen(timestamp_s) + strlen(userid) + strlen(domain->dom) + 13;
 	query = (char *) malloc((len+1) * sizeof(char));
 
 	strcpy(query, q_userlog);
@@ -403,6 +403,8 @@ int dbUpdate(MYSQL * dbh, DB_USERDATA_t * data, struct subdomain_st * domain, ch
 	strcat(query, ipaddr);
 	strcat(query, "', '");
 	strcat(query, timestamp_s);
+	strcat(query, "', '");
+	strcat(query, domain->dom);
 	strcat(query, "')");
 
 	if(mysql_query(dbh, query) != 0) {

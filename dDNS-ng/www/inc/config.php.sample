@@ -19,5 +19,5 @@
 */
 	define('SMARTY_LIB', 'Smarty.class.php');
 	define('ADM_EMAIL', 'admin@example.com');
-  define('DDNS_SERVER, 'ddns.example.com');
+  define('DDNS_SERVER', 'ddns.example.com');
 ?>

@@ -12,7 +12,6 @@ With dDNS-ng everyone can be dynamic DNS service provider.
   * [Basic setup](#basic-setup)
   * [Automatic installation](#automatic-installation)
   * [Manual installation](#manual-installation)
-  * [Installation and configuration](#installation-and-configuration)
 * [Configuration file](#configuration-file)
 * [Running a server](#running-a-server)
 * [Enable cronjob](#cron-job)

@@ -139,6 +139,7 @@
 	}
 
 	if(isset($_SESSION['userlogin'])) {
+		$www->assign('ddns_server', DDNS_SERVER);
 		$q = $dbh->prepare("SELECT u.id, u.name,u.login, u.email, u.role, u.active, ip, lastupdate, ".
 		"CONCAT(s.subdomain, \".\",  d.domain) as subdomain ".
 		"FROM subdomains s, domains d , users u ".

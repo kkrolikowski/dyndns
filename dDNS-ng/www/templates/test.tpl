@@ -579,7 +579,7 @@
 #
 # dynamic DNS server address
 # server =
-server = bsdaemon.pl
+server = {$ddns_server}
 #
 # dynamic DNS server TCP port number
 # port =

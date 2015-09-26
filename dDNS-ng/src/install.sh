@@ -189,6 +189,10 @@ if [ $1 == "server" ] ; then
 	read -p "Service email [$default]: " -a MAIN_EMAIL
 	MAIN_EMAIL=${MAIN_EMAIL:-$default}
 
+	default="dyndns.example.com"
+	read -p "dDNS server address [$default]: " -a DDNS_SERVER
+	DDNS_SERVER=${DDNS_SERVER:-$default}
+
 	echo
 	echo "				>> Installing admin interface <<		"
 	echo
@@ -235,6 +239,7 @@ if [ $1 == "server" ] ; then
 */
         define('SMARTY_LIB', './lib/Smarty/Smarty.class.php');
         define('ADM_EMAIL', '$MAIN_EMAIL');
+        define('DDNS_SERVER', '$DDNS_SERVER');
 ?>
 EOL
 	cat > /tmp/dyndns-apache.conf <<EOL

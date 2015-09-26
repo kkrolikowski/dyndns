@@ -229,7 +229,7 @@
 			   $www->assign('error', "No data");
 		else {
 			   while($res = $q->fetch()) {
-					   $history[substr($res['date'], 1, -1)] = $res['ip'];
+					   $history[substr($res['date'], 1, -1)] = array($res['ip'], $res['domain']);
 			   }
 			   $www->assign('history', $history);
 		}

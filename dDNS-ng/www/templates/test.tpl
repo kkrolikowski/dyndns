@@ -217,15 +217,17 @@
                   <dt>Last update</dt><dd>{$userdata.lastupdate}</dd>
                </dl>
             </div>
-            <div role="tabpanel" class="tab-pane fade col-xs-4" id="history">
-               <table class="table">
-               <thead>
-                  <th>Last change</th><th>IP Address</th>
-               </thead>
-               {foreach from=$history key=date item=ip}
-                  <tr><td width="200px">{$date}</td><td>{$ip}</td></tr>
-               {/foreach}
-               </table>
+            <div role="tabpanel" class="tab-pane fade col-xs-6" id="history">
+              <table class="table">
+                <thead>
+                  <th>Last change</th><th>IP Address</th><th>In domain</th>
+                </thead>
+                <tbody>
+                  {foreach from=$history key=date item=ip}
+                  <tr><td width="200px">{$date}</td><td>{$ip[0]}</td><td>{$ip[1]}</td></tr>
+                  {/foreach}
+                </tbody>
+              </table>
             </div>
 			{if $userdata.role eq 'admin'}
       <div role="tabpanel" class="tab-pane fade col-md-4" id="manageDomains">

@@ -58,16 +58,16 @@ After completing DNS part you can install Apache, MySQL and PHP (LAMP) environme
 | FreeBSD | pkg install apache22 php5 php5-mysql mysql56-server mysql56-client |
 | Centos  | yum -y install httpd php php-mysql mariadb-server mariadb          |
 
-### Automatic installation
-### Manual installation
-
-### Database preparation
-Running dDNS-ng for the first time we have to create new database and database user account with decent privileges to tablespace. This can be done with these steps<br>
+Okay. Now we are in position to do some database tasks. We need to create one for dynamic DNS system and a user account associated whith it.
 ```sql
 mysql> CREATE DATABASE dyndns;
 mysql> GRANT ALL ON dyndns.* to 'dyndns_user'@'%' IDENTIFIED by 'someRandomPassword';
 mysql> FLUSH PRIVILEGES;
 ```
+_**Note: % sign means any host. You can restrict here access to your database if you want.**_
+### Automatic installation
+### Manual installation
+
 ### Installation and configuration
 Once you allready have new database and database user associated with it you are in position to run **install.sh** script. This script will compile the code and configure
 and install web interface.

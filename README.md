@@ -39,6 +39,14 @@ There are two ways of getting dDNS-ng system to work. Automatic and Manual. But 
 to be done before we can move forward.
 ### Basic setup
 Let's assume that you have basic system installed and with no addtional software except SSH. I'll recomend to start with [Bind](https://www.isc.org/downloads/bind/) installation.
+After that you can configure your brand new domain on your own DNS server. Table below describes recomended paths to use.
+
+| OS      | Zone Directory                | Configuration file               |
+|---------|:------------------------------|:---------------------------------|
+| Ubuntu  | /etc/bind/                    | /etc/bind/named.conf.local       |
+| Centos  | /var/named/                   | /etc/named.rfc1912.zones         |
+| FreeBSD | /usr/local/etc/namedb/master/ | /usr/local/etc/namedb/named.conf |
+
 ### Automatic installation
 ### Manual installation
 

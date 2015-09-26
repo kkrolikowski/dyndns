@@ -77,6 +77,11 @@ if [ $(id -u) -gt 0 ] ; then
 	exit 1
 fi
 package_system=$(checkDistro);
+if [ $package_system == "deb" ]; then
+	echo -n "Rebuilding package indexes........... "
+	apt-get -qy update 2>&1 >/dev/null
+	echo "[done]"
+fi
 echo "				>> Collecting inventory <<				"
 
 installpkg make

@@ -47,14 +47,19 @@ After that you can configure your brand new domain on your own DNS server. Table
 | Centos  | /var/named/                   | /etc/named.rfc1912.zones         |
 | FreeBSD | /usr/local/etc/namedb/master/ | /usr/local/etc/namedb/named.conf |
 
+Despite OS dependent naming convention, you have to create zone files with names identical to domains which they describes. If you have domain example.com, your zone file
+should have name: example.com.
+
+After completing DNS part you can install Apache, MySQL and PHP (LAMP) environment. Table below will be usefull with this task.
+
+| OS      | Command                                                            |
+|---------|:-------------------------------------------------------------------|
+| Ubuntu  | apt-get install apache2 php5 php5-mysql mysql-server mysql-client  |
+| FreeBSD | pkg install apache22 php5 php5-mysql mysql56-server mysql56-client |
+| Centos  | yum -y install httpd php php-mysql mariadb-server mariadb          |
+
 ### Automatic installation
 ### Manual installation
-
-| OS      | Command                                   |
-|---------|:------------------------------------------|
-| Ubuntu  | apt-get install libmysqlclient-dev        |
-| FreeBSD | pkg install mysql56-client                |
-| Centos  | yum -y install mariadb-devel mariadb-libs |
 
 ### Database preparation
 Running dDNS-ng for the first time we have to create new database and database user account with decent privileges to tablespace. This can be done with these steps<br>

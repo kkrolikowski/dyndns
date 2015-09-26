@@ -64,19 +64,20 @@ mysql> CREATE DATABASE dyndns;
 mysql> GRANT ALL ON dyndns.* to 'dyndns_user'@'%' IDENTIFIED by 'someRandomPassword';
 mysql> FLUSH PRIVILEGES;
 ```
-_**Note: % sign means any host. You can restrict here access to your database if you want.**_
-### Automatic installation
-### Manual installation
+**Note:** _% sign means any host. You can restrict here access to your database if you want._
 
-### Installation and configuration
-Once you allready have new database and database user associated with it you are in position to run **install.sh** script. This script will compile the code and configure
-and install web interface.
-Go to dDNS-ng/src directory and run a command:<br>
+### Automatic installation
+If your server is running Ubuntu or Centos i higly recommend using install.sh script. Installation script ensures that there are all necessary
+packages installed into the system before building and installing all components. The only thing to do is pasting Virtualhost declaration to apache
+configuration and restart apache processes.
+
+Go to dDNS-ng/src directory and run a command:
 ```bash
 # ./install.sh server
 ```
-This is an interactive script, so follow the instructions appearing on the screen. In result you will have server (or client) binary and associated configuration file copied in proper place. Installation script will also ask you to provide several data to configure your website. At the end **install.sh** script will display VirtualHost configuration ready to paste into apache files.
 
+### Manual installation
+TODO
 
 #### Configuration file
 Server (and client) cofiguration file comes with few defaults which you can change if you want. All of the options are summarized below<br>

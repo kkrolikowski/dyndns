@@ -31,11 +31,16 @@ Only authenticated clients are authorized to update particular zonefile. DNS zon
 ```
 ; serial
 ```
+Be careful. On some systems **serial** begins with capital "S" which is not supported.<br>
 **White space after semicolon is important!**<br>
 Client accounts are based on MySQL database contents. Every registered user can add as many domains as he want.
 ## Installation
-dDNS server code is linked to MySQL libs. To build server you need to install MySQL devel libs.
-Source code can be obtained from [Download page](https://github.com/kkrolikowski/dyndns/wiki/Download). You can clone it direcly from Github as well.<br>
+There are two ways of getting dDNS-ng system to work. Automatic and Manual. But first things first. I'll start with describing basic setup that has
+to be done before we can move forward.
+### Basic setup
+Let's assume that you have basic system installed and with no addtional software except SSH. I'll recomend to start with [Bind](https://www.isc.org/downloads/bind/) installation.
+### Automatic installation
+### Manual installation
 
 | OS      | Command                                   |
 |---------|:------------------------------------------|

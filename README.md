@@ -9,11 +9,13 @@ With dDNS-ng everyone can be dynamic DNS service provider.
 * [Web environment](#web-environment)
 * [Synopsis](#synopsis)
 * [Installation](#installation)
-  * [Database preparation](#database-preparation)
+  * [Basic setup](#basic-setup)
+  * [Automatic installation](#automatic-installation)
+  * [Manual installation](#manual-installation)
   * [Installation and configuration](#installation-and-configuration)
-    * [Configuration file](#configuration-file)
-    * [Running a server](#running-a-server)
-    * [Enable cronjob](#cron-job)
+* [Configuration file](#configuration-file)
+* [Running a server](#running-a-server)
+* [Enable cronjob](#cron-job)
 
 ## Server Requirements
 * Operating system: Linux or FreeBSD
@@ -79,7 +81,7 @@ Go to dDNS-ng/src directory and run a command:
 ### Manual installation
 TODO
 
-#### Configuration file
+## Configuration file
 Server (and client) cofiguration file comes with few defaults which you can change if you want. All of the options are summarized below<br>
 
 | Option    | Default | Description                                         |
@@ -96,7 +98,7 @@ Server (and client) cofiguration file comes with few defaults which you can chan
 | smtp_ip   | 127.0.0.1 | SMTP server IP Address. Leave it unchanged if you run it on the same machine like ddns-server
 | smtp_port | 25 | SMTP server port. Leave it unchanged if it runs on standard 25/tcp port
 | mail_from | dyndns@example.com | email address which will be set as sender address (From). It can be alias to your existing account
-#### Running a server
+## Running a server
 Tu run installed and configured dDNS server switch to root account and run:
 ```bash
 # ddns-server -c /etc/dyndns-server.conf
@@ -105,7 +107,7 @@ Program will run in background. If you want to keep dDNS server running after sy
 ```bash
 /usr/bin/ddns-server -c /etc/dyndns-server.conf
 ```
-#### Cron job
+## Cron job
 The last important thing to do is run a cron.php. I recomend using short - one minute interval
 ```
 * * * * * /usr/local/bin/curl -s http://website.example.com/cron.php

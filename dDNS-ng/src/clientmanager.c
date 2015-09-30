@@ -84,6 +84,7 @@ REMOTEDATA_t * readCLientData(int sockfd, int logger) {
                 log_event(logger, " FATAL ERROR: Memory allocation for login\n", NULL);
                 exit(-1);
 			}
+			bzero(data->login, sizeof(data->login));
 			strcpy(data->login, val);
 		}
 		else if(strstr(readbuf, "PASS") != NULL) {
@@ -92,6 +93,7 @@ REMOTEDATA_t * readCLientData(int sockfd, int logger) {
                 log_event(logger, " FATAL ERROR: Memory allocation for password\n", NULL);
                 exit(-1);
 			}
+			bzero(data->pass, sizeof(data->pass));
 			strcpy(data->pass, val);
 		}
 		else if(strstr(readbuf, "SUBDOMAIN") != NULL) {
@@ -100,6 +102,7 @@ REMOTEDATA_t * readCLientData(int sockfd, int logger) {
                 log_event(logger, " FATAL ERROR: Memory allocation for subdomain\n", NULL);
                 exit(-1);
 			}
+			bzero(data->subdomain, sizeof(data->subdomain));
 			strcpy(data->subdomain, val);
 		}
 		else {
@@ -144,6 +147,7 @@ MYSQL_RES * queryUserData(MYSQL * dbh, char * login, int logger) {
  * build SQL query to get user account information
  */
 	query = (char *) malloc((strlen(query_prefix) + strlen(login) + strlen(query_suffix) + 1) * sizeof(char));
+	bzero(query, sizeof(query));
 	strcpy(query, query_prefix);
 	strcat(query, login);
 	strcat(query, query_suffix);
@@ -187,6 +191,7 @@ static char * getdata(char * buf) {
 	while(*buf++ != '\0')
 		len++;
 	val = (char *) malloc((len+1) * sizeof(char));
+	bzero(val, sizeof(val));
 	for(i = 0; i < len; i++)
 		val[i] = curr[i];
 	val[i] = '\0';
@@ -222,6 +227,7 @@ struct subdomain_st * explodeDomain(char * clientDomain) {
 		while(*cur++ != '.')
 			sub_len++;
 		name->sub = (char *) malloc((sub_len+1) * sizeof(char));
+		bzero(name->sub, sizeof(name->sub));
 		for(i = 0; i < sub_len; i++)
 			name->sub[i] = clientDomain[i];
 		name->sub[i] = '\0';
@@ -232,12 +238,14 @@ struct subdomain_st * explodeDomain(char * clientDomain) {
 	}
 	else {
 		name->sub = (char *) malloc(2 * sizeof(char));
+		bzero(name->sub, sizeof(name->sub));
 		strcpy(name->sub, "@");
 		name->len += 2;
 	}
 	while(*cur++)
 		dom_len++;
 	name->dom = (char *) malloc((dom_len + 1) * sizeof(char));
+	bzero(name->dom, sizeof(name->dom));
 	for(i = 0; i < dom_len; i++)
 		name->dom[i] = clientDomain[i];
 	name->dom[i] = '\0';
@@ -274,6 +282,7 @@ char * stripSerialNo(char * input) {
 	int i = 0;
 
 	serial = (char *) malloc(13 * sizeof(char));
+	bzero(serial, sizeof(serial));
 	while(*input++) {
 		if(isdigit(*input)) {
 			serial[i] = *input;
@@ -375,6 +384,7 @@ int dbUpdate(MYSQL * dbh, DB_USERDATA_t * data, struct subdomain_st * domain, ch
 			strlen(q_subdomains_5) + strlen(q_subdomains_6) + strlen(timestamp_s) + strlen(ipaddr) + strlen(userid) +
 			strlen(domain->sub) + strlen(domain->dom);
 	query = (char *) malloc((len+1) * sizeof(char));
+	bzero(query, sizeof(query));
 
 	strcpy(query, q_subdomains_1);
 	strcat(query, ipaddr);
@@ -396,6 +406,7 @@ int dbUpdate(MYSQL * dbh, DB_USERDATA_t * data, struct subdomain_st * domain, ch
 
 	len = strlen(q_userlog) + strlen(ipaddr) + strlen(timestamp_s) + strlen(userid) + strlen(domain->dom) + 13;
 	query = (char *) malloc((len+1) * sizeof(char));
+    bzero(query, sizeof(query));
 
 	strcpy(query, q_userlog);
 	strcat(query, userid);
@@ -417,6 +428,7 @@ int dbUpdate(MYSQL * dbh, DB_USERDATA_t * data, struct subdomain_st * domain, ch
         len = strlen(q_serial_1) + strlen(q_serial_2) + strlen(q_serial_3) + strlen(data->serial) +
                 strlen(domain->dom);
         query = (char *) malloc((len+1) * sizeof(char));
+        bzero(query, sizeof(query));
 
         strcpy(query, q_serial_1);
         strcat(query, data->serial);

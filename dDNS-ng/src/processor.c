@@ -64,7 +64,7 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 			if(conndata->login != NULL)
                 log_event(logfd, " ERROR: Unknown user ", conndata->login, "\n", NULL);
             else
-                log_event(logfd, " ERROR: Unknown user\n", NULL);
+                log_event(logfd, " ERROR: Unknown user from ", inet_ntoa(conndata->client_ip_addr), "\n", NULL);
 			mysql_free_result(res);
 			mysql_close(dbh);
 			clearConnData(conndata);

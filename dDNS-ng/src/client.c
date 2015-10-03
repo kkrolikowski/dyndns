@@ -106,6 +106,8 @@ int main(int argc, char *argv[]) {
 			seq++;
 			bzero(buf, 256);
 		}
+		if(strstr(buf, "Unknown command") != NULL)
+            log_event(logfd, " ERROR: communication problem\n", NULL);
 		seq = 0;
 		close(sockfd);
 		sleep(config.client.interval);

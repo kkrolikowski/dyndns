@@ -142,14 +142,21 @@ MYSQL_RES * queryUserData(MYSQL * dbh, char * login, int logger) {
 			WHERE s.domain_id = d.id and u.id = s.user_id and u.login = '";
 	char * query_suffix = "' AND dynamic = 1";
 	char * query;
+	char * unknown_user = "unknown";
 
 /*
  * build SQL query to get user account information
  */
-	query = (char *) malloc((strlen(query_prefix) + strlen(login) + strlen(query_suffix) + 1) * sizeof(char));
+	if(login != NULL)
+        query = (char *) malloc((strlen(query_prefix) + strlen(login) + strlen(query_suffix) + 1) * sizeof(char));
+    else
+        query = (char *) malloc((strlen(query_prefix) + strlen(unknown_user) + strlen(query_suffix) + 1) * sizeof(char));
 	bzero(query, sizeof(query));
 	strcpy(query, query_prefix);
-	strcat(query, login);
+	if(login != NULL)
+        strcat(query, login);
+    else
+        strcat(query, unknown_user);
 	strcat(query, query_suffix);
 /*
  * send query to MySQL server

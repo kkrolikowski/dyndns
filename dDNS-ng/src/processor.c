@@ -61,7 +61,10 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		 * Log an error if none was found.
 		 */
 		if((res = queryUserData(dbh, conndata->login, logfd)) == NULL) {
-			log_event(logfd, " ERROR: Unknown user ", conndata->login, "\n", NULL);
+			if(conndata->login != NULL)
+                log_event(logfd, " ERROR: Unknown user ", conndata->login, "\n", NULL);
+            else
+                log_event(logfd, " ERROR: Unknown user\n", NULL);
 			mysql_free_result(res);
 			mysql_close(dbh);
 			clearConnData(conndata);

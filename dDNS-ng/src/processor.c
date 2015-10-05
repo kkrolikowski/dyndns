@@ -209,30 +209,32 @@ int clientManager(config_t * cfg_file, int logfd, int sockfd) {
 		/*
 		 * adding subdomains by fresh users.
 		*/
-		if(strcmp(dbdata->domstatus, "public") == 0) {
-            if(appendDomain(zonepath, clientDomain->sub, inet_ntoa(conndata->client_ip_addr)) == 0) {
-                log_event(logfd, " ERROR: append zone: ", zonepath, " failed\n", NULL);
-                mysql_close(dbh);
-                clearConnData(conndata);
-                clearDBData(dbdata);
-                free(zonepath);
-                free(clientDomain->dom);
-                free(clientDomain->sub);
-                free(clientDomain);
-            }
-            else {
-                timestamp_s = timestamp();
-				if(dbUpdate(dbh, dbdata, clientDomain, inet_ntoa(conndata->client_ip_addr), timestamp_s) == 0)
-					log_event(logfd, " Error: Database update failed\n", NULL);
-                free(timestamp_s);
-                log_event(logfd, " INFO: New subdomain: ", dbdata->subdomain, "\n", NULL);
-                reload_p = fork();
-				if(reload_p == 0)
-					namedReload();
-				else if(reload_p > 0)
-					waitpid(reload_p, NULL, WNOHANG);
-				else
-					log_event(logfd, " ERROR Reload named failed\n", NULL);
+		else {
+            if(strcmp(dbdata->domstatus, "public") == 0) {
+                if(appendDomain(zonepath, clientDomain->sub, inet_ntoa(conndata->client_ip_addr)) == 0) {
+                    log_event(logfd, " ERROR: append zone: ", zonepath, " failed\n", NULL);
+                    mysql_close(dbh);
+                    clearConnData(conndata);
+                    clearDBData(dbdata);
+                    free(zonepath);
+                    free(clientDomain->dom);
+                    free(clientDomain->sub);
+                    free(clientDomain);
+                }
+                else {
+                    timestamp_s = timestamp();
+                    if(dbUpdate(dbh, dbdata, clientDomain, inet_ntoa(conndata->client_ip_addr), timestamp_s) == 0)
+                        log_event(logfd, " Error: Database update failed\n", NULL);
+                    free(timestamp_s);
+                    log_event(logfd, " INFO: New subdomain: ", dbdata->subdomain, "\n", NULL);
+                    reload_p = fork();
+                    if(reload_p == 0)
+                        namedReload();
+                    else if(reload_p > 0)
+                        waitpid(reload_p, NULL, WNOHANG);
+                    else
+                        log_event(logfd, " ERROR Reload named failed\n", NULL);
+                }
             }
 		}
 		/*

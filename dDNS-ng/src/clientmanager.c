@@ -288,7 +288,7 @@ char * stripSerialNo(char * input) {
 	char * serial;
 	int i = 0;
 
-	serial = (char *) malloc(13 * sizeof(char));
+	serial = (char *) malloc(11 * sizeof(char));
 	bzero(serial, sizeof(serial));
 	while(*input++) {
 		if(isdigit(*input)) {
@@ -305,10 +305,10 @@ char * newSerialNo(char * serial) {
     struct tm tf;
     char * newserial;
     char * ver = "00";
-    long bigger_serial = 0;
+    long bigger_serial = 0L;
 
     newserial = (char *) malloc((strlen(serial)+1) * sizeof(char));
-    bzero(newserial, sizeof(newserial));
+    memset(newserial, '\0', strlen(serial)+1);
     time(&today);
     localtime_r(&today, &tf);
     strftime(newserial, sizeof(newserial), "%Y%m%d", &tf);
@@ -316,6 +316,7 @@ char * newSerialNo(char * serial) {
 
 	if(atol(serial) >= atol(newserial)) {
 		bigger_serial = atol(serial) + 1;
+		memset(newserial, '\0', strlen(newserial)+1);
 		sprintf(newserial, "%ld", bigger_serial);
 	}
 
@@ -339,7 +340,6 @@ int updateZone(char * subdomain, char * ipaddr, char * serial_from_db, char * fi
     	log_event(logger, " Error: Unable to open: ", tmpf, "\n", NULL);
     	return 0;
     }
-
     while(fgets(buf, sizeof(buf), zf) != NULL) {
     	if(strstr(buf, "; serial") != NULL) {
 	    	serial = stripSerialNo(buf);
@@ -364,6 +364,7 @@ int updateZone(char * subdomain, char * ipaddr, char * serial_from_db, char * fi
 
     fclose(zf);
     fclose(tmp);
+    remove(tmpf);
     free(tmpf);
 
     return 1;

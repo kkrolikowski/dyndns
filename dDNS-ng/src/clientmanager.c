@@ -357,7 +357,11 @@ int updateZone(char * subdomain, char * ipaddr, char * serial_from_db, char * fi
     }
     free(serial);
     free(newserial);
-    rewind(zf);
+    fclose(zf);
+    if((zf = fopen(file, "w")) == NULL) {
+        log_event(logger, " Error: Unable to open: ", file, " for writing\n", NULL);
+        return 0;
+    }
     rewind(tmp);
     while(fgets(buf, sizeof(buf), tmp) != NULL)
     	fputs(buf, zf);

@@ -311,7 +311,7 @@ char * newSerialNo(char * serial) {
     memset(newserial, '\0', strlen(serial)+1);
     time(&today);
     localtime_r(&today, &tf);
-    strftime(newserial, sizeof(newserial), "%Y%m%d", &tf);
+    strftime(newserial, strlen(serial), "%Y%m%d", &tf);
     strcat(newserial, ver);
 
 	if(atol(serial) >= atol(newserial)) {
